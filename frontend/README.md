@@ -2,6 +2,8 @@
 
 > 記錄一下如何配置一個前端開發環境（Vue + Electron）
 
+[![回首頁](https://img.shields.io/badge/回首頁-gray?style=for-the-badge)](../README.md)
+
 ## 一、 安裝 Node.js
 
 > Node 是用來執行 JavaScript 的環境，根據 ChatGPT 有做詳細的介紹（詳見註解）
