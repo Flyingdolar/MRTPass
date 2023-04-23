@@ -226,3 +226,25 @@ pnpm run electron:serve
      ```
 
 ## 六、 啟動錯誤 BUG
+
+實際操作時，出現兩個錯誤：
+
+1. 無法讀取 `VUEJS3_DEVTOOLS`
+
+    ![vue-electron-error](https://imgur.com/15MHx1A)
+
+    將上面的程式碼改成
+
+    ```typescript
+    import installExtension, { VUEJS_DEVTOOLS as VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+    ```
+
+2. 無法定義 e 的型別
+
+    ![vue-electron-error2](https://imgur.com/Aija141)
+
+    將上面的程式碼改成
+
+    ```typescript
+    console.error("Vue Devtools failed to install:", e as string);
+    ```
