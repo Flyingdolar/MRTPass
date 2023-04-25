@@ -1,7 +1,7 @@
 # 捷運通 MRT Pass
 
 [![前端環境](https://img.shields.io/badge/前端環境部署-lightblue?style=for-the-badge)](frontend/README.md)
-[![後端環境](https://img.shields.io/badge/後端環境部署-pink?style=for-the-badge)](frontend/README.md)
+[![後端環境](https://img.shields.io/badge/後端環境部署-pink?style=for-the-badge)](backend/README.md)
 
 > 2023 Spring 資料庫理論 - Group 5 期末專題
 
