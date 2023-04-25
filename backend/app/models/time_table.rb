@@ -1,0 +1,2 @@
+class TimeTable < ApplicationRecord
+end

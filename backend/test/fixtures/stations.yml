@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  line: MyString
+  number: 1
+  longitude: 1.5
+  latitude: 1.5
+  lineCount: 1
+  exitCount: 1
+
+two:
+  line: MyString
+  number: 1
+  longitude: 1.5
+  latitude: 1.5
+  lineCount: 1
+  exitCount: 1

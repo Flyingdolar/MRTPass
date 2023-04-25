@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  price: 1
+  upper_bound: 1.5
+  lower_bound: 1.5
+
+two:
+  price: 1
+  upper_bound: 1.5
+  lower_bound: 1.5
