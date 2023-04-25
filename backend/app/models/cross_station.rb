@@ -1,0 +1,2 @@
+class CrossStation < ApplicationRecord
+end

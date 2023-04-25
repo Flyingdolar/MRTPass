@@ -1,0 +1,2 @@
+class Lost < ApplicationRecord
+end
