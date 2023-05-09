@@ -1,2 +1,0 @@
-class Information < ApplicationRecord
-end

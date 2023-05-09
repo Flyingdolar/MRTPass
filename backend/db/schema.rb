@@ -45,7 +45,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_071854) do
     t.string "name"
     t.string "photo"
     t.string "address"
-    t.float "score"
+    t.string "type"
     t.string "Des"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
