@@ -1041,3 +1041,337 @@ FOREIGN KEY ("info_id")
   [1m[36mActiveRecord::InternalMetadata Create (1.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["key", "environment"], ["value", "development"], ["created_at", "2023-05-09 16:38:02.892266"], ["updated_at", "2023-05-09 16:38:02.892266"]]
   [1m[36mTRANSACTION (2.0ms)[0m  [1m[36mcommit transaction[0m
   [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:40:48 +0800
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  
+ActiveRecord::PendingMigrationError (
+
+Migrations are pending. To resolve this issue, run:
+
+        bin/rails db:migrate RAILS_ENV=development
+
+You have 10 pending migrations:
+
+20230425063332_create_members.rb
+20230425064232_create_stations.rb
+20230425064925_create_infos.rb
+20230425065453_create_comments.rb
+20230425065939_create_time_tables.rb
+20230425070129_create_losts.rb
+20230425070406_create_tickets.rb
+20230425070502_create_announcements.rb
+20230425071516_create_cross_stations.rb
+20230425071854_create_station_infos.rb
+
+
+):
+  
+activerecord (7.0.4.3) lib/active_record/migration.rb:627:in `check_pending!'
+activerecord (7.0.4.3) lib/active_record/migration.rb:592:in `block (2 levels) in call'
+activesupport (7.0.4.3) lib/active_support/file_update_checker.rb:83:in `execute'
+activerecord (7.0.4.3) lib/active_record/migration.rb:597:in `block in call'
+activerecord (7.0.4.3) lib/active_record/migration.rb:589:in `synchronize'
+activerecord (7.0.4.3) lib/active_record/migration.rb:589:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/callbacks.rb:27:in `block in call'
+activesupport (7.0.4.3) lib/active_support/callbacks.rb:99:in `run_callbacks'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/callbacks.rb:26:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/executor.rb:14:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/actionable_exceptions.rb:17:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/debug_exceptions.rb:28:in `call'
+web-console (4.2.0) lib/web_console/middleware.rb:132:in `call_app'
+web-console (4.2.0) lib/web_console/middleware.rb:28:in `block in call'
+web-console (4.2.0) lib/web_console/middleware.rb:17:in `catch'
+web-console (4.2.0) lib/web_console/middleware.rb:17:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/show_exceptions.rb:26:in `call'
+railties (7.0.4.3) lib/rails/rack/logger.rb:40:in `call_app'
+railties (7.0.4.3) lib/rails/rack/logger.rb:25:in `block in call'
+activesupport (7.0.4.3) lib/active_support/tagged_logging.rb:99:in `block in tagged'
+activesupport (7.0.4.3) lib/active_support/tagged_logging.rb:37:in `tagged'
+activesupport (7.0.4.3) lib/active_support/tagged_logging.rb:99:in `tagged'
+railties (7.0.4.3) lib/rails/rack/logger.rb:25:in `call'
+sprockets-rails (3.4.2) lib/sprockets/rails/quiet_assets.rb:13:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/remote_ip.rb:93:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/request_id.rb:26:in `call'
+rack (2.2.7) lib/rack/runtime.rb:22:in `call'
+activesupport (7.0.4.3) lib/active_support/cache/strategy/local_cache_middleware.rb:29:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/server_timing.rb:61:in `block in call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/server_timing.rb:26:in `collect_events'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/server_timing.rb:60:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/executor.rb:14:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/static.rb:23:in `call'
+rack (2.2.7) lib/rack/sendfile.rb:110:in `call'
+actionpack (7.0.4.3) lib/action_dispatch/middleware/host_authorization.rb:137:in `call'
+railties (7.0.4.3) lib/rails/engine.rb:530:in `call'
+puma (5.6.5) lib/puma/configuration.rb:252:in `call'
+puma (5.6.5) lib/puma/request.rb:77:in `block in handle_request'
+puma (5.6.5) lib/puma/thread_pool.rb:340:in `with_force_shutdown'
+puma (5.6.5) lib/puma/request.rb:76:in `handle_request'
+puma (5.6.5) lib/puma/server.rb:443:in `process_client'
+puma (5.6.5) lib/puma/thread_pool.rb:147:in `block in spawn_thread'
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateMembers (20230425063332)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "members" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "account" varchar, "password" varchar, "nickname" varchar, "role" varchar, "picture" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425063332"]]
+  [1m[36mTRANSACTION (0.8ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateStations (20230425064232)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "stations" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "linecolor" varchar, "number" integer, "x_Pos" float, "y_Pos" float, "Trans_Num" integer, "exit_Num" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425064232"]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateInfos (20230425064925)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "infos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "photo" varchar, "address" varchar, "type" varchar, "Des" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425064925"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateComments (20230425065453)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "comments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "photo" varchar, "comment" text, "score" integer, "member_id" integer NOT NULL, "info_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_a72f17693a"
+FOREIGN KEY ("member_id")
+  REFERENCES "members" ("id")
+, CONSTRAINT "fk_rails_8ae6003394"
+FOREIGN KEY ("info_id")
+  REFERENCES "infos" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_comments_on_member_id" ON "comments" ("member_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_comments_on_info_id" ON "comments" ("info_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425065453"]]
+  [1m[36mTRANSACTION (0.6ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateTimeTables (20230425065939)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "time_tables" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "time" varchar, "line" varchar, "end" integer, "linecolor" varchar, "number" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425065939"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateLosts (20230425070129)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "losts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "item" varchar, "photo" varchar, "time" varchar, "location" varchar, "lost_Attr" varchar, "member_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_9d03c57ac2"
+FOREIGN KEY ("member_id")
+  REFERENCES "members" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_losts_on_member_id" ON "losts" ("member_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425070129"]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateTickets (20230425070406)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "tickets" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "price" integer, "upper_bound" float, "lower_bound" float, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425070406"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateAnnouncements (20230425070502)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "announcements" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "topic" varchar, "context" text, "member_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_4d040bf3ad"
+FOREIGN KEY ("member_id")
+  REFERENCES "members" ("id")
+)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_announcements_on_member_id" ON "announcements" ("member_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425070502"]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateCrossStations (20230425071516)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "cross_stations" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "number_1" integer, "number_2" integer, "linecolor_1" varchar, "linecolor_2" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425071516"]]
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateStationInfos (20230425071854)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "station_infos" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "info_id" integer NOT NULL, "linecolor" varchar, "number" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_74270f1c76"
+FOREIGN KEY ("info_id")
+  REFERENCES "infos" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_station_infos_on_info_id" ON "station_infos" ("info_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20230425071854"]]
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["key", "environment"], ["value", "development"], ["created_at", "2023-05-09 18:47:52.181529"], ["updated_at", "2023-05-09 18:47:52.181529"]]
+  [1m[36mTRANSACTION (0.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:48:35 +0800
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 8ms (Views: 0.1ms | ActiveRecord: 0.2ms | Allocations: 5911)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:49:35 +0800
+Processing by Api::MrtAdmin::StationController#index as */*
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 5ms (Views: 0.4ms | ActiveRecord: 0.2ms | Allocations: 824)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:50:21 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 689)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:51:23 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.2ms | ActiveRecord: 0.1ms | Allocations: 689)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:52:59 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 5ms (Views: 0.3ms | ActiveRecord: 0.2ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:59:25 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 4ms (Views: 0.3ms | ActiveRecord: 0.7ms | Allocations: 891)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:59:49 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:59:50 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 02:59:51 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:02:20 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 679)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:02:28 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 1ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:04:43 +0800
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 5ms (Views: 0.2ms | ActiveRecord: 0.2ms | Allocations: 4782)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:05:28 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 3ms (Views: 0.2ms | ActiveRecord: 0.1ms | Allocations: 815)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:05:48 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 689)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:14:55 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 4ms (Views: 0.2ms | ActiveRecord: 0.8ms | Allocations: 891)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:15:10 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 3ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 678)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:27:16 +0800
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 4ms (Views: 0.1ms | ActiveRecord: 0.2ms | Allocations: 4783)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:32:55 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 816)
+
+
+Started POST "/api/mrt_admin/station" for ::1 at 2023-05-10 03:32:57 +0800
+Processing by Api::MrtAdmin::StationController#create as HTML
+  Parameters: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}}
+[31mUnpermitted parameter: :station. Context: { controller: Api::MrtAdmin::StationController, action: create, request: #<ActionDispatch::Request:0x0000000105f21128>, params: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "controller"=>"api/mrt_admin/station", "action"=>"create", "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}} }[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mStation Create (1.3ms)[0m  [1m[32mINSERT INTO "stations" ("linecolor", "number", "x_Pos", "y_Pos", "Trans_Num", "exit_Num", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?)[0m  [["linecolor", "G"], ["number", 5], ["x_Pos", 121.123], ["y_Pos", 23.123], ["Trans_Num", 2], ["exit_Num", 3], ["created_at", "2023-05-09 19:32:57.746320"], ["updated_at", "2023-05-09 19:32:57.746320"]]
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mTRANSACTION (0.5ms)[0m  [1m[36mcommit transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+Completed 200 OK in 22ms (Views: 0.1ms | ActiveRecord: 2.4ms | Allocations: 10699)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:33:02 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 922)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:33:20 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.1ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 2ms (Views: 0.1ms | ActiveRecord: 0.1ms | Allocations: 825)
+
+
+Started POST "/api/mrt_admin/station" for ::1 at 2023-05-10 03:33:40 +0800
+Processing by Api::MrtAdmin::StationController#create as HTML
+  Parameters: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}}
+[31mUnpermitted parameter: :station. Context: { controller: Api::MrtAdmin::StationController, action: create, request: #<ActionDispatch::Request:0x00000001060ab250>, params: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "controller"=>"api/mrt_admin/station", "action"=>"create", "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}} }[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mStation Create (0.4ms)[0m  [1m[32mINSERT INTO "stations" ("linecolor", "number", "x_Pos", "y_Pos", "Trans_Num", "exit_Num", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?)[0m  [["linecolor", "G"], ["number", 5], ["x_Pos", 121.123], ["y_Pos", 23.123], ["Trans_Num", 2], ["exit_Num", 3], ["created_at", "2023-05-09 19:33:40.740062"], ["updated_at", "2023-05-09 19:33:40.740062"]]
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[36mcommit transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+Completed 200 OK in 5ms (Views: 0.1ms | ActiveRecord: 1.5ms | Allocations: 2234)
+
+
+Started POST "/api/mrt_admin/station" for ::1 at 2023-05-10 03:33:41 +0800
+Processing by Api::MrtAdmin::StationController#create as HTML
+  Parameters: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}}
+[31mUnpermitted parameter: :station. Context: { controller: Api::MrtAdmin::StationController, action: create, request: #<ActionDispatch::Request:0x00000001060fb4a8>, params: {"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3, "controller"=>"api/mrt_admin/station", "action"=>"create", "station"=>{"linecolor"=>"G", "number"=>5, "x_Pos"=>121.123, "y_Pos"=>23.123, "Trans_Num"=>2, "exit_Num"=>3}} }[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mStation Create (0.4ms)[0m  [1m[32mINSERT INTO "stations" ("linecolor", "number", "x_Pos", "y_Pos", "Trans_Num", "exit_Num", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?)[0m  [["linecolor", "G"], ["number", 5], ["x_Pos", 121.123], ["y_Pos", 23.123], ["Trans_Num", 2], ["exit_Num", 3], ["created_at", "2023-05-09 19:33:41.442128"], ["updated_at", "2023-05-09 19:33:41.442128"]]
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[36mcommit transaction[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:16:in `create'
+Completed 200 OK in 5ms (Views: 0.1ms | ActiveRecord: 1.2ms | Allocations: 2222)
+
+
+Started GET "/api/mrt_admin/station" for ::1 at 2023-05-10 03:33:43 +0800
+Processing by Api::MrtAdmin::StationController#index as HTML
+  [1m[36mStation Load (0.2ms)[0m  [1m[34mSELECT "stations".* FROM "stations"[0m
+  ↳ app/controllers/api/mrt_admin/station_controller.rb:10:in `index'
+Completed 200 OK in 3ms (Views: 0.1ms | ActiveRecord: 0.2ms | Allocations: 1071)
+
+
