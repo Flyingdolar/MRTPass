@@ -4,7 +4,7 @@ class CreateInfos < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :photo
       t.string :address
-      t.float :score
+      t.string :type
       t.string :Des
 
       t.timestamps
