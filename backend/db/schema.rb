@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_25_071854) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
   create_table "announcements", force: :cascade do |t|
     t.string "topic"
     t.text "context"
@@ -51,6 +51,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_071854) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "logins", force: :cascade do |t|
+    t.boolean "isLogin", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "losts", force: :cascade do |t|
     t.string "item"
     t.string "photo"
@@ -71,6 +77,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_071854) do
     t.string "picture"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.integer "member_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id"], name: "index_sessions_on_member_id"
   end
 
   create_table "station_infos", force: :cascade do |t|
@@ -115,5 +128,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_071854) do
   add_foreign_key "comments", "infos"
   add_foreign_key "comments", "members"
   add_foreign_key "losts", "members"
+  add_foreign_key "sessions", "members"
   add_foreign_key "station_infos", "infos"
 end
