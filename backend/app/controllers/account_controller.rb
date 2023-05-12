@@ -27,7 +27,7 @@ class AccountController < ApplicationController
     def new_session
         @login=Login.last
         @session=Session.last
-        if !@login.isLogin || @session.nil?
+        if @login.nil? || !@login.isLogin || @session.nil?
             @member = Member.find_by(account: params[:account])
             if @member.nil?
                 render :json => {
@@ -54,11 +54,12 @@ class AccountController < ApplicationController
                 }.to_json, :status => 200
             end
         else
+            @member=Member.find(@session.member_id)
             render :json => {
                 status: "error",
                 error: true,
                 message: "failed to login",
-                data: "Already logged in"
+                data: "Already logged in (#{@member.nickname})"
             }.to_json, :status => 403
         end  
     end
@@ -98,7 +99,7 @@ class AccountController < ApplicationController
 
     def delete
         @login=Login.last
-        if @login.isLogin
+        if !@login.nil? && @login.isLogin
             @login=Login.create(isLogin:false)
             render :json => {
                 status: "success",
