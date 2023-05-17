@@ -2,7 +2,8 @@
 
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS_DEVTOOLS as VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import installExtension from "electron-devtools-installer";
+const VUEJS3_DEVTOOLS = 'nhdogjmejiglipccpnnnanhbledajbpd';
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
