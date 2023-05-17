@@ -56,3 +56,5 @@ feat(navbar): Add i18n language switch
 - test
 
 如果需要填寫內文及腳註，git commit 時不要加 `-m "<COMMIT MESSAGE>"` 選項，git 會開啟文字編輯器讓你填寫，慣用的文字編輯器可以透過 `git config --global core.editor <想要用的文字編輯器>` 來設定。
+
+HI
