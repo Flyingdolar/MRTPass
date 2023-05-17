@@ -22,6 +22,9 @@ dependencies:
   stable:
     specifier: ^0.1.8
     version: 0.1.8
+  vfonts:
+    specifier: ^0.0.3
+    version: 0.0.3
   vue:
     specifier: ^3.2.13
     version: 3.2.47
@@ -9524,6 +9527,10 @@ packages:
       core-util-is: 1.0.2
       extsprintf: 1.4.1
     optional: true
+
+  /vfonts@0.0.3:
+    resolution: {integrity: sha512-nguyw8L6Un8eelg1vQ31vIU2ESxqid7EYmy8V+MDeMaHBqaRSkg3dTBToC1PR00D89UzS/SLkfYPnx0Wf23IQQ==}
+    dev: false
 
   /vm-browserify@1.1.2:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
