@@ -4,10 +4,10 @@
   </nav>
   <router-view />
   <nav>
-    <router-link to="/about">捷運資訊</router-link> |
+    <router-link to="/">捷運資訊</router-link> |
     <router-link to="/post">捷運周邊</router-link> |
-    <router-link to="/post">遺失物</router-link> |
-    <router-link to="/post">我的帳號</router-link>
+    <router-link to="/about">遺失物</router-link> |
+    <router-link to="/account">我的帳號</router-link>
   </nav>
 </template>
 

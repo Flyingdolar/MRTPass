@@ -6,30 +6,33 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "home",
     component: HomeView,
+    children: [
+      {
+        path: "MRTInfo",
+        name: "MRTInfo",
+        component: () => import("../views/MRTInfo.vue"),
+      },
+      {
+        path: "MRTAnnounce",
+        name: "MRTAnnounce",
+        component: () => import("../views/MRTAnnounce.vue"),
+      },
+    ],
   },
   {
     path: "/about",
     name: "about",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    component: () => import("../views/AboutView.vue"),
   },
   {
     path: "/post",
     name: "viewpost",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/submitPost.vue"),
+    component: () => import("../views/submitPost.vue"),
   },
   {
-    path: "/MRTInfo",
-    name: "MRTInfo",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MRTInfo.vue"),
-  },
-  {
-    path: "/MRTAnnounce",
-    name: "MRTAnnounce",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MRTAnnounce.vue"),
+    path: "/account",
+    name: "myaccount",
+    component: () => import("../views/account/MyAccount.vue"),
   },
 ];
 
