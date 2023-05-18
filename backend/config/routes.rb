@@ -12,6 +12,11 @@ Rails.application.routes.draw do
     namespace :admin do
     end
     namespace :mrt_admin do
+      post 'announcement' => 'announce#create'
+      get 'announcement' => 'announce#show_all'
+      get 'announcement/:id' => 'announce#show_one'
+      patch 'announcement/:id' => 'announce#edit'
+      delete 'announcement/:id' => 'announce#delete'
       resources :station
     end
     namespace :member do
