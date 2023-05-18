@@ -27,7 +27,7 @@ class AccountController < ApplicationController
     def new_session
         @login=Login.last
         @session=Session.last
-        if !@login.isLogin || @session.nil?
+        if @login.nil? || !@login.isLogin || @session.nil?
             @member = Member.find_by(account: params[:account])
             if @member.nil?
                 render :json => {
