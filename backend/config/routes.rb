@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post 'sign_up'  => 'account#create'
   get  'session'  => 'account#get_session'
   post 'sign_out' => 'account#delete'
+  patch 'update'  => 'account#update'
   namespace :api do
     namespace :admin do
     end

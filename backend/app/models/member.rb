@@ -5,4 +5,5 @@ class Member < ApplicationRecord
     has_many :announcements, dependent: :destroy
     has_many :losts, dependent: :destroy
     has_many :sessions, dependent: :destroy
+    mount_uploader :picture , MemberUploader
 end

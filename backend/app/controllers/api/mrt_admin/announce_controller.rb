@@ -2,7 +2,7 @@ class Api::MrtAdmin::AnnounceController < ApplicationController
     def create
         @session=Session.last
         @login  =Login.last
-        if @login.nil?||@login.isLogin==false||@session.nil?
+        if @login.nil?||!@login.isLogin||@session.nil?
             render :json => {
                 status: "error",
                 error: true,
@@ -64,7 +64,7 @@ class Api::MrtAdmin::AnnounceController < ApplicationController
         @session = Session.last
         @login = Login.last
       
-        if @login.nil? || @login.isLogin == false || @session.nil?
+        if @login.nil? || !@login.isLogin || @session.nil?
             render json: {
                 status: "error",
                 error: true,
@@ -104,7 +104,7 @@ class Api::MrtAdmin::AnnounceController < ApplicationController
     def delete 
         @session=Session.last
         @login  =Login.last
-        if @login.nil?||@login.isLogin==false||@session.nil?
+        if @login.nil?||!@login.isLogin||@session.nil?
             render :json => {
                 status: "error",
                 error: true,
