@@ -117,9 +117,43 @@ class AccountController < ApplicationController
         end
     end
 
+    def update
+        @login=Login.last
+        @session=Session.last
+        if @login.nil?|| !@login.isLogin ||@session.nil?
+            render :json => {
+                status: "error",
+                error: true,
+                message: "Failed to update account Info.",
+                data: "The user is not login."
+            }.to_json, :status => 400
+        else 
+            @member=Member.find(@session.member_id)
+            if @member.update(update_params)
+                render :json => {
+                    status: "success",
+                    error: false,
+                    message: "success to update account Info.",
+                    data: @member
+                }.to_json, :status => 200
+            else
+                render :json => {
+                    status: "error",
+                    error: true,
+                    message: "Failed to update account Info.",
+                    data: @member.errors
+                }.to_json, :status => 400
+            end   
+        end
+    end
+
     private
 
     def member_params
         params.permit(:account, :password)
+    end
+
+    def update_params
+        params.permit(:nickname,:password,:picture)
     end
 end
