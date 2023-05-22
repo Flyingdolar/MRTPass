@@ -1,19 +1,10 @@
 <template>
   <nav>
-    <n-page-header title="捷運通 MRT PASS"></n-page-header>
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
   </nav>
   <router-view />
-  <nav>
-    <router-link to="/">捷運資訊</router-link> |
-    <router-link to="/post">捷運周邊</router-link> |
-    <router-link to="/about">遺失物</router-link> |
-    <router-link to="/account">我的帳號</router-link>
-  </nav>
 </template>
-
-<script setup lang="ts">
-import { NPageHeader } from "naive-ui";
-</script>
 
 <style>
 #app {

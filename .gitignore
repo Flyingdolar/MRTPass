@@ -56,4 +56,3 @@ pnpm-debug.log*
 # Ignore master key for decrypting credentials and more.
 /backend/config/master.key
 
-/backend/Gemfile.lock
