@@ -7,6 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import HelloWorld from "@/components/HelloWorld.vue";
 import { NButton } from "naive-ui";
 </script>

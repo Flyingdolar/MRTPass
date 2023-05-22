@@ -31,6 +31,7 @@ specifiers:
   vue-class-component: ^8.0.0-0
   vue-cli-plugin-electron-builder: ~2.1.1
   vue-router: ^4.0.3
+  vuex: ^4.0.2
 
 dependencies:
   axios: 1.4.0
@@ -44,6 +45,7 @@ dependencies:
   vue: 3.3.2
   vue-class-component: 8.0.0-rc.1_vue@3.3.2
   vue-router: 4.2.0_vue@3.3.2
+  vuex: 4.0.2_vue@3.3.2
 
 devDependencies:
   '@types/electron-devtools-installer': 2.2.2
@@ -9787,6 +9789,15 @@ packages:
       seemly: 0.3.6
       vdirs: 0.1.8_vue@3.3.2
       vooks: 0.2.12_vue@3.3.2
+      vue: 3.3.2
+    dev: false
+
+  /vuex/4.0.2_vue@3.3.2:
+    resolution: {integrity: sha512-M6r8uxELjZIK8kTKDGgZTYX/ahzblnzC4isU1tpmEuOIIKmV+TRdc+H4s8ds2NuZ7wpUTdGRzJRtoj+lI+pc0Q==}
+    peerDependencies:
+      vue: ^3.0.2
+    dependencies:
+      '@vue/devtools-api': 6.5.0
       vue: 3.3.2
     dev: false
 

@@ -21,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
 import axios from "axios";
 import {
   NForm,
@@ -34,8 +35,15 @@ import {
   NCard,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed } from "vue";
-
+import { ref, reactive, computed, onMounted } from "vue";
+import store from "/src/scripts/vuex.ts";
+import { User } from "/src/scripts/types.ts";
+onMounted(() => {
+  console.log(store.state.isLogin);
+  if (store.state.isLogin == true) {
+    router.push("/profile");
+  }
+});
 const model = reactive({
   email: "",
   password: "",
@@ -79,6 +87,11 @@ function login() {
     })
     .then(function (response) {
       console.log(response);
+      store.dispatch("isLogin", true);
+      store.dispatch("user", response.data.id);
+      store.dispatch("role", response.data.role);
+      store.dispatch("username", response.data.nickname);
+      //router.go(0);
     })
     .catch(function (error) {
       console.log(error);
@@ -95,6 +108,11 @@ function regist() {
     })
     .then(function (response) {
       console.log(response);
+      store.dispatch("isLogin", true);
+      store.dispatch("user", response.data.id);
+      store.dispatch("role", response.data.role);
+      store.dispatch("username", response.data.nickname);
+      //router.go(0);
     })
     .catch(function (error) {
       console.log(error);
