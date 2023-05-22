@@ -1,60 +1,27 @@
 import { createStore } from "vuex";
-import type { Role, User } from "./types";
+import type { LoginInfo } from "./types";
 
 export interface State {
-  role: string | undefined;
-  username: string;
-  user: User | undefined;
-  isLogin: boolean;
+  userinfo: LoginInfo | undefined;
 }
 
 const store = createStore<State>({
   state: {
-    role: undefined,
-    username: "",
-    user: undefined,
-    isLogin: false,
+    userinfo: undefined,
   },
   getters: {
-    role: (state) => {
-      return state.role;
-    },
-    username: (state) => {
-      return state.username;
-    },
-    user: (state) => {
-      return state.username;
-    },
-    isLogin: (state) => {
-      return state.isLogin;
+    userinfo: (state) => {
+      return state.userinfo;
     },
   },
   actions: {
-    role(ctx, newRole) {
-      ctx.commit("role", newRole);
-    },
-    username: (ctx, name) => {
-      ctx.commit("username", name);
-    },
-    user: (ctx, user) => {
-      ctx.commit("user", user);
-    },
-    isLogin: (ctx, isLogin) => {
-      ctx.commit("isLogin", isLogin);
+    userinfo(ctx, userinfo) {
+      ctx.commit("userinfo", userinfo);
     },
   },
   mutations: {
-    async role(state, newRole) {
-      state.role = newRole;
-    },
-    async username(state, newName) {
-      state.username = newName;
-    },
-    async user(state, newUser) {
-      state.user = newUser;
-    },
-    async isLogin(state, isLogin) {
-      state.isLogin = isLogin;
+    async userinfo(state, userinfo) {
+      state.userinfo = userinfo;
     },
   },
 });

@@ -17,6 +17,7 @@
     </n-form-item>
     <n-button attr-type="button" @click="login"> 登入帳號 </n-button>
     <n-button attr-type="button" @click="regist"> 註冊帳號 </n-button>
+    <n-button attr-type="button" @click="logout"> 操 </n-button>
   </n-form>
 </template>
 
@@ -27,20 +28,17 @@ import {
   NForm,
   NInput,
   NFormItem,
-  NDatePicker,
-  NSelect,
   FormRules,
   FormInst,
   NButton,
-  NCard,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { watchOnce } from "@vueuse/core";
 import store from "/src/scripts/vuex.ts";
-import { User } from "/src/scripts/types.ts";
+const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 onMounted(() => {
-  console.log(store.state.isLogin);
-  if (store.state.isLogin == true) {
+  if (isLogin.value == true) {
     router.push("/profile");
   }
 });
@@ -87,16 +85,15 @@ function login() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("isLogin", true);
-      store.dispatch("user", response.data.id);
-      store.dispatch("role", response.data.role);
-      store.dispatch("username", response.data.nickname);
-      //router.go(0);
+      store.dispatch("userinfo", response.data);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
+  watchOnce(isLogin, () => {
+    router.push("/profile");
+  });
 }
 
 function regist() {
@@ -108,14 +105,25 @@ function regist() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("isLogin", true);
-      store.dispatch("user", response.data.id);
-      store.dispatch("role", response.data.role);
-      store.dispatch("username", response.data.nickname);
-      //router.go(0);
     })
     .catch(function (error) {
       console.log(error);
+    });
+  //axios
+}
+function logout() {
+  //axios post
+  axios
+    .post("http://localhost:3000/sign_out")
+    .then(function (response) {
+      console.log(response);
+      store.dispatch("userinfo", undefined);
+      router.push("/account");
+    })
+    .catch(function (error) {
+      store.dispatch("userinfo", undefined);
+      console.log(error);
+      router.push("/account");
     });
   //axios
 }

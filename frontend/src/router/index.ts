@@ -6,6 +6,7 @@ import {
 } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import store from "../scripts/vuex";
+import { Role } from "../scripts/types";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -50,35 +51,30 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-const commonRoute = ["home", "profile"];
-const applicantRoute = ["ApplyForm"];
-const reviewerRoute = ["AssignedWork", "ReviewMain", "ReviewDoc", "ReviewOral"];
-const pmRoute = ["Dashboard"];
-const adminRoute = ["SysMain", "SysUser"];
+const commonRoute = ["home"];
+const userRoute = ["profile"];
+const mrt_adminRoute = ["profile"];
+const adminRoute = ["profile"];
 const notLoginRoute = ["myaccount", "about", "viewpost", "home"];
 
 router.beforeEach(async (to) => {
-  const isLogin = store.state.isLogin;
+  const isLogin = store.state.userinfo ? true : false;
   if (isLogin) {
-    const role = store.state.role;
+    const role = store.state.userinfo?.role as unknown as string;
     if (to.name === "Login" || to.name === "Register") {
       return { name: "Home" };
     }
     if (commonRoute.includes(to.name as string)) {
       return true;
-    } else if (role === "APPLICANT") {
-      if (!applicantRoute.includes(to.name as string)) {
+    } else if (role === "user") {
+      if (!userRoute.includes(to.name as string)) {
         return { name: "Home" };
       }
-    } else if (role === "REVIEWER") {
-      if (!reviewerRoute.includes(to.name as string)) {
+    } else if (role === "mrt_admin") {
+      if (!mrt_adminRoute.includes(to.name as string)) {
         return { name: "Home" };
       }
-    } else if (role === "PROGRAMMANAGER") {
-      if (!pmRoute.includes(to.name as string)) {
-        return { name: "Home" };
-      }
-    } else if (role === "ADMIN") {
+    } else if (role === "admin") {
       if (!adminRoute.includes(to.name as string)) {
         return { name: "Home" };
       }
