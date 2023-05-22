@@ -1,12 +1,11 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <div><NButton type="primary">Naive Button</NButton></div>
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <n-button>捷運資訊</n-button>
+    <n-button>捷運公告</n-button>
+    <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
-import HelloWorld from "@/components/HelloWorld.vue";
 import { NButton } from "naive-ui";
 </script>
