@@ -9,7 +9,7 @@
     <n-list>
       <template #header> 個人資料 </template>
       <n-list-item>
-        <n-thing title="Thing" title-extra="extra" description="description">
+        <n-space vertical>
           <n-button @click="editUserNamemodal = true">修改使用者名稱</n-button
           ><br />
           <n-modal v-model:show="editUserNamemodal">
@@ -26,8 +26,10 @@
                 placeholder="請輸入使用者名稱"
               />
               <template #footer>
-                <n-button @click="editUserName">儲存</n-button>
-                <n-button @click="editUserNamemodal = false">取消</n-button>
+                <n-space justify="center">
+                  <n-button @click="editUserName">儲存</n-button>
+                  <n-button @click="editUserNamemodal = false">取消</n-button>
+                </n-space>
               </template>
             </n-card>
           </n-modal>
@@ -41,13 +43,29 @@
               role="dialog"
               aria-modal="true"
             >
-              <n-input
-                v-model:value="model.newName"
-                placeholder="這邊先隨便拉:D"
-              />
+              <n-upload
+                multiple
+                directory-dnd
+                action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+                :max="5"
+              >
+                <n-upload-dragger>
+                  <div style="margin-bottom: 12px">
+                    <n-icon size="48" :depth="3">
+                      <archive-icon />
+                    </n-icon>
+                  </div>
+                  <n-text style="font-size: 16px">
+                    點擊或拖移以上傳照片
+                  </n-text>
+                  <n-p depth="3" style="margin: 8px 0 0 0"> 這邊先隨便:D </n-p>
+                </n-upload-dragger>
+              </n-upload>
               <template #footer>
-                <n-button @click="editUserName">儲存</n-button>
-                <n-button @click="editUserNamemodal = false">取消</n-button>
+                <n-space justify="center">
+                  <n-button @click="editUserName">儲存</n-button>
+                  <n-button @click="editUserNamemodal = false">取消</n-button>
+                </n-space>
               </template>
             </n-card>
           </n-modal>
@@ -88,26 +106,29 @@
                 </n-form-item>
               </n-form>
               <template #footer>
-                <n-button @click="editPassword">儲存</n-button>
-                <n-button @click="editPasswordmodal = false">取消</n-button>
+                <n-space justify="center">
+                  <n-button @click="editPassword">儲存</n-button>
+                  <n-button @click="editPasswordmodal = false">取消</n-button>
+                </n-space>
               </template>
             </n-card>
           </n-modal>
-        </n-thing>
+        </n-space>
       </n-list-item>
     </n-list>
     <n-list v-if="roleisAdmin">
       <template #header> 管理 </template>
       <n-list-item>
-        <n-thing title="Thing" title-extra="extra" description="description">
+        <n-space vertical>
           <n-button @click="editAllUser">使用者權限</n-button><br />
           <n-button @click="editMRT">捷運資訊調整</n-button><br />
-        </n-thing>
+        </n-space>
       </n-list-item>
     </n-list>
   </n-card>
-
-  <n-button @click="logout">登出</n-button>
+  <n-space justify="center">
+    <n-button @click="logout">登出</n-button>
+  </n-space>
 </template>
 
 <script setup lang="ts">
@@ -123,6 +144,11 @@ import {
   NSpace,
   NForm,
   NFormItem,
+  NUploadDragger,
+  NUpload,
+  NIcon,
+  NText,
+  NP,
 } from "naive-ui";
 import { ref, reactive, computed, onMounted } from "vue";
 import store from "/src/scripts/vuex.ts";
@@ -133,7 +159,7 @@ const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
 const Username = computed(() => {
-  return store.state.userinfo.data.nickname;
+  return store.state?.userinfo?.data.nickname;
 });
 const Userrole = computed(() => {
   if ((store.state?.userinfo?.data.role as string) == "admin") {
