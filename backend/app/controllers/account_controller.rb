@@ -9,7 +9,7 @@ class AccountController < ApplicationController
             render :json => {
                 status: "success",
                 error: false,
-                message: "successfully created account",
+                message: "succeed to created account",
                 data: @member
             }.to_json, :status => 200
         else
@@ -34,14 +34,14 @@ class AccountController < ApplicationController
                     status: "error",
                     error: true,
                     message: "failed to login",
-                    data: "This account doesn't exist"
+                    data: "This account doesn't exist."
                 }.to_json, :status => 400
             elsif @member.password != params[:password]
                 render :json => {
                     status: "error",
                     error: true,
                     message: "failed to login",
-                    data: "Password error"
+                    data: "Password error."
                 }.to_json, :status => 400
             else
                 @session=Session.create(member_id: @member.id)
@@ -49,7 +49,7 @@ class AccountController < ApplicationController
                 render :json => {
                     status: "success",
                     error: false,
-                    message: "successfully login",
+                    message: "succeed to login",
                     data:  @member
                 }.to_json, :status => 200
             end
@@ -59,7 +59,7 @@ class AccountController < ApplicationController
                 status: "error",
                 error: true,
                 message: "failed to login",
-                data: "Already logged in (#{@member.nickname})"
+                data: "Already logged in (#{@member.nickname})."
             }.to_json, :status => 403
         end  
     end
@@ -67,11 +67,11 @@ class AccountController < ApplicationController
     def get_session
         @session=Session.last
         @login  =Login.last
-        if @login.nil?||@login.isLogin==false
+        if @login.nil?||!@login.isLogin
             render :json => {
                 status: "success",
                 error: false,
-                message: "No user online",
+                message: "succeed to get session",
                 data: {
                     isLogin: false
                 }
@@ -80,15 +80,15 @@ class AccountController < ApplicationController
             render :json => {
                 status: "error",
                 error: true,
-                message: "failed to get session log",
-                data: "This is no session log"
+                message: "failed to get session",
+                data: "This is no session log."
             }.to_json, :status => 400
         else
             @member=Member.find(@session.member_id)
             render :json => {
                 status: "success",
                 error: false,
-                message: "User online",
+                message: "succeed to get session",
                 data: {
                     isLogin: true,
                     member: @member
@@ -104,7 +104,7 @@ class AccountController < ApplicationController
             render :json => {
                 status: "success",
                 error: false,
-                message: "successfully logout",
+                message: "succeed to logout",
                 data:  {}
             }.to_json, :status => 200
         else
@@ -112,40 +112,72 @@ class AccountController < ApplicationController
                 status: "error",
                 error: true,
                 message: "failed to logout",
-                data: "Already logged out"
+                data: "Already logged out."
             }.to_json, :status => 401
         end
     end
 
     def update
-        @login=Login.last
-        @session=Session.last
-        if @login.nil?|| !@login.isLogin ||@session.nil?
-            render :json => {
-                status: "error",
-                error: true,
-                message: "Failed to update account Info.",
-                data: "The user is not login."
-            }.to_json, :status => 400
-        else 
-            @member=Member.find(@session.member_id)
+        check,@member=check_login
+        if check
             if @member.update(update_params)
                 render :json => {
                     status: "success",
                     error: false,
-                    message: "success to update account Info.",
+                    message: "succeed to update account information",
                     data: @member
                 }.to_json, :status => 200
             else
                 render :json => {
                     status: "error",
                     error: true,
-                    message: "Failed to update account Info.",
+                    message: "failed to update account information",
                     data: @member.errors
                 }.to_json, :status => 400
             end   
         end
     end
+
+    def update_pswd
+        check,@member=check_login
+        if check
+            if @member.password==password_params[:old_password]
+                if password_params[:new_password]==password_params[:confirmation]
+                    @member.password=password_params[:new_password]
+                    if @member.save
+                        render :json => {
+                            status: "success",
+                            error: false,
+                            message: "succeed to update password",
+                            data: @member
+                        }.to_json, :status => 200
+                    else
+                        render :json => {
+                            status: "error",
+                            error: true,
+                            message: "failed to update password",
+                            data: @member.errors
+                        }.to_json, :status => 400
+                    end
+                else
+                    render :json => {
+                        status: "error",
+                        error: true,
+                        message: "failed to update password",
+                        data: "The password confirmation does not match the new password."
+                    }.to_json, :status => 400
+                end
+            else
+                render :json => {
+                    status: "error",
+                    error: true,
+                    message: "failed to update password",
+                    data: "Old password error."
+                }.to_json, :status => 400
+            end
+        end
+    end
+
 
     private
 
@@ -154,6 +186,11 @@ class AccountController < ApplicationController
     end
 
     def update_params
-        params.permit(:nickname,:password,:picture)
+        params.permit(:nickname,:picture)
     end
+
+    def password_params
+        params.permit(:old_password,:new_password,:confirmation)
+    end
+
 end
