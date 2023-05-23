@@ -79,8 +79,13 @@
               role="dialog"
               aria-modal="true"
             >
-              <n-form ref="formRef" :label-width="80">
-                <n-form-item label="舊密碼">
+              <n-form
+                ref="formRef"
+                :label-width="80"
+                :model="model"
+                :rules="rules"
+              >
+                <n-form-item label="舊密碼" path="oldPassword">
                   <n-input
                     type="password"
                     show-password-on="click"
@@ -88,7 +93,7 @@
                     v-model:value="model.oldPassword"
                   />
                 </n-form-item>
-                <n-form-item label="新密碼">
+                <n-form-item label="新密碼" path="newPassword">
                   <n-input
                     type="password"
                     show-password-on="click"
@@ -96,7 +101,7 @@
                     v-model:value="model.newPassword"
                   />
                 </n-form-item>
-                <n-form-item label="確認新密碼">
+                <n-form-item label="確認新密碼" path="comfirmPassword">
                   <n-input
                     type="password"
                     show-password-on="click"
@@ -120,7 +125,7 @@
       <template #header> 管理 </template>
       <n-list-item>
         <n-space vertical>
-          <n-button @click="editAllUser">使用者權限</n-button><br />
+          <n-button @click="editAllUser">使用者權限</n-button>
           <n-button @click="editMRT">捷運資訊調整</n-button><br />
         </n-space>
       </n-list-item>
@@ -149,6 +154,8 @@ import {
   NIcon,
   NText,
   NP,
+  FormRules,
+  FormItemRule,
 } from "naive-ui";
 import { ref, reactive, computed, onMounted } from "vue";
 import store from "/src/scripts/vuex.ts";
@@ -170,10 +177,56 @@ const Userrole = computed(() => {
     return "一般會員";
   }
 });
-
+const rules: FormRules = {
+  oldPassword: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (!value) {
+          return new Error("Old password is required");
+        } else if (value != store.state.userinfo.data.password) {
+          return new Error("Worng old password");
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ],
+  newPassword: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (!value) {
+          return new Error("New password is required");
+        } else if (value != model.comfirmPassword) {
+          return new Error(
+            "New password and comfirmed password should be the same"
+          );
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ],
+  comfirmPassword: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (!value) {
+          return new Error("Comfirmed password is required");
+        } else if (value != model.newPassword) {
+          return new Error(
+            "New password and comfirmed password should be the same"
+          );
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ],
+};
 onMounted(() => {
-  roleisAdmin.value = true;
-  if ((store.state.userinfo.role as string) == "admin") {
+  if ((store.state.userinfo.data.role as string) == "admin") {
     roleisAdmin.value = true;
   }
 });
@@ -202,7 +255,7 @@ function logout() {
 }
 
 function editUserName() {
-  //axios post
+  //axios patch
   axios
     .patch("http://localhost:3000/update", {
       nickname: model.newName,
@@ -222,7 +275,7 @@ function editPhoto() {
   editPhotomodal.value = true;
 }
 function editPassword() {
-  //axios post
+  //axios patch
   axios
     .patch("http://localhost:3000/password", {
       old_password: model.oldPassword,
@@ -240,7 +293,7 @@ function editPassword() {
   //axios
 }
 function editAllUser() {
-  router.push("/");
+  router.push("/memberlist");
 }
 function editMRT() {
   router.push("/");

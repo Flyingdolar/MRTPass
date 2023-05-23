@@ -45,6 +45,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "profile",
     component: () => import("../views/account/MyProfile.vue"),
   },
+  {
+    path: "/memberlist",
+    name: "memberlist",
+    component: () => import("../views/MemberList.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -54,7 +59,7 @@ const router = createRouter({
 const commonRoute = ["home"];
 const userRoute = ["profile"];
 const mrt_adminRoute = ["profile"];
-const adminRoute = ["profile"];
+const adminRoute = ["profile", "memberlist"];
 const notLoginRoute = ["myaccount", "about", "viewpost", "home"];
 
 router.beforeEach(async (to) => {
