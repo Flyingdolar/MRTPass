@@ -9,8 +9,10 @@ Rails.application.routes.draw do
   get  'session'  => 'account#get_session'
   post 'sign_out' => 'account#delete'
   patch 'update'  => 'account#update'
+  patch 'password'=> 'account#update_pswd'
   namespace :api do
     namespace :admin do
+      resources :authorization, except: [:create]
     end
     namespace :mrt_admin do
       post 'announcement' => 'announce#create'
