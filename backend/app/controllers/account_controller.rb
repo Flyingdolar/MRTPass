@@ -67,7 +67,7 @@ class AccountController < ApplicationController
     def get_session
         @session=Session.last
         @login  =Login.last
-        if @login.nil?||@login.isLogin==false
+        if @login.nil?||!@login.isLogin
             render :json => {
                 status: "success",
                 error: false,
