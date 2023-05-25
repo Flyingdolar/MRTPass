@@ -1,4 +1,3 @@
 class Station < ApplicationRecord
-    has_many :station_infos
-    has_many :time_tables
+    validates :linecolor,:number,:x_Pos,:y_Pos,:isCross,:exit_Num,:name, presence: true
 end
