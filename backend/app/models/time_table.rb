@@ -1,3 +1,3 @@
 class TimeTable < ApplicationRecord
-    belongs_to :station
+    validates :time,:line,:end,:linecolor,:number, presence: true
 end
