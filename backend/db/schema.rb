@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_25_152810) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_25_174513) do
   create_table "announcements", force: :cascade do |t|
     t.string "topic"
     t.text "context"
@@ -132,6 +132,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_25_152810) do
     t.integer "number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "No"
   end
 
   add_foreign_key "announcements", "members"

@@ -2,6 +2,75 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 #
 
+def set_time_table(start_count,end_count,line,no)
+    a=Station.where(linecolor:line)
+    time_="06:00"
+    while(time_<="23:00")
+        i=start_count
+        each_time_=time_
+        a.each do |temp|
+            each_time_=time_add(each_time_,3)
+            if i>=end_count
+                break
+            elsif temp.number!=i
+                s=CrossStation.find_by(linecolor_2:temp.linecolor,number_2:i)
+                TimeTable.create(time:each_time_,line:line,end:end_count,linecolor:s.linecolor_1,number:s.number_1,No:no)
+                i=i+1
+                redo
+            else
+                TimeTable.create(time:each_time_,line:line,end:end_count,linecolor:line,number:temp.number,No:no)
+                i=i+1
+            end
+        end
+        time_=time_add(time_,5)
+        no=no+7
+    end
+end
+
+
+def set_time_table_inverse(start_count,end_count,line,no)
+    a=Station.where(linecolor:line).order(number: :desc)
+    time_="06:00"
+    while(time_<="23:00")
+        i=start_count
+        each_time_=time_
+        a.each do |temp|
+            each_time_=time_add(each_time_,3)
+            if i<=end_count
+                break
+            elsif temp.number>start_count
+                next
+            elsif temp.number!=i
+                s=CrossStation.find_by(linecolor_2:temp.linecolor,number_2:i)
+                TimeTable.create(time:each_time_,line:line,end:end_count,linecolor:s.linecolor_1,number:s.number_1,No:no)
+                i=i-1
+                redo
+            else
+                TimeTable.create(time:each_time_,line:line,end:end_count,linecolor:line,number:temp.number,No:no)
+                i=i-1
+            end
+        end
+        time_=time_add(time_,5)
+        no=no+7
+    end
+end
+
+def time_add(start,diff)
+    time=start
+    hour, minute = time.split(':').map(&:to_i)
+    minute += diff
+    if minute >= 60
+        hour += 1
+        minute -= 60
+    end
+    if hour==24
+        hour=0
+    end
+    new_time = format('%02d:%02d', hour, minute)
+    return new_time
+end
+
+
 p "DB seeding start"
 p "Clear DB"
 Announcement.destroy_all
@@ -15,6 +84,7 @@ Ticket.destroy_all
 TimeTable.destroy_all
 CrossStation.destroy_all
 Station.destroy_all
+Line.destroy_all
 Member.destroy_all
 
 p "Create member"
@@ -22,6 +92,16 @@ Member.create(account:"admin",password:"123456",nickname:"admin",role:"admin")
 Member.create(account:"mrt_admin",password:"123456",nickname:"北捷管理員",role:"mrt_admin")
 Member.create(account:"user1",password:"123456",nickname:"user#344003",role:"user")
 Member.create(account:"user2",password:"123456",nickname:"user#344004",role:"user")
+
+p "Create line"
+Line.create(linecolor:"BR",name:"文湖線",colorcode:"#c48c31")
+Line.create(linecolor: "R",name:"淡水信義線",colorcode:"#e3002c")
+Line.create(linecolor: "G",name:"松山新店線",colorcode:"#008659")
+Line.create(linecolor: "O",name:"中和新蘆線",colorcode:"#f8b61c")
+Line.create(linecolor:"BL",name:"板南線",colorcode:"#0070bd")
+Line.create(linecolor:"Y",name:"環狀線",colorcode:"#ffdb00")
+Line.create(linecolor:"LG",name:"小碧潭支線",colorcode:"#cfdb00")
+Line.create(linecolor:"LR",name:"新北投支線",colorcode:"#fd92a3")
 
 p "Create station"
 p "BR line"
@@ -159,7 +239,6 @@ p "LG line"
 Station.create(linecolor:"LG",number: 2,x_Pos:24.9719,y_Pos:121.5303,isCross:false,exit_Num:2,name:"小碧潭")
 
 
-
 p "Connect cross station"
 CrossStation.create(linecolor_1:"BR",number_1: 9,linecolor_2: "R",number_2: 5,name:"大安")
 CrossStation.create(linecolor_1:"BR",number_1:10,linecolor_2:"BL",number_2:15,name:"忠孝復興")
@@ -185,7 +264,94 @@ CrossStation.create(linecolor_1:"O",number_1:17,linecolor_2: "Y",number_2:18,nam
 
 CrossStation.create(linecolor_1:"BL",number_1:8,linecolor_2: "Y",number_2:16,name:"板橋")
 
+
 p "Set time table"
+p "From BR01 To BR24"
+set_time_table(1,24,"BR",1000)
+p "From R02 To R28"
+set_time_table(2,28,"R",3000)
+p "From G01 To G19"
+set_time_table(1,19,"G",5000)
+p "From O01 To O21"
+set_time_table(1,21,"O",7000)
+p "From O01 To O54"
+a=Station.where(linecolor:"O")
+time_="06:02"
+no=7002
+while(time_<="23:02")
+    i=1
+    each_time_=time_
+    a.each do |temp|
+        each_time_=time_add(each_time_,3)
+        if i>=54
+            break
+        elsif i>12&&i<50
+        elsif temp.number!=i
+            s=CrossStation.find_by(linecolor_2:temp.linecolor,number_2:i)
+            TimeTable.create(time:each_time_,line:"O",end:54,linecolor:s.linecolor_1,number:s.number_1,No:no)
+            i=i+1
+            redo
+        else
+            TimeTable.create(time:each_time_,line:"O",end:54,linecolor:"O",number:temp.number,No:no)
+            i=i+1
+        end
+    end
+    time_=time_add(time_,5)
+    no=no+7
+end
+
+p "From BL01 To BL23"
+set_time_table(1,23,"BL",8500)
+p "From Y07 To Y20"
+set_time_table(7,20,"Y",8505)
+p "From LG01 To LG02"
+set_time_table(1,2,"LG",5005)
+p "From LR01 To LR02"
+set_time_table(1,2,"LR",3005)
+
+p "Set time table"
+p "From BR24 To BR01"
+set_time_table_inverse(24,1,"BR",1001)
+p "From R28 To R02"
+set_time_table_inverse(28,2,"R",3001)
+p "From G19 To G01"
+set_time_table_inverse(19,1,"G",5001)
+p "From O21 To O01"
+set_time_table_inverse(21,1,"O",7001)
+p "From O54 To O01"
+a=Station.where(linecolor:"O").order(number: :desc)
+time_="06:00"
+no=7003
+while(time_<="23:00")
+    i=54
+    each_time_=time_
+    a.each do |temp|
+        each_time_=time_add(each_time_,3)
+        if i<=1
+            break
+        elsif i>12&&i<50
+        elsif temp.number!=i
+            s=CrossStation.find_by(linecolor_2:temp.linecolor,number_2:i)
+            TimeTable.create(time:each_time_,line:"O",end:1,linecolor:s.linecolor_1,number:s.number_1,No:no)
+            i=i-1
+            redo
+        else
+            TimeTable.create(time:each_time_,line:"O",end:1,linecolor:"O",number:temp.number,No:no)
+            i=i-1
+        end
+    end
+    time_=time_add(time_,5)
+    no=no+7
+end
+
+p "From BL23 To BL01"
+set_time_table_inverse(23,01,"BL",8501)
+p "From Y20 To Y07"
+set_time_table_inverse(20,7,"Y",8506)
+p "From LG02 To LG01"
+set_time_table_inverse(2,1,"LG",5006)
+p "From LR02 To LR01"
+set_time_table_inverse(2,1,"LR",3006)
 
 
 p "Set ticket price"
@@ -203,6 +369,4 @@ Ticket.create(upper_bound:1000.0,lower_bound:31.0,price:65)
 
 
 p "DB Seeded"
-
-
 
