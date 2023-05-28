@@ -1,11 +1,18 @@
 require 'rails_helper'
 require './spec/support/authorized_helper'
+RSpec.configure do |c|
+  c.include AuthorizedHelper
+end
+
 
 RSpec.describe "Account", type: :request do
     before do
         @member=Member.create(account:"123123@gmail.com",password:"example",nickname:"handsome boy",role:"user")
     end
 
+    let(:filepath) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '1.jpg'), 'image/jpg') }
+    let(:invalid_filepath) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '2.txt'), 'text/plain') }
+    
 
     describe "POST /sign_up" do
         example "succeed to sign up" do
@@ -307,7 +314,136 @@ RSpec.describe "Account", type: :request do
 
     end
 
+    describe "PATCH /update" do
+      example "succeed to update account information" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}  
+        patch "/update",params:{nickname:"handsome guy",picture:filepath}
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "success",
+              "error": false,
+              "message": "succeed to update account information",
+              "data": Member.first
+            }.to_json
+          )
+        )
+      end
 
+      example "failed to update account information(picture format error)" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}  
+        patch "/update",params:{nickname:"handsome guy",picture:invalid_filepath}
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update account information",
+              "data": {
+                "picture": [
+                    "You are not allowed to upload \"txt\" files, allowed types: jpg, jpeg, png"
+                ]
+              }
+            }.to_json
+          )
+        )
+      end
+
+      example "failed to update account information(not login)" do
+        patch "/update",params:{nickname:"handsome guy",picture:filepath}
+        expect_unauthorized(response)
+      end
+    end
+
+    describe "PATCH /password" do
+      example "succeed to update password" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}
+        patch "/password",params:{old_password:"example",new_password:"123456",confirmation:"123456"}
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "success",
+              "error": false,
+              "message": "succeed to update password",
+              "data": Member.first
+            }.to_json
+          )
+        )
+        post "/sign_out"
+        post "/sign_in",params:{account:"123123@gmail.com",password:"123456"}
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "success",
+              "error": false,
+              "message": "succeed to login",
+              "data": Member.first
+            }.to_json
+          )
+        )      
+      end
+
+      example "failed to update password(old password error.)" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}
+        patch "/password",params:{old_password:"example123",new_password:"123456",confirmation:"123456"}
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update password",
+              "data": "Old password error."
+            }.to_json
+          )
+        )
+      end
+
+      example "failed to update password(The password confirmation does not match the new password.)" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}
+        patch "/password",params:{old_password:"example",new_password:"1234567",confirmation:"123456"}
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update password",
+              "data": "The password confirmation does not match the new password."
+            }.to_json
+          )
+        )
+      end
+
+      example "failed to update password(new password is empty)" do
+        post "/sign_in",params:{account:"123123@gmail.com",password:"example"}
+        patch "/password",params:{old_password:"example",new_password:"",confirmation:""}
+        expect(response).to have_http_status(400)
+        expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update password",
+              "data": {
+                "password": [
+                    "can't be blank"
+                ]
+            }
+            }.to_json
+          )
+        )
+      end
+
+      example "failed to update password(not login)" do
+        patch "/password",params:{old_password:"example",new_password:"123456",confirmation:"123456"}
+        expect_unauthorized(response)
+      end
+    end
     
 
 end
