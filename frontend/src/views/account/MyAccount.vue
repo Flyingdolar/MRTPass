@@ -17,7 +17,7 @@
     </n-form-item>
     <n-button attr-type="button" @click="login"> 登入帳號 </n-button>
     <n-button attr-type="button" @click="regist"> 註冊帳號 </n-button>
-    <n-button @click="logoutbutton">logout</n-button>
+    <!--<n-button @click="logoutbutton">我再出現一次我就是小丑</n-button>--->
   </n-form>
 </template>
 
@@ -136,6 +136,7 @@ function regist() {
     });
   //axios
 }
+/*
 function logoutbutton() {
   //axios post
   axios
@@ -151,5 +152,5 @@ function logoutbutton() {
       router.push("/account");
     });
   //axios
-}
+}*/
 </script>

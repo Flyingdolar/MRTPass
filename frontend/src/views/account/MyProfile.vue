@@ -248,7 +248,7 @@ function logout() {
   axios
     .post("http://localhost:3000/sign_out")
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
       store.dispatch("userinfo", undefined);
       router.push("/account");
     })

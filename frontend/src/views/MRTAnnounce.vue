@@ -78,8 +78,7 @@ onMounted(() => {
   axios
     .get("http://localhost:3000/api/mrt_admin/announcement")
     .then(function (response) {
-      console.log(response);
-
+      //console.log(response);
       AllPost.value = response.data.data.map(function (item, index, array) {
         return {
           id: item.id,
