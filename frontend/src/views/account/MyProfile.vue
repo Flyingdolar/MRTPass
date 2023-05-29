@@ -10,7 +10,8 @@
       <template #header> 個人資料 </template>
       <n-list-item>
         <n-space vertical>
-          <n-button @click="editUserNamemodal = true">修改使用者名稱</n-button
+          <n-button v-show="!roleisAdmin" @click="editUserNamemodal = true"
+            >修改使用者名稱</n-button
           ><br />
           <n-modal v-model:show="editUserNamemodal">
             <n-card
@@ -33,7 +34,9 @@
               </template>
             </n-card>
           </n-modal>
-          <n-button @click="editPhotomodal = true">修改頭像照片</n-button><br />
+          <n-button v-show="!roleisAdmin" @click="editPhotomodal = true"
+            >修改頭像照片</n-button
+          ><br />
           <n-modal v-model:show="editPhotomodal">
             <n-card
               style="width: 600px"
@@ -43,12 +46,7 @@
               role="dialog"
               aria-modal="true"
             >
-              <n-upload
-                multiple
-                directory-dnd
-                action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-                :max="5"
-              >
+              <n-upload directory-dnd @action="handleUpload" :max="5">
                 <n-upload-dragger>
                   <div style="margin-bottom: 12px">
                     <n-icon size="48" :depth="3">
@@ -63,8 +61,8 @@
               </n-upload>
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="editUserName">儲存</n-button>
-                  <n-button @click="editUserNamemodal = false">取消</n-button>
+                  <n-button @click="Photopatch">儲存</n-button>
+                  <n-button @click="editPhotomodal = false">取消</n-button>
                 </n-space>
               </template>
             </n-card>
@@ -259,7 +257,6 @@ function editUserName() {
   axios
     .patch("http://localhost:3000/update", {
       nickname: model.newName,
-      picture: null,
     })
     .then(function (response) {
       console.log(response);
@@ -297,5 +294,25 @@ function editAllUser() {
 }
 function editMRT() {
   router.push("/");
+}
+let uploadedURL;
+function handleUpload(response) {
+  uploadedURL = response.data.url;
+  return uploadedURL;
+}
+function Photopatch() {
+  console.log(uploadedURL);
+  //axios patch
+  axios
+    .patch("http://localhost:3000/update", {
+      picture: uploadedURL,
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 </script>
