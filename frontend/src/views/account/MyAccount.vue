@@ -36,17 +36,19 @@ import {
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import store from "/src/scripts/vuex.ts";
-//const isLogin = computed(() => (store?.state?.userinfo ? true : false));
-const isLogin = ref(false);
+const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 
 onMounted(() => {
   if (!isLogin.value) {
     fetchsession();
+    watchOnce(isLogin, () => {
+      router.push("/profile");
+    });
   }
-  watchOnce(isLogin, () => {
-    console.log(store.state.userinfo);
+  //console.log(store.state.userinfo);
+  if (isLogin.value) {
     router.push("/profile");
-  });
+  }
 });
 const model = reactive({
   email: "",
@@ -87,8 +89,7 @@ function fetchsession() {
     .get("http://localhost:3000/session")
     .then(function (response) {
       //console.log(response.data.data);
-      isLogin.value = response.data.data.isLogin;
-      if (isLogin.value) {
+      if (response.data.data.isLogin) {
         //console.log(response.data.data.member);
         store.dispatch("userinfo", response.data.data.member);
         //console.log(store.state.userinfo);
@@ -108,8 +109,7 @@ function login() {
     })
     .then(function (response) {
       //console.log(response);
-      store.dispatch("userinfo", response.data);
-      isLogin.value = response.data.data.isLogin;
+      store.dispatch("userinfo", response.data.data);
       //console.log(store.state.userinfo);
     })
     .catch(function (error) {

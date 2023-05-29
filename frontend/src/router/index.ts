@@ -60,7 +60,15 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-const commonRoute = ["home", "MRTInfo", "MRTAnnounce"];
+const commonRoute = [
+  "home",
+  "MRTInfo",
+  "MRTAnnounce",
+  "myaccount",
+  "about",
+  "viewpost",
+  "home",
+];
 const userRoute = ["profile"];
 const mrt_adminRoute = ["profile"];
 const adminRoute = ["profile", "memberlist"];

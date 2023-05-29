@@ -234,7 +234,7 @@ onMounted(() => {
   if ((store.state.userinfo.role as string) == "admin") {
     roleisAdmin.value = true;
   }
-  //console.log(store.state.userinfo.role);
+  //console.log(store.state.userinfo);
 });
 const model = reactive({
   newName: "",

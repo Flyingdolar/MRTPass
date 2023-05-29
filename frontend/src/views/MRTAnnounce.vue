@@ -1,8 +1,11 @@
 <template>
-  <h1>HHHHH</h1>
   <n-space justify="center">
     <n-card
-      ><div v-for="item in AllPost" :key="item?.id">{{ item }}</div>
+      ><div v-for="item in AllPost" :key="item?.id">
+        <n-space
+          ><n-card :title="item.topic">{{ item.context }}</n-card></n-space
+        >
+      </div>
       <n-space v-if="roleisAdmin">
         <n-button @click="showNewAnnounce = true">新增公告</n-button>
       </n-space>
@@ -75,8 +78,8 @@ onMounted(() => {
   axios
     .get("http://localhost:3000/api/mrt_admin/announcement")
     .then(function (response) {
-      //console.log(response);
-      /*
+      console.log(response);
+
       AllPost.value = response.data.data.map(function (item, index, array) {
         return {
           id: item.id,
@@ -86,7 +89,7 @@ onMounted(() => {
           created_at: item.created_at,
           updated_at: item.updated_at,
         };
-      });*/
+      });
     })
     .catch(function (error) {
       console.log(error);
