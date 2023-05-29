@@ -17,9 +17,23 @@ Rails.application.routes.draw do
     namespace :mrt_admin do
       resources :announce
       resources :station
-      resources :info do
-        resources :comment
-      end
+      post 'common' => 'info#create_common'
+      get 'common' => 'info#index_common'
+      get 'common/:id' => 'info#show_common'
+      patch 'common/:id' => 'info#update_common'
+      delete 'common/:id' => 'info#destroy'
+
+      post 'trans' => 'info#create_trans'
+      get 'trans' => 'info#index_trans'
+      get 'trans/:id' => 'info#show_trans'
+      patch 'trans/:id' => 'info#update_trans'
+      delete 'trans/:id' => 'info#destroy'
+
+      post 'common/:info_id/comment' => 'comment#create'
+      get 'common/:info_id/comment' => 'comment#index'
+      get 'common/:info_id/comment/:id' => 'comment#show'
+      patch 'common/:info_id/comment/:id' => 'comment#update'
+      delete 'common/:info_id/comment/:id' => 'comment#destroy'
     end
     namespace :member do
     end
