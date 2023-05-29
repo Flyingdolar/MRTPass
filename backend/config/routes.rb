@@ -15,12 +15,11 @@ Rails.application.routes.draw do
       resources :authorization, except: [:create]
     end
     namespace :mrt_admin do
-      post 'announcement' => 'announce#create'
-      get 'announcement' => 'announce#show_all'
-      get 'announcement/:id' => 'announce#show_one'
-      patch 'announcement/:id' => 'announce#edit'
-      delete 'announcement/:id' => 'announce#delete'
+      resources :announce
       resources :station
+      resources :info do
+        resources :comment
+      end
     end
     namespace :member do
     end

@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
         check,@member=check_login
         if check
             if @member.role=="admin"||@member.role=="mrt_admin"
-                return true
+                return true,@member
             else
                 render :json => {
                     status: "error",
@@ -46,9 +46,9 @@ class ApplicationController < ActionController::Base
                     message: "Unauthorized",
                     data: "User not permitted for this action."
                 }.to_json, :status => 403
-                return false
+                return false,nil
             end
         end
-        return false
+        return false,nil
     end
 end
