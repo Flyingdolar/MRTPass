@@ -171,12 +171,12 @@ const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
 const Username = computed(() => {
-  return store.state?.userinfo?.data.nickname;
+  return store.state?.userinfo?.nickname;
 });
 const Userrole = computed(() => {
-  if ((store.state?.userinfo?.data.role as string) == "admin") {
+  if ((store.state?.userinfo?.role as string) == "admin") {
     return "系統管理員";
-  } else if ((store.state?.userinfo?.data.role as string) == "mrt_admin") {
+  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
     return "捷運管理員";
   } else {
     return "一般會員";
@@ -231,9 +231,10 @@ const rules: FormRules = {
   ],
 };
 onMounted(() => {
-  if ((store.state.userinfo.data.role as string) == "admin") {
+  if ((store.state.userinfo.role as string) == "admin") {
     roleisAdmin.value = true;
   }
+  //console.log(store.state.userinfo.role);
 });
 const model = reactive({
   newName: "",

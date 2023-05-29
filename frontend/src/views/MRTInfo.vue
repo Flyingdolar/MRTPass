@@ -1,25 +1,5 @@
 <template>
-  <n-form
-    ref="formRef"
-    :model="model"
-    label-placement="left"
-    label-width="auto"
-    require-mark-placement="right-hanging"
-    size="medium"
-    :style="{ maxwidth: '800px', align: ' center ' }"
-  >
-    <n-form-item label="標題" path="user.name">
-      <n-input v-model:value="model.topic" placeholder="輸入標題" />
-    </n-form-item>
-    <n-form-item label="內文" path="user.age">
-      <n-input
-        v-model:value="model.context"
-        type="textarea"
-        placeholder="輸入內文"
-      />
-    </n-form-item>
-    <n-button attr-type="button" @click="submitpost"> 送出 </n-button>
-  </n-form>
+  <h1>This is info</h1>
 </template>
 
 <script setup lang="ts">

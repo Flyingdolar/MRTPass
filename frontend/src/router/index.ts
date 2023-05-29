@@ -6,7 +6,6 @@ import {
 } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import store from "../scripts/vuex";
-import { Role } from "../scripts/types";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -14,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
     children: [
       {
-        path: "MRTInfo",
+        path: "",
         name: "MRTInfo",
         component: () => import("../views/MRTInfo.vue"),
       },
@@ -61,11 +60,18 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
-const commonRoute = ["home"];
+const commonRoute = ["home", "MRTInfo", "MRTAnnounce"];
 const userRoute = ["profile"];
 const mrt_adminRoute = ["profile"];
 const adminRoute = ["profile", "memberlist"];
-const notLoginRoute = ["myaccount", "about", "viewpost", "home"];
+const notLoginRoute = [
+  "myaccount",
+  "about",
+  "viewpost",
+  "home",
+  "MRTInfo",
+  "MRTAnnounce",
+];
 
 router.beforeEach(async (to) => {
   const isLogin = store.state.userinfo ? true : false;
