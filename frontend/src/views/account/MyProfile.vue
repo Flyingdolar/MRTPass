@@ -46,19 +46,8 @@
               role="dialog"
               aria-modal="true"
             >
-              <n-upload directory-dnd @action="handleUpload" :max="5">
-                <n-upload-dragger>
-                  <div style="margin-bottom: 12px">
-                    <n-icon size="48" :depth="3">
-                      <archive-icon />
-                    </n-icon>
-                  </div>
-                  <n-text style="font-size: 16px">
-                    點擊或拖移以上傳照片
-                  </n-text>
-                  <n-p depth="3" style="margin: 8px 0 0 0"> 這邊先隨便:D </n-p>
-                </n-upload-dragger>
-              </n-upload>
+              <img :src="previewImage" v-if="previewImage" alt="Preview" />
+              <input type="file" accept="image/jpeg" @change="uploadImage" />
               <template #footer>
                 <n-space justify="center">
                   <n-button @click="Photopatch">儲存</n-button>
@@ -159,6 +148,24 @@ import { ref, reactive, computed, onMounted } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
 
+const previewImage = ref<string | null>(null);
+const imageFile = ref<File | null>(null);
+
+const uploadImage = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const image = target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = (e) => {
+      previewImage.value = e.target?.result as string;
+      console.log(previewImage.value);
+
+      // 將選擇的圖像文件存儲到 imageFile 變量中
+      imageFile.value = image;
+    };
+  }
+};
 const roleisAdmin = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
@@ -295,24 +302,25 @@ function editAllUser() {
 function editMRT() {
   router.push("/");
 }
-let uploadedURL;
-function handleUpload(response) {
-  uploadedURL = response.data.url;
-  return uploadedURL;
-}
 function Photopatch() {
-  console.log(uploadedURL);
   //axios patch
-  axios
-    .patch("http://localhost:3000/update", {
-      picture: uploadedURL,
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  //axios
+  if (imageFile.value) {
+    // 將圖像資料發送到後端
+    const formData = new FormData();
+    formData.append("image", imageFile.value);
+    console.log(formData.values);
+    //axios patch
+    axios
+      .patch("http://localhost:3000/update", {
+        picture: formData.values,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    //axios
+  }
 }
 </script>

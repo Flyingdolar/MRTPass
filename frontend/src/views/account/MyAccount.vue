@@ -17,7 +17,6 @@
     </n-form-item>
     <n-button attr-type="button" @click="login"> 登入帳號 </n-button>
     <n-button attr-type="button" @click="regist"> 註冊帳號 </n-button>
-    <n-button attr-type="button" @click="logout"> 操 </n-button>
   </n-form>
 </template>
 
@@ -36,11 +35,13 @@ import {
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import store from "/src/scripts/vuex.ts";
-const isLogin = computed(() => (store?.state?.userinfo ? true : false));
+//const isLogin = computed(() => (store?.state?.userinfo ? true : false));
+const isLogin = ref(false);
 onMounted(() => {
-  if (isLogin.value == true) {
+  fetchsession();
+  watchOnce(isLogin, () => {
     router.push("/profile");
-  }
+  });
 });
 const model = reactive({
   email: "",
@@ -75,7 +76,20 @@ const rules: FormRules = {
     },
   ],
 };
-
+function fetchsession() {
+  //axios get
+  axios
+    .get("http://localhost:3000/session")
+    .then(function (response) {
+      console.log("login state = " + response.data.data.isLogin);
+      isLogin.value = response.data.data.isLogin;
+      store.dispatch("userinfo", response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
 function login() {
   //axios post
   axios
@@ -86,6 +100,7 @@ function login() {
     .then(function (response) {
       console.log(response);
       store.dispatch("userinfo", response.data);
+      isLogin.value = response.data.data.isLogin;
     })
     .catch(function (error) {
       console.log(error);
@@ -108,22 +123,6 @@ function regist() {
     })
     .catch(function (error) {
       console.log(error);
-    });
-  //axios
-}
-function logout() {
-  //axios post
-  axios
-    .post("http://localhost:3000/sign_out")
-    .then(function (response) {
-      console.log(response);
-      store.dispatch("userinfo", undefined);
-      router.push("/account");
-    })
-    .catch(function (error) {
-      store.dispatch("userinfo", undefined);
-      console.log(error);
-      router.push("/account");
     });
   //axios
 }
