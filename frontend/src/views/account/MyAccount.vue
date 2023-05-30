@@ -46,7 +46,7 @@ onMounted(() => {
     });
   }
   //console.log(store.state.userinfo);
-  if (isLogin.value) {
+  else {
     router.push("/profile");
   }
 });

@@ -68,6 +68,7 @@ const commonRoute = [
   "about",
   "viewpost",
   "home",
+  "profile",
 ];
 const userRoute = ["profile"];
 const mrt_adminRoute = ["profile"];
