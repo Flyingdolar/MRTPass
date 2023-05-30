@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       resources :authorization, except: [:create]
     end
     namespace :mrt_admin do
-      resources :announce
+      resources :announcement
       resources :station
       post 'common' => 'info#create_common'
       get 'common' => 'info#index_common'
