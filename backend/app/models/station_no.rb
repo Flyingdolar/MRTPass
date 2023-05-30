@@ -1,0 +1,2 @@
+class StationNo < ApplicationRecord
+end
