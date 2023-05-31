@@ -29,14 +29,11 @@ Rails.application.routes.draw do
       get 'trans/:id' => 'info#show_trans'
       patch 'trans/:id' => 'info#update_trans'
       delete 'trans/:id' => 'info#destroy'
-
-      post 'common/:info_id/comment' => 'comment#create'
-      get 'common/:info_id/comment' => 'comment#index'
-      get 'common/:info_id/comment/:id' => 'comment#show'
-      patch 'common/:info_id/comment/:id' => 'comment#update'
-      delete 'common/:info_id/comment/:id' => 'comment#destroy'
     end
     namespace :member do
+      resources :info, only: [] do
+        resources :comment
+      end      
     end
   end
 end
