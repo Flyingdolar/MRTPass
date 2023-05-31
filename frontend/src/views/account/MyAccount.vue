@@ -62,8 +62,6 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Email is required");
-        } else if (!/@/.test(value)) {
-          return new Error("Email format is incorrect");
         }
         return true;
       },
