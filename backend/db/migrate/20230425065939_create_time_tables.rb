@@ -4,8 +4,8 @@ class CreateTimeTables < ActiveRecord::Migration[7.0]
       t.string :time
       t.string :line
       t.integer :end
-      t.string :linecolor
-      t.integer :number
+      t.integer :No
+      t.belongs_to :station , null: false, foreign_key: true
       t.timestamps
     end
   end
