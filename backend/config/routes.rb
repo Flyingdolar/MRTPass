@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     namespace :mrt_admin do
       resources :announcement
       resources :station
+      get 'line_station' => 'station#show_by_line'
       post 'common' => 'info#create_common'
       get 'common' => 'info#index_common'
       get 'common/:id' => 'info#show_common'
