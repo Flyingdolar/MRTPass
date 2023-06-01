@@ -18,11 +18,12 @@
         placeholder="輸入內文"
       />
     </n-form-item>
-    <n-button attr-type="button" @click="submitpost"> 送出 </n-button>
+    <n-button attr-type="button" @click="addNewAnnounce"> 送出 </n-button>
   </n-form>
 </template>
 
 <script setup lang="ts">
+import store from "@/scripts/vuex";
 import axios from "axios";
 import {
   NForm,
@@ -43,7 +44,7 @@ const model = reactive({
   context: "",
 });
 
-function submitpost() {
+function addNewAnnounce() {
   //axios post
   axios
     .post("http://localhost:3000/api/mrt_admin/announcement", {

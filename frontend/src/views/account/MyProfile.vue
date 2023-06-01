@@ -1,4 +1,3 @@
-<!-- eslint-disable prettier/prettier -->
 <template>
   <n-card>
     <n-card>
@@ -10,7 +9,8 @@
       <template #header> 個人資料 </template>
       <n-list-item>
         <n-space vertical>
-          <n-button @click="editUserNamemodal = true">修改使用者名稱</n-button
+          <n-button v-show="!roleisAdmin" @click="editUserNamemodal = true"
+            >修改使用者名稱</n-button
           ><br />
           <n-modal v-model:show="editUserNamemodal">
             <n-card
@@ -33,7 +33,9 @@
               </template>
             </n-card>
           </n-modal>
-          <n-button @click="editPhotomodal = true">修改頭像照片</n-button><br />
+          <n-button v-show="!roleisAdmin" @click="editPhotomodal = true"
+            >修改頭像照片</n-button
+          ><br />
           <n-modal v-model:show="editPhotomodal">
             <n-card
               style="width: 600px"
@@ -43,28 +45,12 @@
               role="dialog"
               aria-modal="true"
             >
-              <n-upload
-                multiple
-                directory-dnd
-                action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-                :max="5"
-              >
-                <n-upload-dragger>
-                  <div style="margin-bottom: 12px">
-                    <n-icon size="48" :depth="3">
-                      <archive-icon />
-                    </n-icon>
-                  </div>
-                  <n-text style="font-size: 16px">
-                    點擊或拖移以上傳照片
-                  </n-text>
-                  <n-p depth="3" style="margin: 8px 0 0 0"> 這邊先隨便:D </n-p>
-                </n-upload-dragger>
-              </n-upload>
+              <img :src="previewImage" v-if="previewImage" alt="Preview" />
+              <input type="file" accept="image/jpeg" @change="uploadImage" />
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="editUserName">儲存</n-button>
-                  <n-button @click="editUserNamemodal = false">取消</n-button>
+                  <n-button @click="Photopatch">儲存</n-button>
+                  <n-button @click="editPhotomodal = false">取消</n-button>
                 </n-space>
               </template>
             </n-card>
@@ -161,17 +147,35 @@ import { ref, reactive, computed, onMounted } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
 
+const previewImage = ref<string | null>(null);
+const imageFile = ref<File | null>(null);
+
+const uploadImage = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target.files && target.files.length > 0) {
+    const image = target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = (e) => {
+      previewImage.value = e.target?.result as string;
+      console.log(previewImage.value);
+
+      // 將選擇的圖像文件存儲到 imageFile 變量中
+      imageFile.value = image;
+    };
+  }
+};
 const roleisAdmin = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
 const Username = computed(() => {
-  return store.state?.userinfo?.data.nickname;
+  return store.state?.userinfo?.nickname;
 });
 const Userrole = computed(() => {
-  if ((store.state?.userinfo?.data.role as string) == "admin") {
+  if ((store.state?.userinfo?.role as string) == "admin") {
     return "系統管理員";
-  } else if ((store.state?.userinfo?.data.role as string) == "mrt_admin") {
+  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
     return "捷運管理員";
   } else {
     return "一般會員";
@@ -226,9 +230,10 @@ const rules: FormRules = {
   ],
 };
 onMounted(() => {
-  if ((store.state.userinfo.data.role as string) == "admin") {
+  if ((store.state.userinfo.role as string) == "admin") {
     roleisAdmin.value = true;
   }
+  //console.log(store.state.userinfo);
 });
 const model = reactive({
   newName: "",
@@ -242,7 +247,7 @@ function logout() {
   axios
     .post("http://localhost:3000/sign_out")
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
       store.dispatch("userinfo", undefined);
       router.push("/account");
     })
@@ -259,7 +264,6 @@ function editUserName() {
   axios
     .patch("http://localhost:3000/update", {
       nickname: model.newName,
-      picture: null,
     })
     .then(function (response) {
       console.log(response);
@@ -297,5 +301,26 @@ function editAllUser() {
 }
 function editMRT() {
   router.push("/");
+}
+function Photopatch() {
+  //axios patch
+  if (imageFile.value) {
+    // 將圖像資料發送到後端
+    const formData = new FormData();
+    formData.append("image", imageFile.value);
+    console.log(formData.values);
+    //axios patch
+    axios
+      .patch("http://localhost:3000/update", {
+        picture: formData.values,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    //axios
+  }
 }
 </script>

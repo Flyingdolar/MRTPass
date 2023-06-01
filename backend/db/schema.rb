@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_30_185124) do
   create_table "announcements", force: :cascade do |t|
     t.string "topic"
     t.text "context"
@@ -32,21 +32,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
     t.index ["member_id"], name: "index_comments_on_member_id"
   end
 
-  create_table "cross_stations", force: :cascade do |t|
-    t.integer "number_1"
-    t.integer "number_2"
-    t.string "linecolor_1"
-    t.string "linecolor_2"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "infos", force: :cascade do |t|
     t.string "name"
     t.string "photo"
     t.string "address"
-    t.string "type"
-    t.string "Des"
+    t.string "type_"
+    t.text "Des"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "lines", force: :cascade do |t|
+    t.string "linecolor"
+    t.string "name"
+    t.string "colorcode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -88,20 +87,27 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
 
   create_table "station_infos", force: :cascade do |t|
     t.integer "info_id", null: false
-    t.string "linecolor"
-    t.integer "number"
+    t.integer "station_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["info_id"], name: "index_station_infos_on_info_id"
+    t.index ["station_id"], name: "index_station_infos_on_station_id"
+  end
+
+  create_table "station_nos", force: :cascade do |t|
+    t.string "linecolor"
+    t.integer "number"
+    t.integer "station_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["station_id"], name: "index_station_nos_on_station_id"
   end
 
   create_table "stations", force: :cascade do |t|
-    t.string "linecolor"
-    t.integer "number"
     t.float "x_Pos"
     t.float "y_Pos"
-    t.integer "Trans_Num"
     t.integer "exit_Num"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -118,10 +124,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
     t.string "time"
     t.string "line"
     t.integer "end"
-    t.string "linecolor"
-    t.integer "number"
+    t.integer "No"
+    t.integer "station_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["station_id"], name: "index_time_tables_on_station_id"
   end
 
   add_foreign_key "announcements", "members"
@@ -130,4 +137,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_10_161758) do
   add_foreign_key "losts", "members"
   add_foreign_key "sessions", "members"
   add_foreign_key "station_infos", "infos"
+  add_foreign_key "station_infos", "stations"
+  add_foreign_key "station_nos", "stations"
+  add_foreign_key "time_tables", "stations"
 end

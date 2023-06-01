@@ -17,7 +17,7 @@
     </n-form-item>
     <n-button attr-type="button" @click="login"> 登入帳號 </n-button>
     <n-button attr-type="button" @click="regist"> 註冊帳號 </n-button>
-    <n-button attr-type="button" @click="logout"> 操 </n-button>
+    <!--<n-button @click="logoutbutton">我再出現一次我就是小丑</n-button>--->
   </n-form>
 </template>
 
@@ -37,8 +37,16 @@ import { ref, reactive, computed, onMounted, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import store from "/src/scripts/vuex.ts";
 const isLogin = computed(() => (store?.state?.userinfo ? true : false));
+
 onMounted(() => {
-  if (isLogin.value == true) {
+  if (!isLogin.value) {
+    fetchsession();
+    watchOnce(isLogin, () => {
+      router.push("/profile");
+    });
+  }
+  //console.log(store.state.userinfo);
+  else {
     router.push("/profile");
   }
 });
@@ -54,8 +62,6 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Email is required");
-        } else if (!/@/.test(value)) {
-          return new Error("Email format is incorrect");
         }
         return true;
       },
@@ -75,7 +81,23 @@ const rules: FormRules = {
     },
   ],
 };
-
+function fetchsession() {
+  //axios get
+  axios
+    .get("http://localhost:3000/session")
+    .then(function (response) {
+      //console.log(response.data.data);
+      if (response.data.data.isLogin) {
+        //console.log(response.data.data.member);
+        store.dispatch("userinfo", response.data.data.member);
+        //console.log(store.state.userinfo);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
 function login() {
   //axios post
   axios
@@ -84,8 +106,9 @@ function login() {
       password: model.password,
     })
     .then(function (response) {
-      console.log(response);
-      store.dispatch("userinfo", response.data);
+      //console.log(response);
+      store.dispatch("userinfo", response.data.data);
+      //console.log(store.state.userinfo);
     })
     .catch(function (error) {
       console.log(error);
@@ -104,19 +127,20 @@ function regist() {
       password: model.password,
     })
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
 }
-function logout() {
+/*
+function logoutbutton() {
   //axios post
   axios
     .post("http://localhost:3000/sign_out")
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
       store.dispatch("userinfo", undefined);
       router.push("/account");
     })
@@ -126,5 +150,5 @@ function logout() {
       router.push("/account");
     });
   //axios
-}
+}*/
 </script>
