@@ -12,7 +12,37 @@
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
+import axios from "axios";
 import { NPageHeader } from "naive-ui";
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { watchOnce } from "@vueuse/core";
+import store from "/src/scripts/vuex.ts";
+
+const isLogin = computed(() => (store?.state?.userinfo ? true : false));
+onMounted(() => {
+  if (!isLogin.value) {
+    fetchsession();
+  }
+  //console.log(store.state.userinfo);
+});
+function fetchsession() {
+  //axios get
+  axios
+    .get("http://localhost:3000/session")
+    .then(function (response) {
+      //console.log(response.data.data);
+      if (response.data.data.isLogin) {
+        //console.log(response.data.data.member);
+        store.dispatch("userinfo", response.data.data.member);
+        //console.log(store.state.userinfo);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
 </script>
 
 <style>

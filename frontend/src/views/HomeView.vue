@@ -1,11 +1,14 @@
 <template>
   <div class="home">
-    <n-button>捷運資訊</n-button>
-    <n-button>捷運公告</n-button>
+    <nav>
+      <n-button><router-link to="/">捷運資訊</router-link></n-button>
+      <n-button><router-link to="/MRTAnnounce">捷運公告</router-link></n-button>
+    </nav>
     <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
+import router from "@/router";
 import { NButton } from "naive-ui";
 </script>

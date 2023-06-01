@@ -9,7 +9,7 @@ export interface User {
   password: string;
   nickname: string;
   role: Role;
-  picture: null;
+  picture: File;
 }
 export interface LoginInfo {
   id: number;
@@ -17,7 +17,15 @@ export interface LoginInfo {
   password: string;
   nickname: string;
   role: Role;
-  picture: null;
+  picture: File;
+  created_at: string;
+  updated_at: string;
+}
+export interface Post {
+  id: number;
+  topic: string;
+  context: string;
+  member_id: number;
   created_at: string;
   updated_at: string;
 }

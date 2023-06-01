@@ -32,13 +32,26 @@ import { watchOnce } from "@vueuse/core";
 import { User, Role } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
+import store from "@/scripts/vuex";
+const EditUsermodal = ref(false);
 const colData = ref<User[]>([]);
 onMounted(() => {
   //axios get
   axios
     .get("http://localhost:3000/api/admin/authorization")
     .then(function (response) {
-      console.log(response);
+      console.log(response.data.data);
+      colData.value = response.data.data.map(function (item, index, array) {
+        return {
+          account: item.account,
+          id: item.id,
+          nickname: item.nickname,
+          password: item.password,
+          picture: item.picture,
+          role: item.role,
+        };
+      });
+      console.log(colData.value);
     })
     .catch(function (error) {
       console.log(error);
@@ -88,6 +101,8 @@ let columns = createColumns({
     toEditUser.account = row.account;
     toEditUser.password = row.password;
     toEditUser.role = row.role;
+    store.dispatch("editinfo", toEditUser);
+    router.push("/memberlist/edit");
   },
 });
 function tmp() {
