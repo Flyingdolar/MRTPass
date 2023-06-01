@@ -52,7 +52,7 @@ import {
 } from "naive-ui";
 import { ref, reactive, computed, onMounted, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
-import store from "/src/scripts/vuex.ts";
+import store from "./scripts/vuex";
 
 const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 onMounted(() => {
