@@ -1,17 +1,14 @@
 <template>
   <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
+    width="512"
+    height="512"
+    viewBox="0 0 512 512"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 6L9 12L15 18"
-      stroke="#333333"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M335.085 112.915C343.416 121.246 343.416 134.754 335.085 143.085L222.17 256L335.085 368.915C343.416 377.246 343.416 390.754 335.085 399.085C326.754 407.416 313.246 407.416 304.915 399.085L176.915 271.085C168.584 262.754 168.584 249.246 176.915 240.915L304.915 112.915C313.246 104.584 326.754 104.584 335.085 112.915Z"
     />
   </svg>
 </template>
