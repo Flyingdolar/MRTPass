@@ -79,7 +79,7 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
     end
     
     def time_table_search
-        current_time = Time.now + 8.hours
+        current_time = Time.now 
         start_time = current_time 
         end_time = current_time + 30.minutes
         a = TimeTable.where(station_id: params[:station_id]).where("time >= ? AND time <= ?", start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S"))
