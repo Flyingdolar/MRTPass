@@ -1,4 +1,4 @@
-class Api::MrtAdmin::CommentController < ApplicationController
+class Api::Member::CommentController < ApplicationController
 
     def create
         check,@member=check_login
