@@ -10,10 +10,10 @@ class Api::MrtAdmin::InfoController < ApplicationController
                 s2 = stationinfo_params[:station_id_2]
                 s3 = stationinfo_params[:station_id_3]
                 responses = []
-                if !s1.nil?
+                if !s1.blank?
                     @stationinfo=StationInfo.new(info_id:@info.id,station_id:s1)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s1
                 else
                     @info.destroy
                     render :json => {
@@ -22,23 +22,26 @@ class Api::MrtAdmin::InfoController < ApplicationController
                         message: "failed to create common_info",
                         data: "Field not completely filled."
                     }.to_json, :status => 400
-                    reutrn
+                    return
                 end
-                if !s2.nil?
+                if !s2.blank?
                     @stationinfo=StationInfo.new(info_id:@info.id,station_id:s2)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s2
                 end
-                if !s3.nil?
-                    @stationinfo=StationInfo.new(info_id:@info.id,station_id:s2)
+                if !s3.blank?
+                    @stationinfo=StationInfo.new(info_id:@info.id,station_id:s3)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s3
                 end
                 render :json => {
                     status: "success",
                     error: false,
                     message: "succeed to create common_info",
-                    data: responses
+                    data:{
+                        info:@info,
+                        station_id:responses
+                    } 
                 }.to_json, :status => 200
             else
                 render :json => {
@@ -51,7 +54,7 @@ class Api::MrtAdmin::InfoController < ApplicationController
         end        
     end
 
-    def create_trans #l,n必須要照順序
+    def create_trans 
         check=check_admin
         if check
             @info=Info.new(info_params)
@@ -61,41 +64,44 @@ class Api::MrtAdmin::InfoController < ApplicationController
                 s2 = stationinfo_params[:station_id_2]
                 s3 = stationinfo_params[:station_id_3]
                 responses = []
-                if !s1.nil?
+                if !s1.blank?
                     @stationinfo=StationInfo.new(info_id:@info.id,station_id:s1)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s1
                 else
                     @info.destroy
                     render :json => {
                         status: "error",
                         error: true,
-                        message: "failed to create common_info",
+                        message: "failed to create trans_info",
                         data: "Field not completely filled."
                     }.to_json, :status => 400
-                    reutrn
+                    return
                 end
-                if !s2.nil?
+                if !s2.blank?
                     @stationinfo=StationInfo.new(info_id:@info.id,station_id:s2)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s2
                 end
-                if !s3.nil?
-                    @stationinfo=StationInfo.new(info_id:@info.id,station_id:s2)
+                if !s3.blank?
+                    @stationinfo=StationInfo.new(info_id:@info.id,station_id:s3)
                     @stationinfo.save
-                    responses<<{info:@info,stationinfo:@stationinfo}
+                    responses<<s3
                 end
                 render :json => {
                     status: "success",
                     error: false,
-                    message: "succeed to create common_info",
-                    data: responses
+                    message: "succeed to create trans_info",
+                    data: {
+                        info:@info,
+                        station_id:responses
+                    } 
                 }.to_json, :status => 200
             else
                 render :json => {
                     status: "error",
                     error: true,
-                    message: "failed to create common_info",
+                    message: "failed to create trans_info",
                     data: "Field not completely filled."
                 }.to_json, :status => 400
             end
@@ -104,17 +110,33 @@ class Api::MrtAdmin::InfoController < ApplicationController
 
 
     def index_trans
-        @info = Info.where(type_: "Trans")
+        s=Station.find(station_params[:station_id])
+        s_i=StationInfo.where(station_id:s.id)
+        @info=[] 
+        s_i.each do |t|
+            k=Info.find(t.info_id)
+            if k.type_=="Trans"
+                @info<<k
+            end
+        end
         render :json => {
                 status: "success",
                 error: false,
-                message: "succeed to get trans_info list",
+                message: "succeed to get trans_info list around #{s.name}",
                 data: @info
             }.to_json, :status => 200
     end
 
     def index_common
-        @info = Info.where(type_: "Common")
+        s=Station.find(station_params[:station_id])
+        s_i=StationInfo.where(station_id:s.id)
+        @info=[] 
+        s_i.each do |t|
+            k=Info.find(t.info_id)
+            if k.type_=="Common"
+                @info<<k
+            end
+        end
         info_with_average_score = @info.map do |info|
             average_score = info.comments.average(:score)
             {
@@ -125,7 +147,7 @@ class Api::MrtAdmin::InfoController < ApplicationController
         render :json => {
                 status: "success",
                 error: false,
-                message: "succeed to get common_info list",
+                message: "succeed to get common_info list around #{s.name}",
                 data: info_with_average_score
             }.to_json, :status => 200
     end
@@ -219,6 +241,10 @@ class Api::MrtAdmin::InfoController < ApplicationController
         params.permit(:name, :photo, :address ,:Des)
     end
     
+    def station_params
+        params.permit(:station_id)
+    end
+
     def stationinfo_params
         params.permit(:station_id_1,:station_id_2,:station_id_3)
     end

@@ -7,7 +7,7 @@ end
 
 RSpec.describe "Account", type: :request do
     before do
-        @member=Member.create(account:"123123@gmail.com",password:"example",nickname:"handsome boy",role:"user")
+        Member.create(account:"123123@gmail.com",password:"example",nickname:"handsome boy",role:"user")
     end
 
     let(:filepath) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '1.jpg'), 'image/jpg') }

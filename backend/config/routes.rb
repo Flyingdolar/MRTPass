@@ -28,13 +28,12 @@ Rails.application.routes.draw do
       get 'common' => 'info#index_common'
       get 'common/:id' => 'info#show_common'
       patch 'common/:id' => 'info#update_common'
-      delete 'common/:id' => 'info#destroy'
+      delete 'info/:id' => 'info#destroy'
 
       post 'trans' => 'info#create_trans'
       get 'trans' => 'info#index_trans'
       get 'trans/:id' => 'info#show_trans'
       patch 'trans/:id' => 'info#update_trans'
-      delete 'trans/:id' => 'info#destroy'
     end
     namespace :member do
       resources :info, only: [] do
