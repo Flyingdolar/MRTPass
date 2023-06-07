@@ -52,7 +52,7 @@ class Api::MrtAdmin::StationController < ApplicationController
                         status: "error",
                         error: true,
                         message: "failed to create station",
-                        data: "Station No. has been taken."
+                        data: "Station No. has been taken or blank."
                     }.to_json, :status => 400
                 end
             end
@@ -120,7 +120,7 @@ class Api::MrtAdmin::StationController < ApplicationController
                     render json: {
                         status: "success",
                         error: false,
-                        message: "succeed update station information",
+                        message: "succeed to update station information",
                         data: @station
                     }.to_json, status: 200
                 else
