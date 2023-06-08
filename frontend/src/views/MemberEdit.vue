@@ -22,7 +22,10 @@
         </n-form>
         <template #footer>
           <n-space vertical>
-            <n-button>刪除帳號</n-button>
+            <n-popconfirm @positive-click="handlePositiveClick()"
+              ><template #trigger><n-button>刪除</n-button></template
+              >確認刪除帳號</n-popconfirm
+            >
             <n-button @click="SaveEdit">儲存</n-button>
           </n-space>
         </template>
@@ -44,6 +47,7 @@ import {
   NFormItem,
   NInput,
   NSelect,
+  NPopconfirm,
 } from "naive-ui";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch, reactive } from "vue";
@@ -52,22 +56,23 @@ import { User, Role } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import store from "@/scripts/vuex";
-const model = reactive({
-  id: "",
-  nickname: "",
-  photo: "",
-  password: "",
-  role: "",
+const model: User = reactive({
+  id: 0,
   account: "",
+  password: "",
+  nickname: "",
+  role: Role.user,
+  picture: null,
 });
 onMounted(() => {
   console.log(store.state.editinfo);
-  model.nickname = store.state?.editinfo?.nickname;
-  model.password = store.state?.editinfo?.password;
-  model.role = store.state?.editinfo?.role;
+  model.nickname = store.state?.editinfo?.nickname as unknown as string;
+  model.id = store.state?.editinfo?.id as unknown as number;
+  model.password = store.state?.editinfo?.password as unknown as string;
+  model.role = store.state?.editinfo?.role as unknown as string;
 });
 const roleOptions = computed(() =>
-  [Role[0], Role[1], Role[2]].map((v, index) => ({
+  [Role[0], Role[1]].map((v, index) => ({
     label: Role[index],
     value: Role[index],
   }))
@@ -78,5 +83,44 @@ function tmp() {
 }
 function SaveEdit() {
   console.log(model);
+  //axios patch
+  axios
+    .patch(
+      "http://localhost:3000/api/admin/authorization/" +
+        (model.id as unknown as string),
+      {
+        nickname: model?.nickname,
+        password: model?.password,
+        role: model?.role,
+      }
+    )
+    .then(function (response) {
+      console.log(response);
+      router.push("/memberlist");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
+function handlePositiveClick() {
+  deleteAccount();
+}
+function deleteAccount() {
+  console.log(model);
+  //axios delete
+  axios
+    .delete(
+      "http://localhost:3000/api/admin/authorization/" +
+        (model.id as unknown as string)
+    )
+    .then(function (response) {
+      console.log(response);
+      router.push("/memberlist");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 </script>

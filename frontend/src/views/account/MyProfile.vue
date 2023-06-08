@@ -5,13 +5,13 @@
       ><br />
       <span>{{ Userrole }}</span>
     </n-card>
-    <n-list>
+    <n-list align="center">
       <template #header> 個人資料 </template>
       <n-list-item>
-        <n-space vertical>
-          <n-button v-show="!roleisAdmin" @click="editUserNamemodal = true"
+        <n-space vertical align="center">
+          <n-button v-if="!roleisAdmin" @click="editUserNamemodal = true"
             >修改使用者名稱</n-button
-          ><br />
+          >
           <n-modal v-model:show="editUserNamemodal">
             <n-card
               style="width: 600px"
@@ -33,9 +33,9 @@
               </template>
             </n-card>
           </n-modal>
-          <n-button v-show="!roleisAdmin" @click="editPhotomodal = true"
+          <n-button v-if="!roleisAdmin" @click="editPhotomodal = true"
             >修改頭像照片</n-button
-          ><br />
+          >
           <n-modal v-model:show="editPhotomodal">
             <n-card
               style="width: 600px"
@@ -55,7 +55,7 @@
               </template>
             </n-card>
           </n-modal>
-          <n-button @click="editPasswordmodal = true">修改密碼</n-button><br />
+          <n-button @click="editPasswordmodal = true">修改密碼</n-button>
           <n-modal v-model:show="editPasswordmodal">
             <n-card
               style="width: 600px"
@@ -107,19 +107,20 @@
         </n-space>
       </n-list-item>
     </n-list>
-    <n-list v-if="roleisAdmin">
+    <n-list v-if="roleisAdmin" align="center">
       <template #header> 管理 </template>
       <n-list-item>
-        <n-space vertical>
+        <n-space vertical align="center">
           <n-button @click="editAllUser">使用者權限</n-button>
-          <n-button @click="editMRT">捷運資訊調整</n-button><br />
+          <n-button @click="editMRTLine">捷運路線設定</n-button>
+          <n-button @click="editMRTStation">捷運站點設定</n-button>
         </n-space>
       </n-list-item>
     </n-list>
+    <n-space justify="center">
+      <n-button @click="logout">登出</n-button>
+    </n-space>
   </n-card>
-  <n-space justify="center">
-    <n-button @click="logout">登出</n-button>
-  </n-space>
 </template>
 
 <script setup lang="ts">
@@ -143,7 +144,7 @@ import {
   FormRules,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeMount } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
 
@@ -229,7 +230,7 @@ const rules: FormRules = {
     },
   ],
 };
-onMounted(() => {
+onBeforeMount(() => {
   if ((store.state.userinfo.role as string) == "admin") {
     roleisAdmin.value = true;
   }
@@ -299,8 +300,11 @@ function editPassword() {
 function editAllUser() {
   router.push("/memberlist");
 }
-function editMRT() {
-  router.push("/");
+function editMRTLine() {
+  router.push("/linelist");
+}
+function editMRTStation() {
+  router.push("/stationlist");
 }
 function Photopatch() {
   //axios patch
