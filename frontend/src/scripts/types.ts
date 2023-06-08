@@ -1,7 +1,7 @@
 export enum Role {
   "user",
-  "admin",
   "mrt_admin",
+  "admin",
 }
 export interface User {
   id: number;
@@ -28,4 +28,13 @@ export interface Post {
   member_id: number;
   created_at: string;
   updated_at: string;
+}
+export interface Station {
+  created_at: string;
+  exit_Num: number;
+  id: number;
+  name: string;
+  updated_at: string;
+  x_Pos: number;
+  y_Pos: number;
 }

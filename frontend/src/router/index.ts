@@ -54,6 +54,16 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit",
     component: () => import("../views/MemberEdit.vue"),
   },
+  {
+    path: "/stationlist",
+    name: "stationlist",
+    component: () => import("../views/MRTStationList.vue"),
+  },
+  {
+    path: "/linelist",
+    name: "linelist",
+    component: () => import("../views/MRTLineList.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -71,8 +81,8 @@ const commonRoute = [
   "profile",
 ];
 const userRoute = ["profile"];
-const mrt_adminRoute = ["profile"];
-const adminRoute = ["profile", "memberlist"];
+const mrt_adminRoute = ["profile", "stationlist", "linelist"];
+const adminRoute = ["profile", "memberlist", "edit", "stationlist", "linelist"];
 const notLoginRoute = [
   "myaccount",
   "about",
