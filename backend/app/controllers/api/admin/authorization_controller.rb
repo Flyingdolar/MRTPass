@@ -77,6 +77,7 @@ class Api::Admin::AuthorizationController < ApplicationController
                     data: "Member #{@member.id} is admin."
                 }.to_json, :status => 400
             else
+                @member.destroy
                 render :json => {
                     status: "success",
                     error: false,
