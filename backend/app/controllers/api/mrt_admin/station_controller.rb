@@ -17,34 +17,57 @@ class Api::MrtAdmin::StationController < ApplicationController
                 l2=no_params[:linecolor_2]
                 n2=no_params[:number_2]
                 if !check_is_dupliction(l1,n1)
-                    @no1=StationNo.new(linecolor:l1,number:n1,station_id:@station.id)
-                    @no1.save
-                    if !check_is_dupliction(l2,n2)
-                        @no2=StationNo.new(linecolor:l2,number:n2,station_id:@station.id)
-                        @no2.save
-                        render :json => {
-                            status: "success",
-                            error: false,
-                            message: "succeed to create station on 2 line",
-                            data: {
-                                station:@station,
-                                linecolor_1:@no1.linecolor,
-                                number_1:@no1.number,
-                                linecolor_2:@no2.linecolor,
-                                number_2:@no2.number
-                            }
-                        }.to_json, :status => 200
+                    if t1=Line.find_by(linecolor:l1)
+                        @no1=StationNo.new(linecolor:l1,number:n1,station_id:@station.id)
+                        @no1.save
+                        if !check_is_dupliction(l2,n2)
+                            if t2=Line.find_by(linecolor:l2)
+                                @no2=StationNo.new(linecolor:l2,number:n2,station_id:@station.id)
+                                @no2.save
+                                render :json => {
+                                    status: "success",
+                                    error: false,
+                                    message: "succeed to create station on 2 line",
+                                    data: {
+                                        station:@station,
+                                        linecolor_1:@no1.linecolor,
+                                        number_1:@no1.number,
+                                        linecolor_2:@no2.linecolor,
+                                        number_2:@no2.number
+                                    }
+                                }.to_json, :status => 200
+                            else
+                                render :json => {
+                                    status: "success",
+                                    error: false,
+                                    message: "succeed to create station on 1 line",
+                                    data: {
+                                        station:@station,
+                                        linecolor_1:@no1.linecolor,
+                                        number_1:@no1.number
+                                    }
+                                }.to_json, :status => 200
+                            end
+                        else
+                            render :json => {
+                                status: "success",
+                                error: false,
+                                message: "succeed to create station on 1 line",
+                                data: {
+                                    station:@station,
+                                    linecolor_1:@no1.linecolor,
+                                    number_1:@no1.number
+                                }
+                            }.to_json, :status => 200
+                        end
                     else
+                        @station.destroy
                         render :json => {
-                            status: "success",
-                            error: false,
-                            message: "succeed to create station on 1 line",
-                            data: {
-                                station:@station,
-                                linecolor_1:@no1.linecolor,
-                                number_1:@no1.number
-                            }
-                        }.to_json, :status => 200
+                            status: "error",
+                            error: true,
+                            message: "failed to create station",
+                            data: "Line #{l1} isn't exist."
+                        }.to_json, :status => 400
                     end
                 else
                     @station.destroy
