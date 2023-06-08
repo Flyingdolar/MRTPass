@@ -12,6 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import router from "@/router";
-import { NButton, NTabs, NTab } from "naive-ui";
+import { NTabs, NTab } from "naive-ui";
 </script>
