@@ -80,17 +80,16 @@ function DeleteStation(id: number) {
   //axios delete
   axios
     .delete(
-      "http://localhost:3000/api/mrt_admin/station/:" +
-        (id as unknown as string)
+      "http://localhost:3000/api/mrt_admin/station/" + (id as unknown as string)
     )
     .then(function (response) {
       console.log(response);
+      router.go(0);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
-  router.push("/profile");
 }
 function goback() {
   router.push("/profile");
