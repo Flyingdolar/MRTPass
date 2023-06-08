@@ -2,7 +2,7 @@
   <n-card class="card">
     <n-space size="large" line-height="20px">
       <n-button @click="goback" size="large">返回</n-button>
-      <n-h3 class="cardtitle">使用者資訊設定</n-h3>
+      <n-h3 class="cardtitle">編輯站點</n-h3>
     </n-space>
     <n-space justify="center" class="content2">
       <n-card :bordered="false" size="huge" role="dialog" aria-modal="true">
@@ -11,27 +11,35 @@
             ><n-input v-model:value="model.name"></n-input
           ></n-form-item>
           <n-form-item label="所屬路線"
-            ><n-input v-model:value="model.linecolor"></n-input
+            ><n-select
+              v-model:value="model.linecolor"
+              :options="lineOptions"
+            ></n-select
           ></n-form-item>
           <n-form-item label="所屬路線編號"
-            ><n-input v-model="model.number"></n-input
+            ><n-input v-model:value="model.number"></n-input
+          ></n-form-item>
+          <n-form-item label="交叉路線"
+            ><n-select
+              v-model:value="model.linecolor2"
+              :options="lineOptions"
+            ></n-select
+          ></n-form-item>
+          <n-form-item label="交叉路線編號"
+            ><n-input v-model:value="model.number2"></n-input
+          ></n-form-item>
+          <n-form-item label="經度"
+            ><n-input v-model:value="model.y_Pos"></n-input
+          ></n-form-item>
+          <n-form-item label="緯度"
+            ><n-input v-model:value="model.x_Pos"></n-input
           ></n-form-item>
           <n-form-item label="站點出口數"
-            ><n-input v-model="model.exit_Num"></n-input
-          ></n-form-item>
-          <n-form-item label="設定權限"
-            ><n-select
-              v-model:value="model.id"
-              :options="roleOptions"
-            ></n-select
+            ><n-input v-model:value="model.exit_Num"></n-input
           ></n-form-item>
         </n-form>
         <template #footer>
           <n-space vertical>
-            <n-popconfirm @positive-click="handlePositiveClick()"
-              ><template #trigger><n-button>刪除</n-button></template
-              >確認刪除帳號</n-popconfirm
-            >
             <n-button @click="SaveEdit">儲存</n-button>
           </n-space>
         </template>
@@ -59,12 +67,12 @@ import {
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch, reactive } from "vue";
 import { watchOnce } from "@vueuse/core";
-import { Station, Role } from "../scripts/types";
+import { Station, Role, Line } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import { useRoute } from "vue-router";
 const route = useRoute();
-let model = reactive({
+const model = reactive({
   exit_Num: 0,
   id: 0,
   name: "",
@@ -72,32 +80,55 @@ let model = reactive({
   y_Pos: 0,
   number: 0,
   linecolor: "",
+  linename: "",
+  number2: "",
+  linecolor2: "",
+  linename2: "",
 });
+const AllLine = ref<Line[]>();
 onMounted(() => {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/station/" + route.params.id)
     .then(function (response) {
       console.log(response.data.data.station);
-      console.log(response.data.data.stationno.number);
+      console.log(response.data.data.stationno);
       model.exit_Num = response.data.data.station.exit_Num;
       model.id = response.data.data.station.id;
       model.name = response.data.data.station.name;
       model.x_Pos = response.data.data.station.x_Pos;
       model.y_Pos = response.data.data.station.y_Pos;
-      model.number = response.data.data.stationno.number;
-      model.linecolor = response.data.data.stationno.linecolor;
-      console.log(model);
+      model.number = response.data.data.stationno[0].stationno.number;
+      model.linecolor = response.data.data.stationno[0].stationno.linecolor;
+      model.linename = response.data.data.stationno[0].linename;
+      if (response.data.data.stationno.length == 2) {
+        model.number2 = response.data.data.stationno[1].stationno.number;
+        model.linecolor2 = response.data.data.stationno[1].stationno.linecolor;
+        model.linename2 = response.data.data.stationno[1].linename;
+      }
+      //console.log(model);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/line")
+    .then(function (response) {
+      console.log(response.data.data);
+      AllLine.value = response.data.data;
+      console.log(AllLine.value);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
 });
-const roleOptions = computed(() =>
-  [Role[0], Role[1]].map((v, index) => ({
-    label: Role[index],
-    value: Role[index],
+const lineOptions = computed(() =>
+  AllLine.value?.map((v, index) => ({
+    label: v.linecolor + v.name,
+    value: v.linecolor,
   }))
 );
 function goback() {
@@ -105,41 +136,21 @@ function goback() {
   router.push("/stationlist");
 }
 function SaveEdit() {
-  console.log(model);
   //axios patch
   axios
-    .patch(
-      "http://localhost:3000/api/admin/authorization/" +
-        (model.id as unknown as string),
-      {
-        name: model?.name,
-        id: model?.id,
-        exit_num: model.exit_Num,
-      }
-    )
-    .then(function (response) {
-      console.log(response);
-      router.push("/memberlist");
+    .patch("http://localhost:3000/api/mrt_admin/station/" + route.params.id, {
+      name: model.name,
+      linecolor_1: model.linecolor,
+      number_1: model.number,
+      x_Pos: model.x_Pos,
+      y_Pos: model.y_Pos,
+      linecolor_2: model.linecolor2,
+      number_2: model.number2,
+      exit_Num: model.exit_Num,
     })
-    .catch(function (error) {
-      console.log(error);
-    });
-  //axios
-}
-function handlePositiveClick() {
-  deleteAccount();
-}
-function deleteAccount() {
-  console.log(model);
-  //axios delete
-  axios
-    .delete(
-      "http://localhost:3000/api/admin/authorization/" +
-        (model.id as unknown as string)
-    )
     .then(function (response) {
       console.log(response);
-      router.push("/memberlist");
+      router.push("/stationlist");
     })
     .catch(function (error) {
       console.log(error);

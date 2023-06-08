@@ -38,3 +38,11 @@ export interface Station {
   x_Pos: number;
   y_Pos: number;
 }
+export interface Line {
+  colorcode: string;
+  created_at: string;
+  id: number;
+  linecolor: string;
+  name: string;
+  updated_at: string;
+}
