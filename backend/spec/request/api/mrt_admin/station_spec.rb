@@ -408,6 +408,7 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
                 )
             )
             expect(StationNo.where(station_id:2)).to eq([])
+            expect(StationInfo.where(station_id:2)).to eq([])
         end
 
         example "failed to delete station(not login)" do

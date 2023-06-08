@@ -3,21 +3,30 @@ class Api::Member::CommentController < ApplicationController
     def create
         check,@member=check_login
         if check
-            @comment = Comment.new(comments_params.merge(member_id: @member.id,info_id:params[:info_id]))
-            if @comment.save
-                render :json => {
-                    status: "success",
-                    error: false,
-                    message: "succeed to create comment",
-                    data: @comment
-                }.to_json, :status => 200
-            else
+            if Comment.find_by(member_id:@member.id,info_id:params[:info_id])
                 render :json => {
                     status: "error",
                     error: true,
                     message: "failed to create comment",
-                    data: @comment.errors
+                    data: "Each account can only leave one comment on a single attraction."
                 }.to_json, :status => 400
+            else    
+                @comment = Comment.new(comments_params.merge(member_id: @member.id,info_id:params[:info_id]))
+                if @comment.save
+                    render :json => {
+                        status: "success",
+                        error: false,
+                        message: "succeed to create comment",
+                        data: @comment
+                    }.to_json, :status => 200
+                else
+                    render :json => {
+                        status: "error",
+                        error: true,
+                        message: "failed to create comment",
+                        data: @comment.errors
+                    }.to_json, :status => 400
+                end
             end
         end        
     end
@@ -27,7 +36,7 @@ class Api::Member::CommentController < ApplicationController
         render :json => {
             status: "success",
             error: false,
-            message: "succeed to get comment list",
+            message: "succeed to get info_#{params[:info_id]} comment list",
             data: @comments
         }.to_json, :status => 200
     end
@@ -45,14 +54,14 @@ class Api::Member::CommentController < ApplicationController
     def update
         check,@member=check_login
         if check
-            @comments = Comment.find(params[:id])
+            @comment = Comment.find(params[:id])
             if @member.id == @comment.member_id
-                if @comments.update(comments_params)
+                if @comment.update(comments_params)
                     render json: {
                         status: "success",
                         error: false,
                         message: "succeed to update comment",
-                        data: @comments
+                        data: @comment
                     }.to_json, status: 200
                 else
                     render :json => {
@@ -77,7 +86,7 @@ class Api::Member::CommentController < ApplicationController
     def destroy 
         check,@member=check_login
         if check
-            @comments = Comment.find(params[:id])
+            @comment = Comment.find(params[:id])
             if @member.id != @comment.member_id && @member.role != "admin"
             render :json => {
                 status: "error",
@@ -85,11 +94,11 @@ class Api::Member::CommentController < ApplicationController
                 message: "Unauthorized",
                 data: "User not permitted for this action."
             }.to_json, :status => 403
-            else @comments.destroy
+            else @comment.destroy
                 render json: {
                     status: "success",
                     error: false,
-                    message: "success to delete comment",
+                    message: "succeed to delete comment",
                     data: {}
                 }.to_json, status: 200
             end
