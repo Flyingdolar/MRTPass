@@ -57,3 +57,4 @@ pnpm-debug.log*
 /backend/config/master.key
 
 /backend/Gemfile.lock
+/backend/coverage

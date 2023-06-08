@@ -1,11 +1,13 @@
 require 'rails_helper'
 require './spec/support/authorized_helper'
+require 'simplecov'
+SimpleCov.start
 RSpec.configure do |c|
     c.include AuthorizedHelper
 end
 
 
-RSpec.describe "Api::MrtAdmin::Announcement", type: :request do
+RSpec.describe "Api::MrtAdmin::Station", type: :request do
     before do
         Member.create(account:"admin",password:"123456",nickname:"admin",role:"admin")
         Member.create(account:"mrt_admin",password:"123456",nickname:"北捷管理員",role:"mrt_admin")

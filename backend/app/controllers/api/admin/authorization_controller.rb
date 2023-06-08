@@ -34,7 +34,7 @@ class Api::Admin::AuthorizationController < ApplicationController
         end
     end
 
-    def edit
+    def update
         check=check_admin
         if check
             @member=Member.find(params[:id])
@@ -54,7 +54,7 @@ class Api::Admin::AuthorizationController < ApplicationController
                         data: @member
                     }.to_json, :status => 200
                 else
-                    ender :json => {
+                    render :json => {
                         status: "error",
                         error: true,
                         message: "failed to update member information",
@@ -77,12 +77,11 @@ class Api::Admin::AuthorizationController < ApplicationController
                     data: "Member #{@member.id} is admin."
                 }.to_json, :status => 400
             else
-                temp=@member
                 render :json => {
                     status: "success",
                     error: false,
                     message: "succeed to delete member",
-                    data: temp
+                    data: {}
                 }.to_json, :status => 200
             end
         end

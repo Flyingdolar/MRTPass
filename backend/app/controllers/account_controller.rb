@@ -1,11 +1,10 @@
 class AccountController < ApplicationController
     def create
         @member = Member.new(member_params)
+        @member.role = "user"
+        id=format('%03d',Member.last.id+1)
+        @member.nickname ="user#344#{id}"
         if @member.save
-            @member.role = "user"
-            id=format('%03d',@member.id)
-            @member.nickname ="user#344#{id}"
-            @member.save
             render :json => {
                 status: "success",
                 error: false,
