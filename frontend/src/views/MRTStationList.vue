@@ -1,7 +1,7 @@
 <template>
   <n-card class="card">
     <n-space justify="space-around" size="large" line-height="20px">
-      <n-button @click="tmp" size="large">返回</n-button>
+      <n-button @click="goback" size="large">返回</n-button>
       <n-h3 class="cardtitle">捷運站點</n-h3>
       <n-button @click="tmp" size="large">搜尋</n-button>
     </n-space>
@@ -72,12 +72,30 @@ const toEditStation = {
   id: 0,
   name: "",
 };
-function EditStation() {
+function EditStation(id: number) {
   console.log("hi");
-  router.push("/");
+  router.push("/stationlist/" + (id as unknown as string));
 }
-function DeleteStation() {
-  console.log("hi");
-  router.push("/");
+function DeleteStation(id: number) {
+  //axios delete
+  axios
+    .delete(
+      "http://localhost:3000/api/mrt_admin/station/:" +
+        (id as unknown as string)
+    )
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+  router.push("/profile");
+}
+function goback() {
+  router.push("/profile");
+}
+function tmp() {
+  console.log("Not yet:D");
 }
 </script>
