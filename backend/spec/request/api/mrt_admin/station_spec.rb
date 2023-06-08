@@ -250,7 +250,8 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
                     "message": "succeed to get station",
                     "data": {
                         station:Station.find(2),
-                        stationno:[StationNo.find(2),StationNo.find(3)]
+                        stationno:[{stationno:StationNo.find(2),linename:"松山新店線"},
+                            {stationno:StationNo.find(3),linename:"中和新蘆線"}]
                     }
                 }.to_json
                 )
