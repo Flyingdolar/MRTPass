@@ -1,7 +1,10 @@
 require 'rails_helper'
-
+require 'simplecov'
+SimpleCov.start
 RSpec.describe "Api::MrtAdmin::Comments", type: :request do
   describe "GET /index" do
-    pending "add some examples (or delete) #{__FILE__}"
+    example "coverage" do
+      post "/api/member/info/1/comment" 
+    end
   end
 end

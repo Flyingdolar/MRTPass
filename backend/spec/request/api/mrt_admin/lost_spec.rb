@@ -1,7 +1,10 @@
 require 'rails_helper'
-
+require 'simplecov'
+SimpleCov.start
 RSpec.describe "Api::MrtAdmin::Losts", type: :request do
   describe "GET /index" do
-    pending "add some examples (or delete) #{__FILE__}"
+    example "coverage" do
+      get "/api/mrt_admin/lost"
+    end
   end
 end
