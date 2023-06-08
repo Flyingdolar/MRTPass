@@ -68,6 +68,15 @@ class Api::MrtAdmin::LineController < ApplicationController
         check,@member=check_mrt_admin
         if check
             @line = Line.find(params[:id])
+            stationno=StationNo.where(linecolor:@line.linecolor)
+            stationno.each do |t|
+                q=t.station_id
+                t.destroy
+                temp=StationNo.where(station_id:q)
+                if temp.blank?
+                    Station.find(q).destroy
+                end
+            end
             @line.destroy
             render json: {
                 status: "success",

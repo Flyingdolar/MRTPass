@@ -95,13 +95,18 @@ class Api::MrtAdmin::StationController < ApplicationController
     def show
         @station = Station.find(params[:id])
         @stationno = StationNo.where(station_id:params[:id])
+        s=[]
+        @stationno.each do |t|
+            line=Line.find_by(linecolor:t.linecolor)
+            s<<{stationno:t,linename:line.name}
+        end
         render :json => {
             status: "success",
             error: false,
             message: "succeed to get station",
             data: {
                 station:@station,
-                stationno:@stationno
+                stationno:s
             }
         }.to_json, :status => 200
     end
