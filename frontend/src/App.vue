@@ -16,7 +16,7 @@
     <!-- Footer -->
     <n-layout-footer flex="~" bg="white" pos="relative">
       <!-- Sec01: 捷運資訊 -->
-      <router-link to="/" @click="setBtn(1)" flex="grow">
+      <router-link to="/MRTInfo" @click="setBtn(1)" flex="grow">
         <n-space
           align="center"
           class="px-auto py-2 hover:bg-blue-100"
