@@ -150,7 +150,9 @@ import {
   FormItemRule,
 } from "naive-ui";
 import { ref, reactive, computed, onMounted, onBeforeMount } from "vue";
-import store from "../../scripts/vuex";
+import store from "/src/scripts/vuex.ts";
+import { watchOnce } from "@vueuse/core";
+import { useMessage } from "naive-ui";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
@@ -176,6 +178,7 @@ const roleisAdmin = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
+const message = useMessage();
 const Username = computed(() => {
   return store.state?.userinfo?.nickname;
 });
@@ -197,7 +200,7 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Old password is required");
-        } else if (value != store.state.userinfo?.data.password) {
+        } else if (value != store.state.userinfo.password) {
           return new Error("Worng old password");
         }
         return true;
@@ -242,7 +245,7 @@ onBeforeMount(() => {
   if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
   }
-  //console.log(store.state.userinfo);
+  message.info(store.state.userinfo.nickname);
 });
 const model = reactive({
   newName: "",
@@ -262,7 +265,7 @@ function logout() {
     })
     .catch(function (error) {
       store.dispatch("userinfo", undefined);
-      console.log(error);
+      message.error(error);
       router.push("/account");
     });
   //axios
@@ -276,7 +279,7 @@ function editUserName() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
+      store.dispatch("userinfo", response.data.data);
       editUserNamemodal.value = false;
     })
     .catch(function (error) {
@@ -297,8 +300,8 @@ function editPassword() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
-      editUserNamemodal.value = false;
+      store.dispatch("userinfo", response.data.data);
+      editPasswordmodal.value = false;
     })
     .catch(function (error) {
       console.log(error);

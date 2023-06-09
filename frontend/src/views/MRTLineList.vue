@@ -9,16 +9,17 @@
       <n-card
         :header-style="{ 'align-self': 'center' }"
         :footer-style="{ 'align-self': 'center' }"
+        justify="center"
       >
         <div v-for="item in colData" :key="item?.id">
           <n-card>
             <n-space align="start" size="large">
               <n-h3>{{ item.name }}</n-h3>
               <n-space align="end" size="large">
-                <n-button @click="EditStation(item.id)">編輯</n-button
-                ><n-popconfirm @positive-click="DeleteStation(item.id)"
+                <n-button @click="EditLine(item.id)">編輯</n-button
+                ><n-popconfirm @positive-click="DeleteLine(item.id)"
                   ><template #trigger><n-button>刪除</n-button></template
-                  >確認刪除公告</n-popconfirm
+                  >確認刪除</n-popconfirm
                 >
               </n-space>
             </n-space>
@@ -43,42 +44,49 @@ import {
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
-import { Station, Role } from "../scripts/types";
+import { Line, Role } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import store from "@/scripts/vuex";
 const EditUsermodal = ref(false);
-const colData = ref<Station[]>([]);
+const colData = ref<Line[]>([]);
 onMounted(() => {
   //axios get
   axios
-    .get("http://localhost:3000/api/mrt_admin/station")
+    .get("http://localhost:3000/api/mrt_admin/line")
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
       colData.value = response.data.data.map(function (item, index, array) {
         return {
           id: item.id,
           name: item.name,
         };
       });
-      console.log(colData.value);
+      //console.log(colData.value);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
 });
-const toEditStation = {
-  id: 0,
-  name: "",
-};
-function EditStation() {
-  console.log("hi");
-  router.push("/");
+
+function EditLine(id: number) {
+  router.push("/linelist/" + (id as unknown as string));
 }
-function DeleteStation() {
-  console.log("hi");
-  router.push("/");
+function DeleteLine(id: number) {
+  //axios delete
+  axios
+    .delete(
+      "http://localhost:3000/api/mrt_admin/line/" + (id as unknown as string)
+    )
+    .then(function (response) {
+      console.log(response);
+      router.go(0);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 function goback() {
   router.push("/profile");

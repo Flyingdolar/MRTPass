@@ -11,7 +11,9 @@
     </n-layout-header>
     <!-- Content -->
     <n-layout-content bg="gray-100" class="body">
-      <router-view />
+      <n-message-provider>
+        <router-view />
+      </n-message-provider>
     </n-layout-content>
     <!-- Footer -->
     <n-layout-footer flex="~" bg="white" pos="relative">
@@ -98,6 +100,7 @@ import {
   NLayoutHeader,
   NLayoutContent,
   NLayoutFooter,
+  NMessageProvider,
 } from "naive-ui";
 import Title from "/src/assets/appTitle.vue";
 import compass from "/src/assets/icon/iCompass.vue";

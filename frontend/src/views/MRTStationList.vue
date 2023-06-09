@@ -6,9 +6,10 @@
       <n-button @click="tmp" size="large">搜尋</n-button>
     </n-space>
     <n-space justify="center" class="content2">
-      <n-card
+      <n-space
         :header-style="{ 'align-self': 'center' }"
         :footer-style="{ 'align-self': 'center' }"
+        justify="center"
       >
         <div v-for="item in colData" :key="item?.id">
           <n-card>
@@ -18,13 +19,13 @@
                 <n-button @click="EditStation(item.id)">編輯</n-button
                 ><n-popconfirm @positive-click="DeleteStation(item.id)"
                   ><template #trigger><n-button>刪除</n-button></template
-                  >確認刪除公告</n-popconfirm
+                  >確認刪除</n-popconfirm
                 >
               </n-space>
             </n-space>
           </n-card>
         </div>
-      </n-card>
+      </n-space>
     </n-space>
   </n-card>
 </template>
@@ -54,26 +55,22 @@ onMounted(() => {
   axios
     .get("http://localhost:3000/api/mrt_admin/station")
     .then(function (response) {
-      console.log(response);
+      //console.log(response);
       colData.value = response.data.data.map(function (item, index, array) {
         return {
           id: item.id,
           name: item.name,
         };
       });
-      console.log(colData.value);
+      //console.log(colData.value);
     })
     .catch(function (error) {
       console.log(error);
     });
   //axios
 });
-const toEditStation = {
-  id: 0,
-  name: "",
-};
+
 function EditStation(id: number) {
-  console.log("hi");
   router.push("/stationlist/" + (id as unknown as string));
 }
 function DeleteStation(id: number) {
