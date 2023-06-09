@@ -1,6 +1,11 @@
 <template>
   <!-- 頁面選項 Tab -->
-  <n-tabs justify-content="space-evenly" type="line" bg="white">
+  <n-tabs
+    default-value="info"
+    justify-content="space-evenly"
+    type="line"
+    bg="white"
+  >
     <n-tab name="info">
       <router-link to="/MRTInfo">捷運資訊</router-link>
     </n-tab>
