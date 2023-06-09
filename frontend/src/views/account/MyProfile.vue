@@ -180,9 +180,11 @@ const Username = computed(() => {
   return store.state?.userinfo?.nickname;
 });
 const Userrole = computed(() => {
-  if ((store.state?.userinfo?.role as string) == "admin") {
+  if ((store.state?.userinfo?.role as unknown as string) == "admin") {
     return "系統管理員";
-  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
+  } else if (
+    (store.state?.userinfo?.role as unknown as string) == "mrt_admin"
+  ) {
     return "捷運管理員";
   } else {
     return "一般會員";
@@ -195,7 +197,7 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Old password is required");
-        } else if (value != store.state.userinfo.data.password) {
+        } else if (value != store.state.userinfo?.data.password) {
           return new Error("Worng old password");
         }
         return true;
@@ -237,7 +239,7 @@ const rules: FormRules = {
   ],
 };
 onBeforeMount(() => {
-  if ((store.state.userinfo.role as string) == "admin") {
+  if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
   }
   //console.log(store.state.userinfo);
