@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
     children: [
       {
-        path: "",
+        path: "MRTInfo",
         name: "MRTInfo",
         component: () => import("../views/MRTInfo.vue"),
       },
