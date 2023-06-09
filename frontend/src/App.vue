@@ -5,13 +5,15 @@
       <n-space justify="space-between" :wrap="false">
         <Title />
         <div p="x-2 y-1" border="1 rounded-lg">
-          <div text="sm secondary">訪客使用者</div>
+          <div text="sm secondary">{{ Userrole }}</div>
         </div>
       </n-space>
     </n-layout-header>
     <!-- Content -->
     <n-layout-content bg="gray-100" class="body">
-      <router-view />
+      <n-message-provider>
+        <router-view />
+      </n-message-provider>
     </n-layout-content>
     <!-- Footer -->
     <n-layout-footer flex="~" bg="white" pos="relative">
@@ -98,26 +100,28 @@ import {
   NLayoutHeader,
   NLayoutContent,
   NLayoutFooter,
+  NMessageProvider,
 } from "naive-ui";
 import Title from "/src/assets/appTitle.vue";
 import compass from "/src/assets/icon/iCompass.vue";
 import star from "/src/assets/icon/iStar.vue";
 import bag from "/src/assets/icon/iBag.vue";
 import user from "/src/assets/icon/iUser.vue";
-import { ref, reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onBeforeMount, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import store from "./scripts/vuex";
 
 const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 const activeBtn = ref(1);
-
-onMounted(() => {
-  if (!isLogin.value) {
-    fetchsession();
+const Userrole = computed(() => {
+  if ((store.state?.userinfo?.role as string) == "admin") {
+    return "系統管理員";
+  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
+    return "捷運管理員";
+  } else {
+    return "一般會員";
   }
-  console.log(store.state.userinfo);
 });
-
 function setBtn(num: number) {
   activeBtn.value = num;
 }

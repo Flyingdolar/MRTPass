@@ -5,13 +5,13 @@
       ><br />
       <span>{{ Userrole }}</span>
     </n-card>
-    <n-list>
+    <n-list align="center">
       <template #header> 個人資料 </template>
       <n-list-item>
-        <n-space vertical>
-          <n-button v-show="!roleisAdmin" @click="editUserNamemodal = true"
+        <n-space vertical align="center">
+          <n-button v-if="!roleisAdmin" @click="editUserNamemodal = true"
             >修改使用者名稱</n-button
-          ><br />
+          >
           <n-modal v-model:show="editUserNamemodal">
             <n-card
               style="width: 600px"
@@ -33,9 +33,9 @@
               </template>
             </n-card>
           </n-modal>
-          <n-button v-show="!roleisAdmin" @click="editPhotomodal = true"
+          <n-button v-if="!roleisAdmin" @click="editPhotomodal = true"
             >修改頭像照片</n-button
-          ><br />
+          >
           <n-modal v-model:show="editPhotomodal">
             <n-card
               style="width: 600px"
@@ -45,17 +45,22 @@
               role="dialog"
               aria-modal="true"
             >
-              <img :src="previewImage" v-if="previewImage" alt="Preview" />
-              <input type="file" accept="image/jpeg" @change="uploadImage" />
+              <n-upload
+                :on-before-upload="handleImgBefore"
+                :on-update-file-list="handleImgChange"
+                :on-remove="handleImgRemove"
+              >
+                <n-button>上傳照片</n-button>
+              </n-upload>
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="Photopatch">儲存</n-button>
+                  <n-button @click="saveChange">儲存</n-button>
                   <n-button @click="editPhotomodal = false">取消</n-button>
                 </n-space>
               </template>
             </n-card>
           </n-modal>
-          <n-button @click="editPasswordmodal = true">修改密碼</n-button><br />
+          <n-button @click="editPasswordmodal = true">修改密碼</n-button>
           <n-modal v-model:show="editPasswordmodal">
             <n-card
               style="width: 600px"
@@ -107,19 +112,20 @@
         </n-space>
       </n-list-item>
     </n-list>
-    <n-list v-if="roleisAdmin">
+    <n-list v-if="roleisAdmin" align="center">
       <template #header> 管理 </template>
       <n-list-item>
-        <n-space vertical>
+        <n-space vertical align="center">
           <n-button @click="editAllUser">使用者權限</n-button>
-          <n-button @click="editMRT">捷運資訊調整</n-button><br />
+          <n-button @click="editMRTLine">捷運路線設定</n-button>
+          <n-button @click="editMRTStation">捷運站點設定</n-button>
         </n-space>
       </n-list-item>
     </n-list>
+    <n-space justify="center">
+      <n-button @click="logout">登出</n-button>
+    </n-space>
   </n-card>
-  <n-space justify="center">
-    <n-button @click="logout">登出</n-button>
-  </n-space>
 </template>
 
 <script setup lang="ts">
@@ -143,12 +149,15 @@ import {
   FormRules,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeMount } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
+import { useMessage } from "naive-ui";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
+const formData = new FormData();
+let file: File | null = null;
 
 const uploadImage = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -169,13 +178,16 @@ const roleisAdmin = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
+const message = useMessage();
 const Username = computed(() => {
   return store.state?.userinfo?.nickname;
 });
 const Userrole = computed(() => {
-  if ((store.state?.userinfo?.role as string) == "admin") {
+  if ((store.state?.userinfo?.role as unknown as string) == "admin") {
     return "系統管理員";
-  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
+  } else if (
+    (store.state?.userinfo?.role as unknown as string) == "mrt_admin"
+  ) {
     return "捷運管理員";
   } else {
     return "一般會員";
@@ -188,7 +200,7 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Old password is required");
-        } else if (value != store.state.userinfo.data.password) {
+        } else if (value != store.state.userinfo.password) {
           return new Error("Worng old password");
         }
         return true;
@@ -229,11 +241,11 @@ const rules: FormRules = {
     },
   ],
 };
-onMounted(() => {
-  if ((store.state.userinfo.role as string) == "admin") {
+onBeforeMount(() => {
+  if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
   }
-  //console.log(store.state.userinfo);
+  message.info(store.state.userinfo.nickname);
 });
 const model = reactive({
   newName: "",
@@ -253,7 +265,7 @@ function logout() {
     })
     .catch(function (error) {
       store.dispatch("userinfo", undefined);
-      console.log(error);
+      message.error(error);
       router.push("/account");
     });
   //axios
@@ -267,7 +279,7 @@ function editUserName() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
+      store.dispatch("userinfo", response.data.data);
       editUserNamemodal.value = false;
     })
     .catch(function (error) {
@@ -288,8 +300,8 @@ function editPassword() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
-      editUserNamemodal.value = false;
+      store.dispatch("userinfo", response.data.data);
+      editPasswordmodal.value = false;
     })
     .catch(function (error) {
       console.log(error);
@@ -299,28 +311,69 @@ function editPassword() {
 function editAllUser() {
   router.push("/memberlist");
 }
-function editMRT() {
-  router.push("/");
+function editMRTLine() {
+  router.push("/linelist");
 }
-function Photopatch() {
-  //axios patch
-  if (imageFile.value) {
-    // 將圖像資料發送到後端
-    const formData = new FormData();
-    formData.append("image", imageFile.value);
-    console.log(formData.values);
-    //axios patch
-    axios
-      .patch("http://localhost:3000/update", {
-        picture: formData.values,
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    //axios
-  }
+function editMRTStation() {
+  router.push("/stationlist");
+}
+// function Photopatch() {
+//   //axios patch
+//   if (imageFile.value) {
+//     // 將圖像資料發送到後端
+//     const formData = new FormData();
+//     formData.append("image", imageFile.value);
+//     console.log(formData.values);
+//     //axios patch
+//     axios
+//       .patch("http://localhost:3000/update", {
+//         picture: formData.values,
+//       })
+//       .then(function (response) {
+//         console.log(response);
+//       })
+//       .catch(function (error) {
+//         console.log(error);
+//       });
+//     //axios
+//   }
+// }
+
+function handleImgBefore(event: any) {
+  const file = event.file;
+  const isImage = file.type.includes("image");
+  const fileSize = file.file.size / 1024 / 1024;
+  // TODO: 顯示錯誤訊息
+  if (!isImage) console.error("上傳內容必須為圖片格式!");
+  if (fileSize > 2) console.error("上傳圖片大小不能超過2MB!");
+  return isImage && fileSize < 2;
+}
+
+function handleImgChange(event: any) {
+  formData.append("picture", event[0].file, event[0].file.name);
+}
+
+function handleImgRemove() {
+  formData.delete("picture");
+}
+
+function cancelChange() {
+  formData.delete("picture");
+}
+
+function saveChange() {
+  axios
+    .patch("http://localhost:3000/update", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(function (response) {
+      store.dispatch("userinfo", response.data);
+      editPhotomodal.value = false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 </script>

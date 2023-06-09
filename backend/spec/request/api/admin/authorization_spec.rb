@@ -181,7 +181,7 @@ RSpec.describe "Api::Admin::Authorization", type: :request do
     describe "DELETE /api/admin/authorization/:id" do
         example "succeed to delete member" do
             post "/sign_in",params:{account:"admin",password:"123456"}
-            delete "/api/admin/authorization/2"
+            delete "/api/admin/authorization/5"
             expect(response).to have_http_status(200)
             expect(JSON.parse(response.body)).to eq(
                 JSON.parse( 
@@ -193,6 +193,7 @@ RSpec.describe "Api::Admin::Authorization", type: :request do
                 }.to_json
                 )
             )
+            expect(Member.last).to eq(Member.find(4))
         end
 
         example "failed to delete member" do

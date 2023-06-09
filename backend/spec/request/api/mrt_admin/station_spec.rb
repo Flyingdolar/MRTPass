@@ -22,12 +22,39 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
         StationNo.create(linecolor:"G",number:11,station_id:3)
         StationNo.create(linecolor:"R",number:8 ,station_id:3)
         StationNo.create(linecolor:"G",number:10,station_id:4)
+        Line.create(linecolor:"BR",name:"文湖線",colorcode:"#c48c31")
+        Line.create(linecolor: "R",name:"淡水信義線",colorcode:"#e3002c")
+        Line.create(linecolor: "G",name:"松山新店線",colorcode:"#008659")
+        Line.create(linecolor: "O",name:"中和新蘆線",colorcode:"#f8b61c")
+        Line.create(linecolor:"BL",name:"板南線",colorcode:"#0070bd")
     end
 
     describe "POST /api/mrt_admin/station" do
         example "succeed to create station on 1 line(input 2 No. but the 2nd is duplication)" do
             post "/sign_in",params:{account:"mrt_admin",password:"123456"}
-            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"O",number_1:2}
+            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"O",number_1:2,linecolor_2:"G",number_2:11}
+            expect(response).to have_http_status(200)
+            expect(JSON.parse(response.body)).to eq(
+                JSON.parse( 
+                {
+                    "status": "success",
+                    "error": false,
+                    "message": "succeed to create station on 1 line",
+                    "data": {
+                        station:Station.last,
+                        linecolor_1:"O",
+                        number_1:2
+                    }
+                }.to_json
+                )
+            )
+            expect(StationNo.find(7).linecolor).to eq("O")
+            expect(StationNo.find(7).number).to eq(2)
+        end
+
+        example "succeed to create station on 1 line(input 2 No. but the 2nd line not exist)" do
+            post "/sign_in",params:{account:"mrt_admin",password:"123456"}
+            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"O",number_1:2,linecolor_2:"QQQQ",number_2:5}
             expect(response).to have_http_status(200)
             expect(JSON.parse(response.body)).to eq(
                 JSON.parse( 
@@ -49,7 +76,7 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
 
         example "succeed to create station on 1 line(only input 1 No.)" do
             post "/sign_in",params:{account:"mrt_admin",password:"123456"}
-            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"O",number_1:2,linecolor_2:"G",number_2:11}
+            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"O",number_1:2}
             expect(response).to have_http_status(200)
             expect(JSON.parse(response.body)).to eq(
                 JSON.parse( 
@@ -106,6 +133,23 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
                     "error": true,
                     "message": "failed to create station",
                     "data": "Station No. has been taken or blank."
+                }.to_json
+                )
+            )
+            expect(Station.last).to eq(Station.find(4))
+        end
+
+        example "failed to create station(input 2 No. but the 1st line not exist)" do
+            post "/sign_in",params:{account:"mrt_admin",password:"123456"}
+            post "/api/mrt_admin/station",params:{name:"我家",x_Pos:23.1,y_Pos:120.1,exit_Num:2,linecolor_1:"GGGGG",number_1:11,linecolor_2:"BL",number_2:1}
+            expect(response).to have_http_status(400)
+            expect(JSON.parse(response.body)).to eq(
+                JSON.parse( 
+                {
+                    "status": "error",
+                    "error": true,
+                    "message": "failed to create station",
+                    "data": "Line GGGGG isn't exist."
                 }.to_json
                 )
             )
@@ -206,7 +250,8 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
                     "message": "succeed to get station",
                     "data": {
                         station:Station.find(2),
-                        stationno:[StationNo.find(2),StationNo.find(3)]
+                        stationno:[{stationno:StationNo.find(2),linename:"松山新店線"},
+                            {stationno:StationNo.find(3),linename:"中和新蘆線"}]
                     }
                 }.to_json
                 )
@@ -408,6 +453,7 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
                 )
             )
             expect(StationNo.where(station_id:2)).to eq([])
+            expect(StationInfo.where(station_id:2)).to eq([])
         end
 
         example "failed to delete station(not login)" do
