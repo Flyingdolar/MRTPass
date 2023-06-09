@@ -84,6 +84,7 @@ import { Station, Role, Line } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import { useRoute } from "vue-router";
+const message = useMessage();
 const route = useRoute();
 const model = reactive({
   exit_Num: 0,
@@ -104,7 +105,8 @@ onMounted(() => {
   axios
     .get("http://localhost:3000/api/mrt_admin/station/" + route.params.id)
     .then(function (response) {
-      //console.log(response.data.data.station);
+      //message.info(response.data.message);
+      //console.log(response.data.data);
       //console.log(response.data.data.stationno);
       model.exit_Num = response.data.data.station.exit_Num;
       model.id = response.data.data.station.id;
@@ -161,7 +163,7 @@ function SaveEdit() {
       exit_Num: model.exit_Num,
     })
     .then(function (response) {
-      console.log(response);
+      message.info(response.data.message);
       router.push("/stationlist");
     })
     .catch(function (error) {

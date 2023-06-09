@@ -50,6 +50,7 @@ import axios from "axios";
 import router from "@/router";
 import store from "@/scripts/vuex";
 import { useRoute } from "vue-router";
+const message = useMessage();
 const route = useRoute();
 const model = reactive({
   id: 0,
@@ -86,7 +87,7 @@ function SaveEdit() {
       id: model.id,
     })
     .then(function (response) {
-      console.log(response);
+      message.info(response.data.message);
       router.push("/linelist");
     })
     .catch(function (error) {

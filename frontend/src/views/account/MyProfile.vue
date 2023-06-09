@@ -147,6 +147,7 @@ import {
 import { ref, reactive, computed, onMounted, onBeforeMount } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
+import { useMessage } from "naive-ui";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
@@ -170,6 +171,7 @@ const roleisAdmin = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
+const message = useMessage();
 const Username = computed(() => {
   return store.state?.userinfo?.nickname;
 });
@@ -234,7 +236,7 @@ onBeforeMount(() => {
   if ((store.state.userinfo.role as string) == "admin") {
     roleisAdmin.value = true;
   }
-  //console.log(store.state.userinfo);
+  message.info(store.state.userinfo.nickname);
 });
 const model = reactive({
   newName: "",
@@ -254,7 +256,7 @@ function logout() {
     })
     .catch(function (error) {
       store.dispatch("userinfo", undefined);
-      console.log(error);
+      message.error(error);
       router.push("/account");
     });
   //axios
