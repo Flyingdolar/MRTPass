@@ -189,7 +189,7 @@ const rules: FormRules = {
       validator(rule: FormItemRule, value: string) {
         if (!value) {
           return new Error("Old password is required");
-        } else if (value != store.state.userinfo.data.password) {
+        } else if (value != store.state.userinfo.password) {
           return new Error("Worng old password");
         }
         return true;
@@ -268,7 +268,7 @@ function editUserName() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
+      store.dispatch("userinfo", response.data.data);
       editUserNamemodal.value = false;
     })
     .catch(function (error) {
@@ -289,8 +289,8 @@ function editPassword() {
     })
     .then(function (response) {
       console.log(response);
-      store.dispatch("userinfo", response.data);
-      editUserNamemodal.value = false;
+      store.dispatch("userinfo", response.data.data);
+      editPasswordmodal.value = false;
     })
     .catch(function (error) {
       console.log(error);
