@@ -45,11 +45,16 @@
               role="dialog"
               aria-modal="true"
             >
-              <img :src="previewImage" v-if="previewImage" alt="Preview" />
-              <input type="file" accept="image/jpeg" @change="uploadImage" />
+              <n-upload
+                :on-before-upload="handleImgBefore"
+                :on-update-file-list="handleImgChange"
+                :on-remove="handleImgRemove"
+              >
+                <n-button>上傳照片</n-button>
+              </n-upload>
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="Photopatch">儲存</n-button>
+                  <n-button @click="saveChange">儲存</n-button>
                   <n-button @click="editPhotomodal = false">取消</n-button>
                 </n-space>
               </template>
@@ -151,6 +156,8 @@ import { useMessage } from "naive-ui";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
+const formData = new FormData();
+let file: File | null = null;
 
 const uploadImage = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -176,9 +183,11 @@ const Username = computed(() => {
   return store.state?.userinfo?.nickname;
 });
 const Userrole = computed(() => {
-  if ((store.state?.userinfo?.role as string) == "admin") {
+  if ((store.state?.userinfo?.role as unknown as string) == "admin") {
     return "系統管理員";
-  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
+  } else if (
+    (store.state?.userinfo?.role as unknown as string) == "mrt_admin"
+  ) {
     return "捷運管理員";
   } else {
     return "一般會員";
@@ -233,7 +242,7 @@ const rules: FormRules = {
   ],
 };
 onBeforeMount(() => {
-  if ((store.state.userinfo.role as string) == "admin") {
+  if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
   }
   message.info(store.state.userinfo.nickname);
@@ -308,25 +317,63 @@ function editMRTLine() {
 function editMRTStation() {
   router.push("/stationlist");
 }
-function Photopatch() {
-  //axios patch
-  if (imageFile.value) {
-    // 將圖像資料發送到後端
-    const formData = new FormData();
-    formData.append("image", imageFile.value);
-    console.log(formData.values);
-    //axios patch
-    axios
-      .patch("http://localhost:3000/update", {
-        picture: formData.values,
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    //axios
-  }
+// function Photopatch() {
+//   //axios patch
+//   if (imageFile.value) {
+//     // 將圖像資料發送到後端
+//     const formData = new FormData();
+//     formData.append("image", imageFile.value);
+//     console.log(formData.values);
+//     //axios patch
+//     axios
+//       .patch("http://localhost:3000/update", {
+//         picture: formData.values,
+//       })
+//       .then(function (response) {
+//         console.log(response);
+//       })
+//       .catch(function (error) {
+//         console.log(error);
+//       });
+//     //axios
+//   }
+// }
+
+function handleImgBefore(event: any) {
+  const file = event.file;
+  const isImage = file.type.includes("image");
+  const fileSize = file.file.size / 1024 / 1024;
+  // TODO: 顯示錯誤訊息
+  if (!isImage) console.error("上傳內容必須為圖片格式!");
+  if (fileSize > 2) console.error("上傳圖片大小不能超過2MB!");
+  return isImage && fileSize < 2;
+}
+
+function handleImgChange(event: any) {
+  formData.append("picture", event[0].file, event[0].file.name);
+}
+
+function handleImgRemove() {
+  formData.delete("picture");
+}
+
+function cancelChange() {
+  formData.delete("picture");
+}
+
+function saveChange() {
+  axios
+    .patch("http://localhost:3000/update", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(function (response) {
+      store.dispatch("userinfo", response.data);
+      editPhotomodal.value = false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 </script>
