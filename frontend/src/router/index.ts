@@ -10,6 +10,7 @@ import axios from "axios";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
+    redirect: "/MRTInfo",
     name: "home",
     component: HomeView,
     children: [
