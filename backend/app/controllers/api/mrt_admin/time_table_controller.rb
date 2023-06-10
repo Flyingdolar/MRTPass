@@ -3,19 +3,38 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
         check,@member=check_mrt_admin
         if check
             @timetable = TimeTable.new(timetable_params)
-            if @timetable.save
-                render :json => {
-                    status: "success",
-                    error: false,
-                    message: "succeed to create timetable",
-                    data: @timetable
-                }.to_json, :status => 200
+            @timetable.station_id=params[:station_id]
+            if StationNo.find_by(linecolor:@timetable.line,number:@timetable.end) 
+                if StationNo.find_by(station_id:@timetable.station_id,linecolor:@timetable.line)
+                    if @timetable.save
+                        render :json => {
+                            status: "success",
+                            error: false,
+                            message: "succeed to create timetable",
+                            data: @timetable
+                        }.to_json, :status => 200
+                    else
+                        render json: {
+                            status: "error",
+                            error: true,
+                            message: "failed to create timetable",
+                            data: @timetable.errors
+                        }.to_json, status: 400
+                    end
+                else
+                    render json: {
+                        status: "error",
+                        error: true,
+                        message: "failed to create timetable",
+                        data: "This station and terminal station not at same line."
+                    }.to_json, status: 400
+                end
             else
                 render json: {
                     status: "error",
                     error: true,
                     message: "failed to create timetable",
-                    data: @timetable.errors
+                    data: "Terminal station doesn't exist."
                 }.to_json, status: 400
             end
         end
@@ -23,12 +42,12 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
     
 
     def index
-        @timetable = TimeTable.all
+        @timetables = TimeTable.where(station_id:params[:station_id])
         render :json => {
                 status: "success",
                 error: false,
                 message: "succeed to get timetable list",
-                data: @timetable
+                data: @timetables
             }.to_json, :status => 200
     end
 
@@ -45,20 +64,40 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
     def update
         check,@member=check_mrt_admin
         if check
-            @timetable = TimeTable.find(params[:id])
-            if @timetable.update(timetable_params)
-                render json: {
-                    status: "success",
-                    error: false,
-                    message: "succeed to update timetable",
-                    data: @timetable
-                }.to_json, status: 200
+            @timetable = TimeTable.new(timetable_params)
+            @timetable.station_id=params[:station_id]
+            if StationNo.find_by(linecolor:@timetable.line,number:@timetable.end) 
+                if StationNo.find_by(station_id:@timetable.station_id,linecolor:@timetable.line)
+                    @timetable = TimeTable.find(params[:id])
+                    if @timetable.update(timetable_params)
+                        render json: {
+                            status: "success",
+                            error: false,
+                            message: "succeed to update timetable",
+                            data: @timetable
+                        }.to_json, status: 200
+                    else
+                        render json: {
+                            status: "error",
+                            error: true,
+                            message: "failed to update timetable",
+                            data: @timetable.errors
+                        }.to_json, status: 400
+                    end
+                else
+                    render json: {
+                        status: "error",
+                        error: true,
+                        message: "failed to update timetable",
+                        data: "This station and terminal station not at same line."
+                    }.to_json, status: 400
+                end
             else
                 render json: {
                     status: "error",
                     error: true,
                     message: "failed to update timetable",
-                    data: @timetable.errors
+                    data: "Terminal station doesn't exist."
                 }.to_json, status: 400
             end
         end
@@ -81,43 +120,41 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
     def time_table_search
         current_time = Time.now 
         start_time = current_time 
-        end_time = current_time + 30.minutes
+        end_time = current_time + 20.minutes
         a = TimeTable.where(station_id: params[:station_id]).where("time >= ? AND time <= ?", start_time.strftime("%H:%M:%S"), end_time.strftime("%H:%M:%S"))
         @temp = []
         a.each do |c|
-          if @temp.blank?
-            @temp << { line: c.line, end: c.end, name: nil, time: c.time, spend_time: nil, No: c.No }
-          else
-            check = true
-            @temp.each do |d|
-              if c.line == d[:line] && c.end == d[:end]
-                check = false
-                break
-              end
+            if @temp.blank?
+                @temp << { line: c.line, end: c.end, name: nil, time: c.time, spend_time: nil, No: c.No }
+            else
+                check = true
+                @temp.each do |d|
+                    if c.line == d[:line] && c.end == d[:end]
+                        check = false
+                        break
+                    end
+                end
+                if check
+                    @temp << { line: c.line, end: c.end, name: nil, time: c.time, spend_time: nil, No: c.No }
+                end
             end
-            if check
-              @temp << { line: c.line, end: c.end, name: nil, time: c.time, spend_time: nil, No: c.No }
-            end
-          end
         end
         terminal = nil
         @temp.each do |item|
-          station_no = StationNo.find_by(linecolor: item[:line], number: item[:end])
-          station_id = station_no&.station_id
-          station = Station.find_by(id: station_id)
-          name = station&.name
-          item[:name] = "往" + name if name
-          item[:spend_time] = calculate_spend_time(item[:time], current_time)
+            station_no = StationNo.find_by(linecolor: item[:line], number: item[:end])
+            name = Station.find(station_no.station_id).name
+            item[:name] = "往" + name if name
+            item[:spend_time] = calculate_spend_time(item[:time], current_time)
         end
         render json: {
-          status: "success",
-          error: false,
-          message: "succeed to show timetable_search_result",
-          data: @temp
+            status: "success",
+            error: false,
+            message: "succeed to get timetable_search_result",
+            data: @temp
         }.to_json, status: 200 
-      end
-      
-      def calculate_spend_time(time, current_time)
+    end
+
+    def calculate_spend_time(time, current_time)
         parts = time.split(':').map(&:to_i)
         s_time = parts[0] * 3600 + parts[1]*60
         current_time = current_time.strftime("%H:%M:%S")
@@ -133,12 +170,13 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
             minutes += 1
         end
         "#{minutes}分#{seconds}秒"
-      end
-      
-      
+    end
+
+
+
     private 
 
     def timetable_params
-        params.permit(:time, :line, :end, :station_id)
+        params.permit(:time, :line, :end, :No)
     end
 end
