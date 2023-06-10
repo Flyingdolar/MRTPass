@@ -123,7 +123,6 @@ const userColor = computed(() => {
 });
 const userRole = computed(() => {
   const role = store.state?.userinfo?.role as unknown as string;
-  console.log(role);
   if (role == "admin") {
     return "系統管理員";
   } else if (role == "mrt_admin") {
