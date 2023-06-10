@@ -111,6 +111,28 @@ RSpec.describe "Api::MrtAdmin::Info", type: :request do
         ) 
     end
 
+    example "failed to create common_info(photo format error)" do
+      post "/sign_in",params:{account:"user1",password:"123456"}
+      post "/api/mrt_admin/common", params: {
+        name: "白帝城",
+        photo: invalid_filepath,
+        address: "gongguang",
+        station_id_1:1,
+        station_id_2:""
+      }
+      expect(response).to have_http_status(400)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to create common_info",
+              "data": "Field not completely filled."
+            }.to_json
+          )
+        ) 
+    end
+
     example "failed to create common_info(not complete filled)" do
       post "/sign_in",params:{account:"user1",password:"123456"}
       post "/api/mrt_admin/common", params: {
@@ -492,6 +514,28 @@ RSpec.describe "Api::MrtAdmin::Info", type: :request do
               "error": false,
               "message": "succeed to update common_info",
               "data": Info.find(1)
+            }.to_json
+          )
+        ) 
+    end
+
+    example "failed to update common_info(photo format error)" do
+      post "/sign_in",params:{account:"user1",password:"123456"}
+      patch "/api/mrt_admin/common/1", params: {
+        name: "白帝城",
+        photo: invalid_filepath,
+        address: "gongguang",
+        station_id_1:1,
+        station_id_2:""
+      }
+      expect(response).to have_http_status(400)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update common_info",
+              "data": "Field not completely filled."
             }.to_json
           )
         ) 

@@ -37,6 +37,24 @@ RSpec.describe "Api::MrtAdmin::Comments", type: :request do
         ) 
     end
 
+    example "failed to create comment(photo format error)" do
+      post "/sign_in",params:{account:"user1",password:"123456"}
+      post "/api/member/info/2/comment",params:{comment:"nice",score:5,photo:invalid_filepath}
+      expect(response).to have_http_status(400)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to create comment",
+              "data": {
+                photo:["You are not allowed to upload \"txt\" files, allowed types: jpg, jpeg, png"]
+              }
+            }.to_json
+          )
+        ) 
+    end
+
     example "failed to create comment(not complete filled)" do
       post "/sign_in",params:{account:"user1",password:"123456"}
       post "/api/member/info/2/comment",params:{comment:"nice"}
@@ -158,6 +176,24 @@ RSpec.describe "Api::MrtAdmin::Comments", type: :request do
               "message": "failed to update comment",
               "data": {
                 score:["can't be blank"]
+              }
+            }.to_json
+          )
+        ) 
+    end
+
+    example "failed to update comment(photo format error)" do
+      post "/sign_in",params:{account:"user1",password:"123456"}
+      patch "/api/member/info/1/comment/2",params:{comment:"nice",score:5,photo:invalid_filepath}
+      expect(response).to have_http_status(400)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+            {
+              "status": "error",
+              "error": true,
+              "message": "failed to update comment",
+              "data": {
+                photo:["You are not allowed to upload \"txt\" files, allowed types: jpg, jpeg, png"]
               }
             }.to_json
           )
