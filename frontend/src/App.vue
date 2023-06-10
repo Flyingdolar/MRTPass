@@ -4,8 +4,8 @@
     <n-layout-header p="4" bg="white" pos="relative">
       <n-space justify="space-between" :wrap="false">
         <Title />
-        <div p="x-2 y-1" border="1 rounded-lg">
-          <div text="sm secondary">{{ Userrole }}</div>
+        <div p="x-2 y-1" border="1 rounded-lg opacity-30" :class="userColor">
+          <div text="sm">{{ userRole }}</div>
         </div>
       </n-space>
     </n-layout-header>
@@ -111,17 +111,27 @@ import { ref, reactive, computed, onBeforeMount, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import store from "./scripts/vuex";
 
-const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 const activeBtn = ref(1);
-const Userrole = computed(() => {
-  if ((store.state?.userinfo?.role as string) == "admin") {
-    return "系統管理員";
-  } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
-    return "捷運管理員";
-  } else {
-    return "一般會員";
-  }
+const userColor = computed(() => {
+  const role = store.state?.userinfo?.role as unknown as string;
+  if (role == "admin") {
+    return "text-red border-red";
+  } else if (role == "mrt_admin") {
+    return "text-orange border-orange";
+  } else if (role == "user") return "text-blue border-blue";
+  else return "text-secondary border-gray-600";
 });
+const userRole = computed(() => {
+  const role = store.state?.userinfo?.role as unknown as string;
+  console.log(role);
+  if (role == "admin") {
+    return "系統管理員";
+  } else if (role == "mrt_admin") {
+    return "捷運管理員";
+  } else if (role == "user") return "一般使用者";
+  else return "未登入訪客";
+});
+
 function setBtn(num: number) {
   activeBtn.value = num;
 }
