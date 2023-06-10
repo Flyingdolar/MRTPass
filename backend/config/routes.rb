@@ -16,13 +16,14 @@ Rails.application.routes.draw do
     end
     namespace :mrt_admin do
       resources :announcement
-      resources :station
+      resources :station do
+        resources :time_table
+        get 'time_table_search' => 'time_table#time_table_search'
+      end
       resources :line
       resources :ticket
       resources :lost
-      resources :time_table
       get 'price_search' => 'ticket#price_search'
-      get 'time_table_search' => 'time_table#time_table_search'
       get 'line_station' => 'station#show_by_line'
       post 'common' => 'info#create_common'
       get 'common' => 'info#index_common'
