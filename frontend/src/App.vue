@@ -35,7 +35,7 @@
         </n-space>
       </router-link>
       <!-- Sec02: 捷運周邊 -->
-      <router-link to="/post" @click="setBtn(2)" flex="grow">
+      <router-link to="/post/MRTtrans" @click="setBtn(2)" flex="grow">
         <n-space
           :vertical="true"
           align="center"

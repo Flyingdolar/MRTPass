@@ -46,3 +46,8 @@ export interface Line {
   name: string;
   updated_at: string;
 }
+export interface LineStation {
+  linecolor: string;
+  number: number;
+  station: Station;
+}

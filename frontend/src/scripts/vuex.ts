@@ -1,15 +1,17 @@
 import { createStore } from "vuex";
-import type { LoginInfo, User } from "./types";
+import type { LineStation, LoginInfo, User } from "./types";
 
 export interface State {
   userinfo: LoginInfo | undefined;
   editinfo: User | undefined;
+  currentlinestation: LineStation | undefined;
 }
 
 const store = createStore<State>({
   state: {
     userinfo: undefined,
     editinfo: undefined,
+    currentlinestation: undefined,
   },
   getters: {
     userinfo: (state) => {
@@ -17,6 +19,9 @@ const store = createStore<State>({
     },
     editinfo: (state) => {
       return state.editinfo;
+    },
+    currentline: (state) => {
+      return state.currentlinestation;
     },
   },
   actions: {
@@ -26,6 +31,9 @@ const store = createStore<State>({
     editinfo(ctx, editinfo) {
       ctx.commit("editinfo", editinfo);
     },
+    currentlinestation(ctx, currentlinestation) {
+      ctx.commit("currentlinestation", currentlinestation);
+    },
   },
   mutations: {
     async userinfo(state, userinfo) {
@@ -33,6 +41,9 @@ const store = createStore<State>({
     },
     async editinfo(state, editinfo) {
       state.editinfo = editinfo;
+    },
+    async currentlinestation(state, currentlinestation) {
+      state.currentlinestation = currentlinestation;
     },
   },
 });

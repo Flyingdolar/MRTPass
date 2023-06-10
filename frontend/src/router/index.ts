@@ -34,6 +34,18 @@ const routes: Array<RouteRecordRaw> = [
     path: "/post",
     name: "viewpost",
     component: () => import("../views/submitPost.vue"),
+    children: [
+      {
+        path: "MRTtrans",
+        name: "MRTtrans",
+        component: () => import("../views/MRTtrans.vue"),
+      },
+      {
+        path: "MRTcommon",
+        name: "MRTcommon",
+        component: () => import("../views/MRTcommon.vue"),
+      },
+    ],
   },
   {
     path: "/account",
@@ -89,6 +101,8 @@ const commonRoute = [
   "viewpost",
   "home",
   "profile",
+  "MRTtrans",
+  "MRTcommon",
 ];
 const userRoute = ["profile"];
 const mrt_adminRoute = [
@@ -114,6 +128,8 @@ const notLoginRoute = [
   "home",
   "MRTInfo",
   "MRTAnnounce",
+  "MRTtrans",
+  "MRTcommon",
 ];
 function fetchsession() {
   //axios get
@@ -160,7 +176,7 @@ router.beforeEach(async (to) => {
     return true;
   } else {
     if (!to.name || !notLoginRoute.includes(to.name as string)) {
-      return { name: "Login" };
+      return { name: "home" };
     }
     return true;
   }

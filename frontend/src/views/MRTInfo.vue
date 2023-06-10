@@ -10,7 +10,7 @@
       />
       <n-select
         v-model:value="depStation.value"
-        :options="stationOpt"
+        :options="depStationOpt"
         placeholder="請選擇站點"
       />
     </div>
@@ -30,7 +30,7 @@
             />
             <n-select
               v-model:value="arrStation.value"
-              :options="stationOpt"
+              :options="arrStationOpt"
               placeholder="請選擇站點"
             />
           </div>
@@ -57,34 +57,79 @@ import {
   NCard,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed } from "vue";
-
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { Station, Line, LineStation } from "../scripts/types";
+const AllLine = ref<Line[]>();
+const CurrentdepLineStation = ref<LineStation[]>();
+const CurrentarrLineStation = ref<LineStation[]>();
 let depRoute = reactive({
   label: "",
-  value: null,
+  value: "",
 });
 let depStation = reactive({
   label: "",
-  value: null,
+  value: "",
 });
 let arrRoute = reactive({
   label: "",
-  value: null,
+  value: "",
 });
 let arrStation = reactive({
   label: "",
-  value: null,
+  value: "",
 });
-let routeOpt = reactive([
-  // FIXME: 路線資料應該改為後端抓取
-  { label: "淡水信義線", value: "R" },
-  { label: "板南線", value: "BL" },
-  { label: "中和新蘆線", value: "O" },
-  { label: "文湖線", value: "BR" },
-  { label: "松山新店線", value: "G" },
-  { label: "小碧潭支線", value: "LG" },
-  { label: "環狀線", value: "Y" },
-]);
+let routeOpt = computed(() =>
+  AllLine.value?.map((v, index) => ({
+    label: v.name,
+    value: v.linecolor,
+  }))
+);
+let depStationOpt = computed(() =>
+  CurrentdepLineStation.value?.map((v, index) => ({
+    label: v.station.name,
+    value: v.station.id,
+  }))
+);
+let arrStationOpt = computed(() =>
+  CurrentarrLineStation.value?.map((v, index) => ({
+    label: v.station.name,
+    value: v.station.id,
+  }))
+);
+watch(depRoute, (depRoute) => {
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/line_station", {
+      params: {
+        linecolor: depRoute.value,
+      },
+    })
+    .then(function (response) {
+      //console.log(response);
+      CurrentdepLineStation.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+});
+watch(arrRoute, (arrRoute) => {
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/line_station", {
+      params: {
+        linecolor: arrRoute.value,
+      },
+    })
+    .then(function (response) {
+      //console.log(response);
+      CurrentarrLineStation.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+});
 let stationOpt = reactive([
   // FIXME: 站點資料應該改為後端抓取
   { label: "象山", value: "2" },
@@ -115,6 +160,18 @@ let stationOpt = reactive([
   { label: "紅樹林", value: "27" },
   { label: "淡水", value: "28" },
 ]);
-
+onMounted(() => {
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/line")
+    .then(function (response) {
+      //console.log(response.data.data);
+      AllLine.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+});
 // Get Route Optiona
 </script>
