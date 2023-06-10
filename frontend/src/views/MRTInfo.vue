@@ -66,11 +66,13 @@ let depRoute = reactive({
   label: "",
   value: "",
 });
-let depStation = reactive({
+
+let arrRoute = reactive({
   label: "",
   value: "",
 });
-let arrRoute = reactive({
+
+let depStation = reactive({
   label: "",
   value: "",
 });
@@ -97,6 +99,7 @@ let arrStationOpt = computed(() =>
   }))
 );
 watch(depRoute, (depRoute) => {
+  depStation.value = null;
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
@@ -114,6 +117,7 @@ watch(depRoute, (depRoute) => {
   //axios
 });
 watch(arrRoute, (arrRoute) => {
+  arrStation.value = null;
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
