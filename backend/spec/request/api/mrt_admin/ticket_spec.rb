@@ -14,6 +14,7 @@ RSpec.describe "Api::MrtAdmin::Tickets", type: :request do
     Ticket.create(upper_bound: 5.0,lower_bound: 0.0,price:20)
     Ticket.create(upper_bound: 8.0,lower_bound: 5.0,price:25)
     Ticket.create(upper_bound:11.0,lower_bound: 8.0,price:30)
+    Ticket.create(upper_bound:1000.0,lower_bound:11.0,price:35)
     Station.create(x_Pos:25.0599,y_Pos:121.6160,exit_Num:2,name:"南港軟體園區")
     Station.create(x_Pos:25.0553,y_Pos:121.6175,exit_Num:7,name:"南港展覽館")
     Station.create(x_Pos:24.9982,y_Pos:121.5793,exit_Num:2,name:"動物園")
@@ -166,5 +167,67 @@ RSpec.describe "Api::MrtAdmin::Tickets", type: :request do
     end
   end
 
+  describe "GET /api/mrt_admin/price_search" do
+    example "succeed to return ticket price" do
+      get "/api/mrt_admin/price_search" ,params:{station1:1,station2:2}
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+          {
+              "status": "success",
+              "error": false,
+              "message": "succeed to return ticket price",
+              "data": 20
+          }.to_json
+          )
+      )
+    end
+
+    example "succeed to return ticket price" do
+      get "/api/mrt_admin/price_search" ,params:{station1:1,station2:3}
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+          {
+              "status": "success",
+              "error": false,
+              "message": "succeed to return ticket price",
+              "data": 25
+          }.to_json
+          )
+      )
+    end
+
+    example "succeed to return ticket price" do
+      get "/api/mrt_admin/price_search" ,params:{station1:1,station2:4}
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+          {
+              "status": "success",
+              "error": false,
+              "message": "succeed to return ticket price",
+              "data": 35
+          }.to_json
+          )
+      )
+    end
+
+    example "succeed to return ticket price" do
+      get "/api/mrt_admin/price_search" ,params:{station1:4,station2:1}
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)).to eq(
+          JSON.parse( 
+          {
+              "status": "success",
+              "error": false,
+              "message": "succeed to return ticket price",
+              "data": 35
+          }.to_json
+          )
+      )
+    end
+
+  end
 
 end
