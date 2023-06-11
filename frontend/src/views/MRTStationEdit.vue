@@ -53,7 +53,60 @@
               </n-card>
             </n-space>
           </n-tab-pane>
-          <n-tab-pane name="班次列表" tab="班次列表"> 路線 is here </n-tab-pane>
+          <n-tab-pane name="班次列表" tab="班次列表">
+            <n-space>
+              <n-card
+                ><div v-for="(item, index) in AllTimeTable" :key="item.id">
+                  <n-card>
+                    <n-space align="start" size="large">
+                      <n-h3
+                        >路線{{ item.line }}/往{{ item.end }}
+                        {{ item.time }}</n-h3
+                      >
+                      <n-space align="end" size="large">
+                        <n-button @click="EditTimeTable(item.id)"
+                          >編輯</n-button
+                        >
+                        <n-modal v-model:show="editTimeTablemodal">
+                          <n-space justify="center" class="content2">
+                            <n-card
+                              :bordered="false"
+                              size="huge"
+                              role="dialog"
+                              aria-modal="true"
+                            >
+                              <n-form ref="formRef" :label-width="80">
+                                <n-form-item label="站點名稱"
+                                  ><n-input v-model:value="model.name"></n-input
+                                ></n-form-item>
+                                <n-form-item label="所屬路線"
+                                  ><n-select
+                                    v-model:value="model.linecolor"
+                                    :options="lineOptions"
+                                  ></n-select
+                                ></n-form-item>
+                              </n-form>
+                              <template #footer>
+                                <n-space vertical>
+                                  <n-button @click="SaveEdit">儲存</n-button>
+                                </n-space>
+                              </template>
+                            </n-card>
+                          </n-space>
+                        </n-modal>
+                        <n-popconfirm
+                          @positive-click="DeleteStation(item.id, index)"
+                          ><template #trigger
+                            ><n-button>刪除</n-button></template
+                          >確認刪除</n-popconfirm
+                        >
+                      </n-space>
+                    </n-space>
+                  </n-card>
+                </div></n-card
+              >
+            </n-space>
+          </n-tab-pane>
         </n-tabs>
       </n-space>
     </n-space>
@@ -80,11 +133,12 @@ import {
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch, reactive } from "vue";
 import { watchOnce } from "@vueuse/core";
-import { Station, Role, Line } from "../scripts/types";
+import { Station, Role, Line, TimeTable } from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import { useRoute } from "vue-router";
 const message = useMessage();
+const editTimeTablemodal = ref(false);
 const route = useRoute();
 const model = reactive({
   exit_Num: 0,
@@ -100,6 +154,7 @@ const model = reactive({
   linename2: "",
 });
 const AllLine = ref<Line[]>();
+const AllTimeTable = ref<TimeTable[]>();
 onMounted(() => {
   //axios get
   axios
@@ -139,6 +194,21 @@ onMounted(() => {
       console.log(error);
     });
   //axios
+  //axios get
+  axios
+    .get(
+      "http://localhost:3000/api/mrt_admin/station/" +
+        route.params.id +
+        "/time_table"
+    )
+    .then(function (response) {
+      //console.log(response.data.data);
+      AllTimeTable.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 });
 const lineOptions = computed(() =>
   AllLine.value?.map((v, index) => ({
@@ -170,5 +240,29 @@ function SaveEdit() {
       console.log(error);
     });
   //axios
+}
+function EditStation(id: number) {
+  console.log("wait");
+}
+function DeleteStation(id: number, index: number) {
+  //axios delete
+  axios
+    .delete(
+      "http://localhost:3000/api/mrt_admin/station/" +
+        route.params.id +
+        "/time_table/" +
+        (id as unknown as string)
+    )
+    .then(function (response) {
+      console.log(response);
+      AllTimeTable.value?.splice(index, 1);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
+function EditTimeTable() {
+  editTimeTablemodal.value = !editTimeTablemodal.value;
 }
 </script>
