@@ -21,8 +21,9 @@ Rails.application.routes.draw do
         get 'time_table_search' => 'time_table#time_table_search'
       end
       resources :line
-      resources :ticket
+      resources :ticket, except: [:update,:delete]
       resources :lost
+      delete 'ticket' => 'ticket#destroy'
       get 'price_search' => 'ticket#price_search'
       get 'line_station' => 'station#show_by_line'
       post 'common' => 'info#create_common'
