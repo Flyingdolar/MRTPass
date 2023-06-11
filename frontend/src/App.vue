@@ -1,5 +1,5 @@
 <template>
-  <n-layout flex="~ col" bg="white" h="full">
+  <n-layout flex="~ col" bg="white">
     <!-- Header -->
     <n-layout-header p="4" bg="white" pos="relative">
       <n-space justify="space-between" :wrap="false">
