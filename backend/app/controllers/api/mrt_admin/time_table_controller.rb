@@ -50,6 +50,7 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
             l=Line.find_by(linecolor:t.line)
             revalue<<{timetable:t,to:s.name,line:l.name}
         end
+        revalue =revalue.sort_by{ |q| [q[:timetable].time,q[:timetable].id] }
         render :json => {
                 status: "success",
                 error: false,
