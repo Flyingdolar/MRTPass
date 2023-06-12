@@ -187,6 +187,11 @@ class Api::MrtAdmin::StationController < ApplicationController
         check,@member=check_mrt_admin
         if check
             @station = Station.find(params[:id])
+            station_no=StationNo.where(station_id:@station.id)
+            station_no.each do |no|
+                time_table=TimeTable.where(line:no.linecolor,end:no.number)
+                time_table.destroy_all
+            end
             @station.destroy
             render json: {
                 status: "success",

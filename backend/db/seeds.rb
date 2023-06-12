@@ -375,83 +375,83 @@ p "LG line"
 StationNo.create(linecolor:"LG",number:1,station_id:53)
 StationNo.create(linecolor:"LG",number:2,station_id:118)
 
-# p "Set time table"
-# p "From BR01 To BR24"
-# set_time_table(1,24,"BR",1000)
-# p "From R02 To R28"
-# set_time_table(2,28,"R",3000)
-# p "From G01 To G19"
-# set_time_table(1,19,"G",5000)
-# p "From O01 To O21"
-# set_time_table(1,21,"O",7000)
-# p "From O01 To O54"
-# a=StationNo.where(linecolor:"O")
-# time_="06:02"
-# no=7002
-# while(time_<="23:02")
-#     i=1
-#     each_time_=time_
-#     a.each do |temp|
-#         each_time_=time_add(each_time_,3)
-#         if i>=54
-#             break
-#         elsif i>12&&i<50
-#         else
-#             TimeTable.create(time:each_time_,line:"O",end:54,station_id:temp.station_id,No:no)
-#             i=i+1
-#         end
-#     end
-#     time_=time_add(time_,5)
-#     no=no+7
-# end
+p "Set time table"
+p "From BR01 To BR24"
+set_time_table(1,24,"BR",1000)
+p "From R02 To R28"
+set_time_table(2,28,"R",3000)
+p "From G01 To G19"
+set_time_table(1,19,"G",5000)
+p "From O01 To O21"
+set_time_table(1,21,"O",7000)
+p "From O01 To O54"
+a=StationNo.where(linecolor:"O")
+time_="06:02"
+no=7002
+while(time_<="23:02")
+    i=1
+    each_time_=time_
+    a.each do |temp|
+        each_time_=time_add(each_time_,3)
+        if i>=54
+            break
+        elsif i>12&&i<50
+        else
+            TimeTable.create(time:each_time_,line:"O",end:54,station_id:temp.station_id,No:no)
+            i=i+1
+        end
+    end
+    time_=time_add(time_,5)
+    no=no+7
+end
 
-# p "From BL01 To BL23"
-# set_time_table(1,23,"BL",8500)
-# p "From Y07 To Y20"
-# set_time_table(7,20,"Y",8505)
-# p "From LG01 To LG02"
-# set_time_table(1,2,"LG",5005)
-# p "From LR01 To LR02"
-# set_time_table(1,2,"LR",3005)
+p "From BL01 To BL23"
+set_time_table(1,23,"BL",8500)
+p "From Y07 To Y20"
+set_time_table(7,20,"Y",8505)
+p "From LG01 To LG02"
+set_time_table(1,2,"LG",5005)
+p "From LR01 To LR02"
+set_time_table(1,2,"LR",3005)
 
-# p "Set time table"
-# p "From BR24 To BR01"
-# set_time_table_inverse(24,1,"BR",1001)
-# p "From R28 To R02"
-# set_time_table_inverse(28,2,"R",3001)
-# p "From G19 To G01"
-# set_time_table_inverse(19,1,"G",5001)
-# p "From O21 To O01"
-# set_time_table_inverse(21,1,"O",7001)
-# p "From O54 To O01"
-# a=StationNo.where(linecolor:"O").order(number: :desc)
-# time_="06:00"
-# no=7003
-# while(time_<="23:00")
-#     i=54
-#     each_time_=time_
-#     a.each do |temp|
-#         each_time_=time_add(each_time_,3)
-#         if i<=1
-#             break
-#         elsif i>12&&i<50
-#         else
-#             TimeTable.create(time:each_time_,line:"O",end:1,station_id:temp.station_id,No:no)
-#             i=i-1
-#         end
-#     end
-#     time_=time_add(time_,5)
-#     no=no+7
-# end
+p "Set time table"
+p "From BR24 To BR01"
+set_time_table_inverse(24,1,"BR",1001)
+p "From R28 To R02"
+set_time_table_inverse(28,2,"R",3001)
+p "From G19 To G01"
+set_time_table_inverse(19,1,"G",5001)
+p "From O21 To O01"
+set_time_table_inverse(21,1,"O",7001)
+p "From O54 To O01"
+a=StationNo.where(linecolor:"O").order(number: :desc)
+time_="06:00"
+no=7003
+while(time_<="23:00")
+    i=54
+    each_time_=time_
+    a.each do |temp|
+        each_time_=time_add(each_time_,3)
+        if i<=1
+            break
+        elsif i>12&&i<50
+        else
+            TimeTable.create(time:each_time_,line:"O",end:1,station_id:temp.station_id,No:no)
+            i=i-1
+        end
+    end
+    time_=time_add(time_,5)
+    no=no+7
+end
 
-# p "From BL23 To BL01"
-# set_time_table_inverse(23,01,"BL",8501)
-# p "From Y20 To Y07"
-# set_time_table_inverse(20,7,"Y",8506)
-# p "From LG02 To LG01"
-# set_time_table_inverse(2,1,"LG",5006)
-# p "From LR02 To LR01"
-# set_time_table_inverse(2,1,"LR",3006)
+p "From BL23 To BL01"
+set_time_table_inverse(23,01,"BL",8501)
+p "From Y20 To Y07"
+set_time_table_inverse(20,7,"Y",8506)
+p "From LG02 To LG01"
+set_time_table_inverse(2,1,"LG",5006)
+p "From LR02 To LR01"
+set_time_table_inverse(2,1,"LR",3006)
 
 
 p "Set ticket price"
