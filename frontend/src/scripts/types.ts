@@ -51,3 +51,16 @@ export interface LineStation {
   number: number;
   station: Station;
 }
+export interface AlotsLineStation {
+  item: LineStation[];
+}
+export interface TimeTable {
+  NO: number;
+  created_at: string;
+  end: number;
+  id: number;
+  line: string;
+  station_id: number;
+  time: string;
+  updated_at: string;
+}
