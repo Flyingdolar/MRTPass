@@ -79,6 +79,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/MRTStationEdit.vue"),
   },
   {
+    path: "/ticketprice",
+    name: "ticketprice",
+    component: () => import("../views/TicketPriceEdit.vue"),
+  },
+  {
     path: "/linelist",
     name: "linelist",
     component: () => import("../views/MRTLineList.vue"),
@@ -112,6 +117,7 @@ const mrt_adminRoute = [
   "linelist",
   "stationedit",
   "lineedit",
+  "ticketprice",
 ];
 const adminRoute = [
   "profile",
@@ -121,6 +127,7 @@ const adminRoute = [
   "linelist",
   "stationedit",
   "lineedit",
+  "ticketprice",
 ];
 const notLoginRoute = [
   "myaccount",

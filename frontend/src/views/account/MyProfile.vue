@@ -118,6 +118,7 @@
         <n-space vertical align="center">
           <n-button @click="editAllUser">使用者權限</n-button>
           <n-button @click="editMRTLine">捷運路線設定</n-button>
+          <n-button @click="editTicketPrice">票價距離設定</n-button>
           <n-button @click="editMRTStation">捷運站點設定</n-button>
         </n-space>
       </n-list-item>
@@ -316,6 +317,9 @@ function editMRTLine() {
 }
 function editMRTStation() {
   router.push("/stationlist");
+}
+function editTicketPrice() {
+  router.push("/ticketprice");
 }
 // function Photopatch() {
 //   //axios patch
