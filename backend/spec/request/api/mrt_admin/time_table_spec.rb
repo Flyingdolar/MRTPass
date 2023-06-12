@@ -40,6 +40,8 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
     TimeTable.create(time:"10:06",line:"G",end:19,station_id:3,No:10)
     TimeTable.create(time:"10:03",line:"G",end:1 ,station_id:2,No:11)
     TimeTable.create(time:"10:04",line:"G",end:19,station_id:2,No:12)
+    Line.create(linecolor: "G",name:"松山新店線",colorcode:"#008659")
+    Line.create(linecolor: "O",name:"中和新蘆線",colorcode:"#f8b61c")
   end
   describe "POST /api/mrt_admin/station/2/time_table" do
     example "succeed to create timetable" do
@@ -150,7 +152,16 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
               "status": "success",
               "error": false,
               "message": "succeed to get timetable list",
-              "data": TimeTable.where("id<=?",10)
+              "data": [{timetable:TimeTable.find(1),to:"南勢角",line:"中和新蘆線"},
+                {timetable:TimeTable.find(2),to:"南勢角",line:"中和新蘆線"},
+                {timetable:TimeTable.find(3),to:"迴龍",line:"中和新蘆線"},
+                {timetable:TimeTable.find(4),to:"迴龍",line:"中和新蘆線"},
+                {timetable:TimeTable.find(5),to:"蘆洲",line:"中和新蘆線"},
+                {timetable:TimeTable.find(6),to:"蘆洲",line:"中和新蘆線"},
+                {timetable:TimeTable.find(7),to:"新店",line:"松山新店線"},
+                {timetable:TimeTable.find(8),to:"新店",line:"松山新店線"},
+                {timetable:TimeTable.find(9),to:"台電大樓",line:"松山新店線"},
+                {timetable:TimeTable.find(10),to:"松山",line:"松山新店線"}]
           }.to_json
           )
       )
@@ -165,7 +176,8 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
               "status": "success",
               "error": false,
               "message": "succeed to get timetable list",
-              "data": TimeTable.where("id>?",10)
+              "data": [{timetable:TimeTable.find(11),to:"新店",line:"松山新店線"},
+                {timetable:TimeTable.find(12),to:"松山",line:"松山新店線"}]
           }.to_json
           )
       )

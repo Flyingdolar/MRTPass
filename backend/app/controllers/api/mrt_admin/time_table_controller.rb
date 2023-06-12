@@ -43,11 +43,18 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
 
     def index
         @timetables = TimeTable.where(station_id:params[:station_id])
+        revalue=[]
+        @timetables.each do |t|
+            s_no=StationNo.find_by(linecolor:t.line,number:t.end)
+            s=Station.find(s_no.station_id)
+            l=Line.find_by(linecolor:t.line)
+            revalue<<{timetable:t,to:s.name,line:l.name}
+        end
         render :json => {
                 status: "success",
                 error: false,
                 message: "succeed to get timetable list",
-                data: @timetables
+                data: revalue
             }.to_json, :status => 200
     end
 
