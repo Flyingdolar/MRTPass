@@ -56,15 +56,19 @@
           <n-tab-pane name="班次列表" tab="班次列表">
             <n-space>
               <n-card
-                ><div v-for="(item, index) in AllTimeTable" :key="item.id">
+                ><div
+                  v-for="(item, index) in filteredItems(currentindex)"
+                  :key="item.timetable.id"
+                >
                   <n-card>
-                    <n-space align="start" size="large">
+                    <n-space align="start" size="large" w="full">
                       <n-h3
-                        >路線{{ item.line }}/往{{ item.end }}
-                        {{ item.time }}</n-h3
+                        >{{ item.line }}/往{{ item.to }}
+                        {{ item.timetable.time }}
+                        {{ item.timetable.No.toString() }}</n-h3
                       >
                       <n-space align="end" size="large">
-                        <n-button @click="EditTimeTable(item.id)"
+                        <n-button @click="EditTimeTable(item.timetable)"
                           >編輯</n-button
                         >
                         <n-modal v-model:show="editTimeTablemodal">
@@ -76,26 +80,45 @@
                               aria-modal="true"
                             >
                               <n-form ref="formRef" :label-width="80">
-                                <n-form-item label="站點名稱"
-                                  ><n-input v-model:value="model.name"></n-input
-                                ></n-form-item>
                                 <n-form-item label="所屬路線"
                                   ><n-select
-                                    v-model:value="model.linecolor"
+                                    v-model:value="CurrentRoute"
                                     :options="lineOptions"
                                   ></n-select
                                 ></n-form-item>
+                                <n-form-item label="班次目的地"
+                                  ><n-select
+                                    v-model:value="CurrentStation"
+                                    :options="stationOpt"
+                                    placeholder="請選擇站點"
+                                /></n-form-item>
+                                <n-form-item label="車次"
+                                  ><n-input
+                                    v-model:value="model.Mrtno"
+                                  ></n-input
+                                ></n-form-item>
+                                <n-form-item label="到站時間">
+                                  <n-time-picker
+                                    v-model:formatted-value="model.deptime"
+                                    value-format="H~m~s"
+                                    :actions="['confirm']"
+                                  />
+                                </n-form-item>
                               </n-form>
                               <template #footer>
                                 <n-space vertical>
-                                  <n-button @click="SaveEdit">儲存</n-button>
+                                  <n-button @click="SaveTimeTableEdit"
+                                    >儲存</n-button
+                                  >
                                 </n-space>
                               </template>
                             </n-card>
                           </n-space>
                         </n-modal>
                         <n-popconfirm
-                          @positive-click="DeleteStation(item.id, index)"
+                          @positive-click="
+                            DeleteStation(item.timetable.id, index)
+                          "
                           ><template #trigger
                             ><n-button>刪除</n-button></template
                           >確認刪除</n-popconfirm
@@ -103,8 +126,18 @@
                       </n-space>
                     </n-space>
                   </n-card>
-                </div></n-card
-              >
+                </div>
+                <n-button
+                  @click="currentindex -= 20"
+                  :disabled="checkminvalue()"
+                  >上20筆資料</n-button
+                >
+                <n-button
+                  @click="currentindex += 20"
+                  :disabled="checkmaxvalue()"
+                  >下20筆資料</n-button
+                >
+              </n-card>
             </n-space>
           </n-tab-pane>
         </n-tabs>
@@ -129,11 +162,27 @@ import {
   NPopconfirm,
   NTabs,
   NTabPane,
+  NTimePicker,
 } from "naive-ui";
 import type { DataTableColumns } from "naive-ui";
-import { computed, h, onMounted, ref, watch, reactive } from "vue";
+import {
+  computed,
+  h,
+  onMounted,
+  ref,
+  watch,
+  reactive,
+  onBeforeMount,
+} from "vue";
 import { watchOnce } from "@vueuse/core";
-import { Station, Role, Line, TimeTable } from "../scripts/types";
+import {
+  Station,
+  Role,
+  Line,
+  TimeTable,
+  AlotsTimeTable,
+  LineStation,
+} from "../scripts/types";
 import axios from "axios";
 import router from "@/router";
 import { useRoute } from "vue-router";
@@ -152,10 +201,13 @@ const model = reactive({
   number2: "",
   linecolor2: "",
   linename2: "",
+  deptime: ref("0~0~0"),
+  Mrtno: "",
 });
 const AllLine = ref<Line[]>();
-const AllTimeTable = ref<TimeTable[]>();
-onMounted(() => {
+const AllTimeTable = ref<AlotsTimeTable[]>();
+const currentindex = ref(0);
+onBeforeMount(() => {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/station/" + route.params.id)
@@ -202,8 +254,9 @@ onMounted(() => {
         "/time_table"
     )
     .then(function (response) {
-      //console.log(response.data.data);
+      console.log(response.data.data);
       AllTimeTable.value = response.data.data;
+      //console.log("done");
     })
     .catch(function (error) {
       console.log(error);
@@ -262,7 +315,96 @@ function DeleteStation(id: number, index: number) {
     });
   //axios
 }
-function EditTimeTable() {
+const editing = ref(0);
+function EditTimeTable(item: TimeTable) {
   editTimeTablemodal.value = !editTimeTablemodal.value;
+  model.Mrtno = item.No.toString();
+  CurrentRoute.value = item.line;
+  editing.value = item.id;
+}
+function filteredItems(index: number) {
+  const retItems = AllTimeTable.value?.slice(index, index + 20);
+  return retItems;
+}
+function checkmaxvalue() {
+  if (currentindex.value + 20 < AllTimeTable.value?.length) {
+    return false;
+  } else {
+    return true;
+  }
+}
+function checkminvalue() {
+  if (currentindex.value == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function formatNumber(number: number) {
+  return number < 10 ? "0" + number : number.toString();
+}
+function SaveTimeTableEdit() {
+  //console.log(model.deptime.split("~")[0] + ":" + model.deptime.split("~")[1]);
+  const depH = computed(() => {
+    const number = parseInt(model.deptime.split("~")[0]);
+    return formatNumber(number);
+  });
+  const depM = computed(() => {
+    const number = parseInt(model.deptime.split("~")[1]);
+    return formatNumber(number);
+  });
+  console.log(depH.value + ":" + depM.value);
+  //axios patch
+  axios
+    .patch(
+      "http://localhost:3000/api/mrt_admin/station/" +
+        route.params.id +
+        "/time_table/" +
+        editing.value.toString,
+      {
+        time: depH.value + ":" + depM.value,
+        No: model.Mrtno,
+        line: CurrentRoute,
+        end: CurrentStation,
+      }
+    )
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
+const CurrentLineStation = ref<LineStation[]>();
+const CurrentRoute = ref<string>();
+const CurrentStation = ref<number | null>();
+const stationOpt = computed(() =>
+  CurrentLineStation.value?.map((v, index) => ({
+    label: v.station.name,
+    value: v.station.id,
+  }))
+);
+watch(CurrentRoute, (CurrentRoute) => {
+  CurrentStation.value = null;
+  //console.log(CurrentRoute);
+  updateStationOpt();
+});
+function updateStationOpt() {
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/line_station", {
+      params: {
+        linecolor: CurrentRoute.value,
+      },
+    })
+    .then(function (response) {
+      //console.log(response);
+      CurrentLineStation.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 </script>

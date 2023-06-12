@@ -55,12 +55,27 @@ export interface AlotsLineStation {
   item: LineStation[];
 }
 export interface TimeTable {
-  NO: number;
+  No: number;
   created_at: string;
   end: number;
   id: number;
   line: string;
   station_id: number;
   time: string;
+  updated_at: string;
+}
+export interface AlotsTimeTable {
+  line: string;
+  timetable: TimeTable;
+  to: string;
+}
+export interface Trans {
+  Des: string;
+  address: string;
+  created_at: string;
+  id: number;
+  name: string;
+  photo: File;
+  type_: string;
   updated_at: string;
 }
