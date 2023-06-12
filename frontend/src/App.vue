@@ -52,7 +52,7 @@
         </n-space>
       </router-link>
       <!-- Sec03: 遺失物 -->
-      <router-link to="/about" @click="setBtn(3)" flex="grow">
+      <router-link to="/lost" @click="setBtn(3)" flex="grow">
         <n-space
           :vertical="true"
           align="center"

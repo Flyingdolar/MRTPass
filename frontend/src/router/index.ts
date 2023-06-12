@@ -27,9 +27,9 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/about",
-    name: "about",
-    component: () => import("../views/AboutView.vue"),
+    path: "/lost",
+    name: "lost",
+    component: () => import("../views/MRTLost.vue"),
   },
   {
     path: "/post",
@@ -103,7 +103,7 @@ const commonRoute = [
   "MRTInfo",
   "MRTAnnounce",
   "myaccount",
-  "about",
+  "lost",
   "viewpost",
   "home",
   "profile",
@@ -131,7 +131,7 @@ const adminRoute = [
 ];
 const notLoginRoute = [
   "myaccount",
-  "about",
+  "lost",
   "viewpost",
   "home",
   "MRTInfo",
