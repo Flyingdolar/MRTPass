@@ -153,15 +153,15 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
               "error": false,
               "message": "succeed to get timetable list",
               "data": [{timetable:TimeTable.find(1),to:"南勢角",line:"中和新蘆線"},
-                {timetable:TimeTable.find(2),to:"南勢角",line:"中和新蘆線"},
-                {timetable:TimeTable.find(3),to:"迴龍",line:"中和新蘆線"},
-                {timetable:TimeTable.find(4),to:"迴龍",line:"中和新蘆線"},
-                {timetable:TimeTable.find(5),to:"蘆洲",line:"中和新蘆線"},
-                {timetable:TimeTable.find(6),to:"蘆洲",line:"中和新蘆線"},
                 {timetable:TimeTable.find(7),to:"新店",line:"松山新店線"},
-                {timetable:TimeTable.find(8),to:"新店",line:"松山新店線"},
                 {timetable:TimeTable.find(9),to:"台電大樓",line:"松山新店線"},
-                {timetable:TimeTable.find(10),to:"松山",line:"松山新店線"}]
+                {timetable:TimeTable.find(5),to:"蘆洲",line:"中和新蘆線"},
+                {timetable:TimeTable.find(3),to:"迴龍",line:"中和新蘆線"},
+                {timetable:TimeTable.find(2),to:"南勢角",line:"中和新蘆線"},
+                {timetable:TimeTable.find(4),to:"迴龍",line:"中和新蘆線"},
+                {timetable:TimeTable.find(8),to:"新店",line:"松山新店線"},
+                {timetable:TimeTable.find(10),to:"松山",line:"松山新店線"},
+                {timetable:TimeTable.find(6),to:"蘆洲",line:"中和新蘆線"}]
           }.to_json
           )
       )
