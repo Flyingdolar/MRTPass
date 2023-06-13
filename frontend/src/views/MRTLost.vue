@@ -227,13 +227,14 @@ onMounted(async () => {
 
 // Handle Appending new lost information
 const appendLost = async () => {
-  console.log(lostObject);
   try {
     const res = await axios.post(
       "http://localhost:3000/api/mrt_admin/lost",
       lostObject
     );
     console.log(res.data);
+    showAppend.value = false;
+    router.go(0);
   } catch (err) {
     console.log(err);
   }
