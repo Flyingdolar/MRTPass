@@ -133,6 +133,7 @@
         ref="formRef"
         :label-width="100"
         :model="lostObject"
+        :rules="formRules"
         require-mark-placement="right-hanging"
         h="120"
         overflow="auto"
@@ -211,14 +212,15 @@
         ref="formRef"
         :label-width="100"
         :model="lostObject"
+        :rules="formRules"
         require-mark-placement="right-hanging"
         h="120"
         overflow="auto"
       >
-        <n-form-item label="遺失物品" path="topic">
+        <n-form-item label="遺失物品" path="lostItem">
           <n-input v-model:value="lostObject.item" placeholder="輸入物品名稱" />
         </n-form-item>
-        <n-form-item label="遺失時間" path="title">
+        <n-form-item label="遺失時間" path="lostTime">
           <n-date-picker
             w="full"
             v-model:value="timeValue"
@@ -226,19 +228,19 @@
             clearable
           />
         </n-form-item>
-        <n-form-item label="遺失地點" path="title">
+        <n-form-item label="遺失地點" path="lostLocation">
           <n-input
             v-model:value="lostObject.location"
             placeholder="請輸入地點"
           />
         </n-form-item>
-        <n-form-item label="屬性" path="title">
+        <n-form-item label="屬性" path="lostAttribute">
           <n-select
             v-model:value="lostObject.lost_Attr"
             :options="attrOption"
           />
         </n-form-item>
-        <n-form-item label="圖片" path="title">
+        <n-form-item label="圖片" path="lostPicture">
           <n-upload
             :on-before-upload="handleImgBefore"
             :on-update-file-list="handleImgChange"
@@ -298,8 +300,10 @@ import {
   NUpload,
   FormRules,
   NFormItem,
+  useMessage,
   NDatePicker,
   FormItemRule,
+  NMessageProvider,
 } from "naive-ui";
 import trash from "../assets/icon/iTrash.vue";
 import back from "../assets/icon/iRefund.vue";
@@ -308,6 +312,7 @@ import edit from "../assets/icon/iEdit.vue";
 import save from "../assets/icon/iSave.vue";
 import { Ref } from "vue";
 
+const message = useMessage();
 const timeValue = ref(0);
 const attrOption = [
   { label: "遺失", value: "遺失" },
@@ -356,14 +361,12 @@ const appendLost = async () => {
   formData.append("location", lostObject.location);
   formData.append("lost_Attr", lostObject.lost_Attr);
   try {
-    const res = await axios.post(
-      "http://localhost:3000/api/mrt_admin/lost",
-      formData
-    );
+    await axios.post("http://localhost:3000/api/mrt_admin/lost", formData);
     showAppend.value = false;
     router.go(0);
+    message.success("新增成功");
   } catch (err) {
-    console.log(err);
+    message.error("新增失敗，缺少遺失物完整資料");
   }
 };
 const patchLost = async () => {
@@ -373,28 +376,28 @@ const patchLost = async () => {
   formData.append("location", lostObject.location);
   formData.append("lost_Attr", lostObject.lost_Attr);
   try {
-    const res = await axios.patch(
+    await axios.patch(
       `http://localhost:3000/api/mrt_admin/lost/${lostObject.id}`,
       formData
     );
-    console.log(res.data);
     showEdit.value = false;
     router.go(0);
+    message.success("修改成功");
   } catch (err) {
-    console.log(err);
+    message.error("修改失敗，缺少遺失物完整資料");
   }
 };
 
 const deleteLost = async () => {
   try {
-    const res = await axios.delete(
+    await axios.delete(
       `http://localhost:3000/api/mrt_admin/lost/${lostObject.id}`
     );
-    console.log(res.data);
     showDelete.value = false;
     router.go(0);
+    message.success("刪除成功");
   } catch (err) {
-    console.log(err);
+    message.error("刪除失敗");
   }
 };
 
@@ -446,6 +449,19 @@ function handleImgChange(event: any) {
   if (event.length === 0) return;
   formData.append("photo", event[0].file, event[0].file.name);
 }
+
+const formRules: FormRules = {
+  item: [
+    {
+      required: true,
+      message: "請輸入物品名稱",
+      trigger: ["input", "blur"],
+    },
+  ],
+  location: [
+    { required: true, message: "請輸入遺失地點", trigger: ["input", "blur"] },
+  ],
+};
 </script>
 
 <style scoped>
