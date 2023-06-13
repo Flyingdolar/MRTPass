@@ -93,6 +93,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "lineedit",
     component: () => import("../views/MRTLineEdit.vue"),
   },
+  {
+    path: "/Common/:id",
+    name: "ViewCommon",
+    component: () => import("../views/ViewCommon.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -109,6 +114,7 @@ const commonRoute = [
   "profile",
   "MRTtrans",
   "MRTcommon",
+  "ViewCommon",
 ];
 const userRoute = ["profile"];
 const mrt_adminRoute = [
@@ -118,6 +124,7 @@ const mrt_adminRoute = [
   "stationedit",
   "lineedit",
   "ticketprice",
+  "ViewCommon",
 ];
 const adminRoute = [
   "profile",
@@ -128,6 +135,7 @@ const adminRoute = [
   "stationedit",
   "lineedit",
   "ticketprice",
+  "ViewCommon",
 ];
 const notLoginRoute = [
   "myaccount",
@@ -138,6 +146,7 @@ const notLoginRoute = [
   "MRTAnnounce",
   "MRTtrans",
   "MRTcommon",
+  "ViewCommon",
 ];
 function fetchsession() {
   //axios get

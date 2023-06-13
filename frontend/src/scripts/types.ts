@@ -101,3 +101,13 @@ export interface Common {
   average_score: string;
   info: Info;
 }
+export interface Comment {
+  comment: string;
+  created_at: string;
+  id: number;
+  info_id: number;
+  member_id: number;
+  photo: File;
+  score: number;
+  updated_at: string;
+}

@@ -17,7 +17,15 @@
   </div>
   <!-- Body: 班次資訊 -->
   <div m="y-2" space="y-2">
-    <n-card title="班次資訊"> {{ timetablesearchResult }} </n-card>
+    <n-card title="班次資訊">
+      <template #header-extra>
+        <n-button @click="updateTicketandTime()">刷新資訊</n-button>
+      </template>
+      <div v-if="timetablesearchResult">
+        {{ timetablesearchResult }}
+      </div>
+      <div v-if="!timetablesearchResult">查無班次資訊</div>
+    </n-card>
     <n-card title="票價查詢">
       <div space="y-2">
         <div space="y-1">
@@ -37,6 +45,9 @@
         </div>
         <div space="y-1">
           <div text="sm" v-if="price">價格<br />{{ price }}元</div>
+        </div>
+        <div space="y-1">
+          <div text="sm" v-if="!price">請選擇站點</div>
         </div>
       </div>
     </n-card>
@@ -99,6 +110,8 @@ let arrStationOpt = computed(() =>
 );
 watch(depRoute, (depRoute) => {
   depStation.value = null;
+  price.value = null;
+  timetablesearchResult.value = null;
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
@@ -117,6 +130,8 @@ watch(depRoute, (depRoute) => {
 });
 watch(arrRoute, (arrRoute) => {
   arrStation.value = null;
+  price.value = null;
+  timetablesearchResult.value = null;
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
@@ -136,40 +151,49 @@ watch(arrRoute, (arrRoute) => {
 const price = ref();
 const timetablesearchResult = ref();
 watch(arrStation, () => {
-  if (arrStation.value) {
-    //axios get
-    axios
-      .get("http://localhost:3000/api/mrt_admin/price_search", {
-        params: {
-          station1: depStation.value,
-          station2: arrStation.value,
-        },
-      })
-      .then(function (response) {
-        console.log(response);
-        price.value = response.data.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    //axios
-    //axios get
-    axios
-      .get(
-        "http://localhost:3000/api/mrt_admin/station/" +
-          depStation.value +
-          "/time_table_search"
-      )
-      .then(function (response) {
-        console.log(response);
-        timetablesearchResult.value = response.data.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    //axios
+  if (arrStation.value && depStation.value) {
+    updateTicketandTime();
   }
 });
+watch(depStation, () => {
+  if (arrStation.value && depStation.value) {
+    updateTicketandTime();
+  }
+});
+function updateTicketandTime() {
+  //axios get
+  axios
+    .get("http://localhost:3000/api/mrt_admin/price_search", {
+      params: {
+        station1: depStation.value,
+        station2: arrStation.value,
+      },
+    })
+    .then(function (response) {
+      console.log(response);
+      price.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+  //axios get
+  axios
+    .get(
+      "http://localhost:3000/api/mrt_admin/station/" +
+        depStation.value +
+        "/time_table_search"
+    )
+    .then(function (response) {
+      //console.log(response);
+      timetablesearchResult.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
+
 let stationOpt = reactive([
   // FIXME: 站點資料應該改為後端抓取
   { label: "象山", value: "2" },

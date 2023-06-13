@@ -1,55 +1,58 @@
 <template>
   <n-space size="large" line-height="20px" vertical>
     <n-card>
-      <n-card
-        v-for="item in CurrentTrans"
-        :key="item?.id"
-        footer-style="padding: 0;"
-        :bordered="false"
-      >
-        <template #header>
-          <div justify="items-end" flex="~" w="full">
-            <div flex="grow" text="lg title">
-              {{ item.name }}
+      <div v-if="CurrentTrans">
+        <n-card
+          v-for="item in CurrentTrans"
+          :key="item?.id"
+          footer-style="padding: 0;"
+          :bordered="false"
+        >
+          <template #header>
+            <div justify="items-end" flex="~" w="full">
+              <div flex="grow" text="lg title">
+                {{ item.name }}
+              </div>
             </div>
-          </div>
-        </template>
-        {{ item.Des }}
-        <template #footer>
-          <div
-            flex="~"
-            justify="center items-center"
-            p="x-4 y-2"
-            v-if="roleisAdmin"
-          >
-            <n-button
-              @click="showOldTrans(item.id)"
-              flex="~ grow"
-              size="medium"
-              type="info"
-              quaternary
+          </template>
+          {{ item.Des }}
+          <template #footer>
+            <div
+              flex="~"
+              justify="center items-center"
+              p="x-4 y-2"
+              v-if="roleisAdmin"
             >
-              <template #icon>
-                <n-icon :size="18"><edit /></n-icon>
-              </template>
-              <div>編輯</div>
-            </n-button>
-            <div m="1" p="0.8px" bg="gray-200" />
-            <n-button
-              @click="showConfirmDelete(item.id)"
-              flex="~ grow"
-              size="medium"
-              type="error"
-              quaternary
-            >
-              <template #icon>
-                <n-icon :size="18"><trash /></n-icon>
-              </template>
-              <div>刪除</div>
-            </n-button>
-          </div>
-        </template>
-      </n-card>
+              <n-button
+                @click="showOldTrans(item.id)"
+                flex="~ grow"
+                size="medium"
+                type="info"
+                quaternary
+              >
+                <template #icon>
+                  <n-icon :size="18"><edit /></n-icon>
+                </template>
+                <div>編輯</div>
+              </n-button>
+              <div m="1" p="0.8px" bg="gray-200" />
+              <n-button
+                @click="showConfirmDelete(item.id)"
+                flex="~ grow"
+                size="medium"
+                type="error"
+                quaternary
+              >
+                <template #icon>
+                  <n-icon :size="18"><trash /></n-icon>
+                </template>
+                <div>刪除</div>
+              </n-button>
+            </div>
+          </template>
+        </n-card>
+      </div>
+      <div v-if="CurrentTrans?.length == 0">查無轉乘資訊</div>
       <!-- Overlay: Edit Annoucement -->
       <n-modal v-model:show="OldTransshow">
         <n-card title="編輯轉乘資訊" :header-style="{ 'align-self': 'center' }">
@@ -67,7 +70,10 @@
               />
             </n-form-item>
             <n-form-item label="地址" path="topic">
-              <n-input v-model:value="model.newtopic" placeholder="輸入地址" />
+              <n-input
+                v-model:value="model.newaddress"
+                placeholder="輸入地址"
+              />
             </n-form-item>
             <n-form-item label="轉乘描述" path="context">
               <template #header-extra> 必填 </template>
@@ -261,6 +267,7 @@ import back from "../assets/icon/iRefund.vue";
 import add from "../assets/icon/iAdd.vue";
 import edit from "../assets/icon/iEdit.vue";
 import save from "../assets/icon/iSave.vue";
+import trash from "../assets/icon/iTrash.vue";
 const message = useMessage();
 const Current = ref({
   dynamicInputValue: [
@@ -326,7 +333,7 @@ const rules: FormRules = {
 watch(store.state, () => {
   getTrans();
 });
-const CurrentTrans = ref<Trans[]>();
+const CurrentTrans = ref<Trans[]>([]);
 function getTrans() {
   if (store.state.currentlinestation) {
     //axios get
