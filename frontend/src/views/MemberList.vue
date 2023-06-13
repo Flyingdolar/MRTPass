@@ -1,18 +1,37 @@
 <template>
-  <n-card class="card">
-    <n-space justify="space-around" size="large" line-height="20px">
-      <n-button @click="tmp" size="large">返回</n-button>
-      <n-h3 class="cardtitle">管理使用者</n-h3>
-      <n-button @click="tmp" size="large">搜尋</n-button>
-    </n-space>
-    <n-space justify="center" class="content2">
-      <n-card
-        :header-style="{ 'align-self': 'center' }"
-        :footer-style="{ 'align-self': 'center' }"
-      >
-        <n-data-table :columns="columns" :data="colData" :max-height="250" />
-      </n-card>
-    </n-space>
+  <div flex="~ col" justify="center items-end" h="10" bg="white">
+    <div flex="~" m="t-auto b-10px l-6 r-17" justify="items-center">
+      <n-button @click="tmp" quaternary>
+        <n-icon size="24"><back /></n-icon>
+      </n-button>
+      <div flex="grow" text="title lg center bottom">管理使用者</div>
+    </div>
+    <div p="y-1px" bg=" gray-200" />
+  </div>
+  <div flex="~ col gap-3">
+    <div v-for="user in colData" :key="user.id" bg="white">
+      <div flex="~" m="x-6 y-5" justify="items-center">
+        <n-icon size="32" v-if="showImage(user.picture == null)">
+          <user :class="userColor(user.role.toString())" />
+        </n-icon>
+        <n-image :src="showImage(user.picture)" />
+        <div flex="grow" m="y-auto l-4" text="body">
+          <div>{{ user.nickname }}</div>
+          <div>{{ user.role }}</div>
+        </div>
+        <n-button quaternary>
+          <template #icon>
+            <n-icon><goto /></n-icon>
+          </template>
+        </n-button>
+      </div>
+    </div>
+  </div>
+  <n-card
+    :header-style="{ 'align-self': 'center' }"
+    :footer-style="{ 'align-self': 'center' }"
+  >
+    <n-data-table :columns="columns" :data="colData" :max-height="250" />
   </n-card>
 </template>
 
@@ -21,11 +40,15 @@ import {
   NCard,
   NSpace,
   NButton,
+  NIcon,
   NModal,
   NDataTable,
   useMessage,
   NH3,
 } from "naive-ui";
+import back from "../assets/icon/iExpLeft.vue";
+import goto from "../assets/icon/iExpRight.vue";
+import user from "../assets/icon/iUser.vue";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
@@ -108,5 +131,14 @@ let columns = createColumns({
 function tmp() {
   console.log("hi");
   router.push("/profile");
+}
+function userColor(role: string) {
+  if (role == "admin") return "text-red";
+  else if (role == "mrt_admin") return "text-orange";
+  else return "text-blue";
+}
+function showImage(picture: any) {
+  if (picture != null) return "http://localhost:3000" + picture;
+  else return null;
 }
 </script>
