@@ -128,6 +128,22 @@ class Api::MrtAdmin::StationController < ApplicationController
         }.to_json, :status => 200
     end
 
+    def show_line
+        @station=Station.find(params[:station_id])
+        stationno=StationNo.where(station_id:@station.id)
+        @line=[]
+        stationno.each do |sn|
+            line=Line.find_by(linecolor:sn.linecolor)
+            @line<<line
+        end
+        render :json => {
+                status: "success",
+                error: false,
+                message: "succeed to get line with #{@station.name}",
+                data: @line
+            }.to_json, :status => 200
+    end
+
     def update
         check,@member=check_mrt_admin
         if check

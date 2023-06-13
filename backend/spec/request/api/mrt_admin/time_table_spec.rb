@@ -99,7 +99,7 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
 
     example "failed to create timetable(This station and terminal station not at same line)" do
       post "/sign_in",params:{account:"mrt_admin",password:"123456"}
-      post "/api/mrt_admin/station/2/time_table",params:{line:"O",end:1,time:"21:00",No:12345}
+      post "/api/mrt_admin/station/2/time_table",params:{line:"O",end:5,time:"21:00",No:12345}
       expect(response).to have_http_status(400)
       expect(JSON.parse(response.body)).to eq(
           JSON.parse( 
@@ -276,7 +276,7 @@ RSpec.describe "Api::MrtAdmin::TimeTables", type: :request do
 
     example "failed to update timetable(This station and terminal station not at same line)" do
       post "/sign_in",params:{account:"mrt_admin",password:"123456"}
-      patch "/api/mrt_admin/station/2/time_table/11",params:{line:"O",end:1,time:"21:00",No:"12345"}
+      patch "/api/mrt_admin/station/2/time_table/11",params:{line:"O",end:5,time:"21:00",No:"12345"}
       expect(response).to have_http_status(400)
       expect(JSON.parse(response.body)).to eq(
           JSON.parse( 

@@ -279,6 +279,53 @@ RSpec.describe "Api::MrtAdmin::Station", type: :request do
         end
     end
 
+    describe "GET /api/mrt_admin/station/:id/line" do
+        example "succeed to get line with 台電大樓" do
+            get "/api/mrt_admin/station/1/line"
+            expect(response).to have_http_status(200)
+            expect(JSON.parse(response.body)).to eq(
+                JSON.parse( 
+                {
+                    "status": "success",
+                    "error": false,
+                    "message": "succeed to get line with 台電大樓",
+                    "data": [Line.find(3)]
+                }.to_json
+                )
+            )
+        end
+
+        example "succeed to get line with 古亭" do
+            get "/api/mrt_admin/station/2/line"
+            expect(response).to have_http_status(200)
+            expect(JSON.parse(response.body)).to eq(
+                JSON.parse( 
+                {
+                    "status": "success",
+                    "error": false,
+                    "message": "succeed to get line with 古亭",
+                    "data": [Line.find(3),Line.find(4)]
+                }.to_json
+                )
+            )
+        end
+
+        example "succeed to get line with 中正紀念堂" do
+            get "/api/mrt_admin/station/3/line"
+            expect(response).to have_http_status(200)
+            expect(JSON.parse(response.body)).to eq(
+                JSON.parse( 
+                {
+                    "status": "success",
+                    "error": false,
+                    "message": "succeed to get line with 中正紀念堂",
+                    "data": [Line.find(3),Line.find(2)]
+                }.to_json
+                )
+            )
+        end
+    end
+
     describe "PATCH /api/mrt_admin/station/2" do
         example "succeed update station information(input 0 No.)" do
             post "/sign_in",params:{account:"mrt_admin",password:"123456"}

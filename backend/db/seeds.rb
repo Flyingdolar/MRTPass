@@ -455,18 +455,39 @@ set_time_table_inverse(2,1,"LR",3006)
 
 
 p "Set ticket price"
-Ticket.create(upper_bound: 5.0,lower_bound: 0.0,price:20)
-Ticket.create(upper_bound: 8.0,lower_bound: 5.0,price:25)
-Ticket.create(upper_bound:11.0,lower_bound: 8.0,price:30)
-Ticket.create(upper_bound:14.0,lower_bound:11.0,price:35)
-Ticket.create(upper_bound:17.0,lower_bound:14.0,price:40)
-Ticket.create(upper_bound:20.0,lower_bound:17.0,price:45)
-Ticket.create(upper_bound:23.0,lower_bound:20.0,price:50)
-Ticket.create(upper_bound:27.0,lower_bound:23.0,price:55)
-Ticket.create(upper_bound:31.0,lower_bound:27.0,price:60)
-Ticket.create(upper_bound:1000.0,lower_bound:31.0,price:65)
+Ticket.create(upper_bound: 3.0,lower_bound: 0.0,price:20)
+Ticket.create(upper_bound: 6.0,lower_bound: 3.0,price:25)
+Ticket.create(upper_bound: 9.0,lower_bound: 6.0,price:30)
+Ticket.create(upper_bound:11.0,lower_bound: 9.0,price:35)
+Ticket.create(upper_bound:13.0,lower_bound:11.0,price:40)
+Ticket.create(upper_bound:15.0,lower_bound:13.0,price:45)
+Ticket.create(upper_bound:17.0,lower_bound:15.0,price:50)
+Ticket.create(upper_bound:19.0,lower_bound:17.0,price:55)
+Ticket.create(upper_bound:25.0,lower_bound:19.0,price:60)
+Ticket.create(upper_bound:1000.0,lower_bound:25.0,price:65)
 
+p "Set Lost"
+Lost.create(item:"女朋友",time:"2000/05/08 19:00",location:"未知",lost_Attr:"遺失",member_id:1)
+Lost.create(item:"雨傘",photo:Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '4.jpg'), 'image/jpg'),time:"2023/06/10 9:00",location:"古亭站",lost_Attr:"拾獲",member_id:2)
+Lost.create(item:"1000元新台幣",time:"2023/06/08 19:00",location:"忠孝復興站",lost_Attr:"遺失",member_id:2)
+Lost.create(item:"皮夾",photo:Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '3.jpg'), 'image/jpg'),time:"2023/06/05 9:00",location:"淡水站",lost_Attr:"拾獲",member_id:1)
+Lost.create(item:"自行車一輛",time:"2023/05/08 19:00",location:"紅樹林站",lost_Attr:"遺失",member_id:1)
 
+p "Set Announcement"
+Announcement.create(topic:"使用工具",context:"前端:Vue + Electron 後端:ROR(ruby on rails)",member_id:1)
+Announcement.create(topic:"製作團隊名單",context:"UI/UX設計、前端刻版面:鄭翔元 前端API串接:楊焜華 後端API設計、單元測試:葉威佑 後端功能:曾皓群",member_id:1)
+Announcement.create(topic:"致謝",context:"感謝柯老師指導及ChatGPT的技術支援",member_id:1)
+
+p "Set Info for 公館"
+Info.create(name:"阿里媽媽",photo:Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '5.jpg'), 'image/jpg'),address:"台北市中正區羅斯福路四段136巷1弄3號",type_:"Common",Des:"營業時間:11:00~15:30,16:30~23:00 電話:02-2368 7724")
+Info.create(name:"公車278",address:"公館站前",type_:"Trans",Des:"捷運內湖站～捷運景美站 頭班車:0510、末班車:2240 班表:0720、0810、0840、0940、1020、1040、1120、1200、1230、1310、1410、1510、1600、1630、1700、1725、1820、1910、1945、2020")
+StationInfo.create(station_id:57,info_id:1)
+StationInfo.create(station_id:57,info_id:2)
+
+p "Set Comment for 阿里媽媽"
+Comment.create(comment:"好吃到一個不行，而且還可以免費續飯，超讚",score:5,member_id:3,info_id:1,photo:Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '6.jpg'), 'image/jpg'))
+Comment.create(comment:"雖然好吃，但座位有點擁擠",score:4,member_id:4,info_id:1)
+Comment.create(comment:"我來亂的 ㄌㄩㄟ~",score:1,member_id:1,info_id:1)
 
 p "DB Seeded"
 
