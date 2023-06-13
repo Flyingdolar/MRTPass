@@ -1,7 +1,6 @@
 <template>
   <n-space size="large" line-height="20px" vertical>
     <n-card>
-      <n-h3 class="cardtitle">trans</n-h3>
       <n-card
         v-for="item in CurrentTrans"
         :key="item?.id"
@@ -51,7 +50,62 @@
           </div>
         </template>
       </n-card>
-
+      <!-- Overlay: Edit Annoucement -->
+      <n-modal v-model:show="OldTransshow">
+        <n-card title="編輯轉乘資訊" :header-style="{ 'align-self': 'center' }">
+          <n-form
+            ref="formRef"
+            :label-width="80"
+            :model="model"
+            :rules="rules"
+            require-mark-placement="right-hanging"
+          >
+            <n-form-item label="轉乘名字" path="topic">
+              <n-input
+                v-model:value="model.newtopic"
+                placeholder="輸入轉乘名字"
+              />
+            </n-form-item>
+            <n-form-item label="地址" path="topic">
+              <n-input v-model:value="model.newtopic" placeholder="輸入地址" />
+            </n-form-item>
+            <n-form-item label="轉乘描述" path="context">
+              <template #header-extra> 必填 </template>
+              <n-input
+                v-model:value="model.newcontent"
+                type="textarea"
+                placeholder="輸入內文"
+              />
+            </n-form-item>
+          </n-form>
+          <template #footer>
+            <div flex="~ gap-8" class="justify-center px-12">
+              <n-button
+                @click="SubmitEditTrans"
+                type="primary"
+                flex="grow"
+                ghost
+              >
+                <template #icon>
+                  <n-icon :size="18"><save /></n-icon>
+                </template>
+                <div>儲存</div>
+              </n-button>
+              <n-button
+                @click="OldTransshow = false"
+                type="tertiary"
+                flex="grow"
+                ghost
+              >
+                <template #icon>
+                  <n-icon :size="18"><back /></n-icon>
+                </template>
+                <div>取消</div>
+              </n-button>
+            </div>
+          </template>
+        </n-card>
+      </n-modal>
       <!-- Overlay: Confirm Delete -->
       <n-modal v-model:show="ConfirmDeleteshow">
         <n-card
@@ -229,6 +283,9 @@ const roleisAdmin = computed(() => {
 const model = reactive({
   name: "",
   context: "",
+  newtopic: "",
+  newaddress: "",
+  newcontent: "",
 });
 const rules: FormRules = {
   topic: [
@@ -280,7 +337,7 @@ function getTrans() {
         },
       })
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
         CurrentTrans.value = response.data.data;
         console.log(CurrentTrans.value);
       })
@@ -450,7 +507,18 @@ function NewTransSubmitt() {
         station_id_3: stationid3.value,
       })
       .then(function (response) {
-        console.log(response.data.data);
+        console.log(response);
+        CurrentTrans.value?.push({
+          Des: model.context,
+          address: itemaddress.value,
+          id: response.data.info.id,
+          created_at: "",
+          name: model.name,
+          photo: formData,
+          type_: "trans",
+          updated_at: "",
+        });
+        showNewTrans.value = false;
       })
       .catch(function (error) {
         console.log(error);
@@ -491,6 +559,20 @@ function showConfirmDelete(id: number) {
   TransID.value = id;
   //console.log(AnnouncementID);
 }
+function deleteTrans() {
+  //axios delete
+  axios
+    .delete("http://localhost:3000/api/mrt_admin/info/" + TransID.value)
+    .then(function (response) {
+      console.log(response.data.data);
+      ConfirmDeleteshow.value = false;
+      router.go(0);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
 function showOldTrans(id: number) {
   OldTransshow.value = true;
   TransID.value = id;
@@ -500,6 +582,30 @@ function showOldTrans(id: number) {
       OldTransindex.value = index;
     }
   });
+  model.newtopic = CurrentTrans.value[OldTransindex.value].name;
+  model.newaddress = CurrentTrans.value[OldTransindex.value].address;
+  model.newcontent = CurrentTrans.value[OldTransindex.value].Des;
   //console.log(OldAnnounceindex.value);
+}
+function SubmitEditTrans() {
+  //axios patch
+  axios
+    .patch("http://localhost:3000/api/mrt_admin/trans/" + TransID.value, {
+      name: model.newtopic,
+      photo: null,
+      address: model.newaddress,
+      Des: model.newcontent,
+    })
+    .then(function (response) {
+      console.log(response.data.data);
+      CurrentTrans.value[OldTransindex.value].name = model.newtopic;
+      CurrentTrans.value[OldTransindex.value].address = model.newaddress;
+      CurrentTrans.value[OldTransindex.value].Des = model.newcontent;
+      OldTransshow.value = false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 </script>

@@ -17,7 +17,7 @@
   </div>
   <!-- Body: 班次資訊 -->
   <div m="y-2" space="y-2">
-    <n-card title="班次資訊"> Content </n-card>
+    <n-card title="班次資訊"> {{ timetablesearchResult }} </n-card>
     <n-card title="票價查詢">
       <div space="y-2">
         <div space="y-1">
@@ -36,8 +36,7 @@
           </div>
         </div>
         <div space="y-1">
-          <div>價格</div>
-          <div text="sm">40 元</div>
+          <div text="sm" v-if="price">價格<br />{{ price }}元</div>
         </div>
       </div>
     </n-card>
@@ -133,6 +132,43 @@ watch(arrRoute, (arrRoute) => {
       console.log(error);
     });
   //axios
+});
+const price = ref();
+const timetablesearchResult = ref();
+watch(arrStation, () => {
+  if (arrStation.value) {
+    //axios get
+    axios
+      .get("http://localhost:3000/api/mrt_admin/price_search", {
+        params: {
+          station1: depStation.value,
+          station2: arrStation.value,
+        },
+      })
+      .then(function (response) {
+        console.log(response);
+        price.value = response.data.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    //axios
+    //axios get
+    axios
+      .get(
+        "http://localhost:3000/api/mrt_admin/station/" +
+          depStation.value +
+          "/time_table_search"
+      )
+      .then(function (response) {
+        console.log(response);
+        timetablesearchResult.value = response.data.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    //axios
+  }
 });
 let stationOpt = reactive([
   // FIXME: 站點資料應該改為後端抓取
