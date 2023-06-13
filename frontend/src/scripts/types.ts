@@ -29,6 +29,14 @@ export interface Post {
   created_at: string;
   updated_at: string;
 }
+export interface Lost {
+  id?: number;
+  item: string;
+  photo?: any;
+  time: string;
+  location: string;
+  lost_Attr: string;
+}
 export interface Station {
   created_at: string;
   exit_Num: number;
