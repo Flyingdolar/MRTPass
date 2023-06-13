@@ -2,9 +2,168 @@
   <n-space size="large" line-height="20px" vertical>
     <n-card>
       <n-h3 class="cardtitle">common</n-h3>
+      <n-card
+        v-for="item in CurrentCommon"
+        :key="item?.info.id"
+        footer-style="padding: 0;"
+        :bordered="false"
+      >
+        <template #header>
+          <div justify="items-end" flex="~" w="full">
+            <div flex="grow" text="lg title">
+              {{ item.info.name }}
+            </div>
+          </div>
+        </template>
+        {{ item.info.Des }}
+        <template #footer>
+          <div
+            flex="~"
+            justify="center items-center"
+            p="x-4 y-2"
+            v-if="roleisAdmin"
+          >
+            <n-button
+              @click="showOldCommon(item.info.id)"
+              flex="~ grow"
+              size="medium"
+              type="info"
+              quaternary
+            >
+              <template #icon>
+                <n-icon :size="18"><edit /></n-icon>
+              </template>
+              <div>編輯</div>
+            </n-button>
+            <div m="1" p="0.8px" bg="gray-200" />
+            <n-button
+              @click="showConfirmDelete(item.info.id)"
+              flex="~ grow"
+              size="medium"
+              type="error"
+              quaternary
+            >
+              <template #icon>
+                <n-icon :size="18"><trash /></n-icon>
+              </template>
+              <div>刪除</div>
+            </n-button>
+          </div>
+        </template>
+      </n-card>
       <n-space v-if="roleisAdmin" justify="center">
         <n-button @click="showNewCommon = true">新增景點</n-button>
       </n-space>
+      <!-- Overlay: Edit Annoucement -->
+      <n-modal v-model:show="OldCommonshow">
+        <n-card title="編輯景點資訊" :header-style="{ 'align-self': 'center' }">
+          <n-form
+            ref="formRef"
+            :label-width="80"
+            :model="model"
+            :rules="rules"
+            require-mark-placement="right-hanging"
+          >
+            <n-form-item label="景點名字" path="topic">
+              <n-input
+                v-model:value="model.newtopic"
+                placeholder="輸入景點名字"
+              />
+            </n-form-item>
+            <n-form-item label="地址" path="topic">
+              <n-input
+                v-model:value="model.newaddress"
+                placeholder="輸入地址"
+              />
+            </n-form-item>
+            <n-form-item label="景點描述" path="context">
+              <template #header-extra> 必填 </template>
+              <n-input
+                v-model:value="model.newcontent"
+                type="textarea"
+                placeholder="輸入內文"
+              />
+            </n-form-item>
+            <n-form-item label="圖片" path="title">
+              <n-upload
+                :on-before-upload="handleImgBefore"
+                :on-update-file-list="handleImgChange"
+              >
+                <n-upload-dragger w="full">
+                  <div
+                    p="x-4 y-4"
+                    bg="hover:blue-100"
+                    text="seconary hover:blue"
+                    border="rounded-lg 1 gray-200 hover:blue-400"
+                  >
+                    <div flex="~" justify="center">
+                      <n-icon size="48"><add /></n-icon>
+                    </div>
+                  </div>
+                </n-upload-dragger>
+              </n-upload>
+            </n-form-item>
+          </n-form>
+          <template #footer>
+            <div flex="~ gap-8" class="justify-center px-12">
+              <n-button
+                @click="SubmitEditCommon"
+                type="primary"
+                flex="grow"
+                ghost
+              >
+                <template #icon>
+                  <n-icon :size="18"><save /></n-icon>
+                </template>
+                <div>儲存</div>
+              </n-button>
+              <n-button
+                @click="OldCommonshow = false"
+                type="tertiary"
+                flex="grow"
+                ghost
+              >
+                <template #icon>
+                  <n-icon :size="18"><back /></n-icon>
+                </template>
+                <div>取消</div>
+              </n-button>
+            </div>
+          </template>
+        </n-card>
+      </n-modal>
+      <!-- Overlay: Confirm Delete -->
+      <n-modal v-model:show="ConfirmDeleteshow">
+        <n-card
+          w="3/4 min-30"
+          title="確定要刪除？"
+          :header-style="{ 'align-self': 'center' }"
+        >
+          <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+          <template #footer>
+            <div flex="~ gap-8" class="justify-center px-2">
+              <n-button @click="deleteCommon" type="error" flex="grow" ghost>
+                <template #icon>
+                  <n-icon :size="18"><trash /></n-icon>
+                </template>
+                <div>刪除</div>
+              </n-button>
+              <n-button
+                @click="ConfirmDeleteshow = false"
+                type="tertiary"
+                flex="grow"
+                ghost
+              >
+                <template #icon>
+                  <n-icon :size="18"><back /></n-icon>
+                </template>
+                <div>取消</div>
+              </n-button>
+            </div>
+          </template>
+        </n-card>
+      </n-modal>
+      <!-- Overlay: New Annoucement -->
       <n-modal v-model:show="showNewCommon">
         <n-card title="建立景點" :header-style="{ 'align-self': 'center' }">
           <n-form
@@ -47,13 +206,31 @@
               <template #header-extra> 必填 </template>
               <n-input v-model:value="model.address" placeholder="輸入內文" />
             </n-form-item>
-            <n-form-item label="景點照片">
+            <n-form-item label="景點描述" path="context">
+              <template #header-extra> 必填 </template>
+              <n-input
+                v-model:value="model.context"
+                type="textarea"
+                placeholder="輸入內文"
+              />
+            </n-form-item>
+            <n-form-item label="圖片" path="title">
               <n-upload
                 :on-before-upload="handleImgBefore"
                 :on-update-file-list="handleImgChange"
-                :on-remove="handleImgRemove"
               >
-                <n-button>上傳照片</n-button>
+                <n-upload-dragger w="full">
+                  <div
+                    p="x-4 y-4"
+                    bg="hover:blue-100"
+                    text="seconary hover:blue"
+                    border="rounded-lg 1 gray-200 hover:blue-400"
+                  >
+                    <div flex="~" justify="center">
+                      <n-icon size="48"><add /></n-icon>
+                    </div>
+                  </div>
+                </n-upload-dragger>
               </n-upload>
             </n-form-item>
           </n-form>
@@ -108,7 +285,11 @@ import {
   FormItemRule,
   NDynamicInput,
   NUpload,
+  NImage,
 } from "naive-ui";
+import trash from "../assets/icon/iTrash.vue";
+import add from "../assets/icon/iAdd.vue";
+import edit from "../assets/icon/iEdit.vue";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onBeforeMount, ref, watch, reactive } from "vue";
 import { watchOnce } from "@vueuse/core";
@@ -117,7 +298,13 @@ import axios from "axios";
 import router from "@/router";
 import store from "@/scripts/vuex";
 import { useRoute } from "vue-router";
-import { Station, Line, LineStation, AlotsLineStation } from "../scripts/types";
+import {
+  Station,
+  Line,
+  LineStation,
+  AlotsLineStation,
+  Common,
+} from "../scripts/types";
 import back from "../assets/icon/iRefund.vue";
 import save from "../assets/icon/iSave.vue";
 const route = useRoute();
@@ -141,7 +328,10 @@ const roleisAdmin = computed(() => {
 });
 const model = reactive({
   name: "",
-  address: "",
+  context: "",
+  newtopic: "",
+  newaddress: "",
+  newcontent: "",
 });
 const rules: FormRules = {
   topic: [
@@ -172,6 +362,7 @@ const rules: FormRules = {
 watch(store.state, () => {
   getCommon();
 });
+const CurrentCommon = ref<Common[]>();
 function getCommon() {
   if (store.state.currentlinestation) {
     //axios get
@@ -183,6 +374,8 @@ function getCommon() {
       })
       .then(function (response) {
         console.log(response);
+        CurrentCommon.value = response.data.data;
+        console.log(CurrentCommon.value);
       })
       .catch(function (error) {
         console.log(error);
@@ -299,6 +492,7 @@ onBeforeMount(() => {
       console.log(error);
     });
   //axios
+  getCommon();
 });
 function NewCommonSubmitt() {
   const goodformcheck = ref(true);
@@ -307,13 +501,44 @@ function NewCommonSubmitt() {
       goodformcheck.value = false;
     }
   });
+  const itemaddress = ref("");
+  CurrentLineStation.value[0].item.forEach(function (item, index, array) {
+    if (item.station.id == Current.value.dynamicInputValue[0].CurrentStation) {
+      itemaddress.value = item.station.name;
+    }
+  });
+  const stationid1 = computed(() => {
+    if (Current.value.dynamicInputValue[0]) {
+      return Current.value.dynamicInputValue[0].CurrentStation;
+    } else {
+      return null;
+    }
+  });
+  const stationid2 = computed(() => {
+    if (Current.value.dynamicInputValue[1]) {
+      return Current.value.dynamicInputValue[1].CurrentStation;
+    } else {
+      return null;
+    }
+  });
+  const stationid3 = computed(() => {
+    if (Current.value.dynamicInputValue[2]) {
+      return Current.value.dynamicInputValue[2].CurrentStation;
+    } else {
+      return null;
+    }
+  });
+
   if (goodformcheck.value) {
+    formData.append("name", model.name);
+    formData.append("address", itemaddress.value);
+    formData.append("Des", model.context);
+    formData.append("station_id_1", stationid1.value);
+    formData.append("station_id_2", stationid2.value);
+    formData.append("station_id_3", stationid3.value);
     //axios post
     axios
-      .post("http://localhost:3000/api/mrt_admin/common", {
-        name: model.name,
-        address: model.address,
-      })
+      .post("http://localhost:3000/api/mrt_admin/common", formData)
       .then(function (response) {
         console.log(response.data.data);
       })
@@ -337,7 +562,9 @@ function handleImgBefore(event: any) {
 }
 
 function handleImgChange(event: any) {
-  formData.append("picture", event[0].file, event[0].file.name);
+  formData.delete("photo");
+  if (event.length === 0) return;
+  formData.append("photo", event[0].file, event[0].file.name);
 }
 
 function handleImgRemove() {
@@ -346,5 +573,66 @@ function handleImgRemove() {
 
 function cancelChange() {
   formData.delete("picture");
+}
+const CommonID = ref(-1);
+const ConfirmDeleteshow = ref(false);
+const OldCommonshow = ref(false);
+const OldCommonindex = ref(-1);
+function showConfirmDelete(id: number) {
+  ConfirmDeleteshow.value = true;
+  CommonID.value = id;
+  //console.log(AnnouncementID);
+}
+function showImage(item) {
+  if (item.photo.url != null) return "http://localhost:3000" + item.photo.url;
+}
+function deleteCommon() {
+  //axios delete
+  axios
+    .delete("http://localhost:3000/api/mrt_admin/info/" + CommonID.value)
+    .then(function (response) {
+      console.log(response.data.data);
+      ConfirmDeleteshow.value = false;
+      router.go(0);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+}
+function showOldCommon(id: number) {
+  OldCommonshow.value = true;
+  CommonID.value = id;
+  //console.log(AnnouncementID);
+  CurrentCommon.value.forEach((item, index) => {
+    if (item.info.id == CommonID.value) {
+      OldCommonindex.value = index;
+    }
+  });
+  model.newtopic = CurrentCommon.value[OldCommonindex.value].info.name;
+  model.newaddress = CurrentCommon.value[OldCommonindex.value].info.address;
+  model.newcontent = CurrentCommon.value[OldCommonindex.value].info.Des;
+  //console.log(OldAnnounceindex.value);
+}
+function SubmitEditCommon() {
+  //axios patch
+  axios
+    .patch("http://localhost:3000/api/mrt_admin/common/" + CommonID.value, {
+      name: model.newtopic,
+      photo: null,
+      address: model.newaddress,
+      Des: model.newcontent,
+    })
+    .then(function (response) {
+      console.log(response.data.data);
+      CurrentCommon.value[OldCommonindex.value].info.name = model.newtopic;
+      CurrentCommon.value[OldCommonindex.value].info.address = model.newaddress;
+      CurrentCommon.value[OldCommonindex.value].info.Des = model.newcontent;
+      OldCommonshow.value = false;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
 }
 </script>

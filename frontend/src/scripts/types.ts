@@ -87,3 +87,17 @@ export interface Trans {
   type_: string;
   updated_at: string;
 }
+export interface Info {
+  id: number;
+  name: string;
+  photo: File;
+  address: string;
+  Des: string;
+  created_at: string;
+  updated_at: string;
+  type_: string;
+}
+export interface Common {
+  average_score: string;
+  info: Info;
+}

@@ -16,7 +16,10 @@
           </div>
         </div>
       </template>
-      {{ item.context }}
+      <div style="white-space: pre-line">
+        {{ item.context }}
+      </div>
+
       <template #footer>
         <div
           flex="~"

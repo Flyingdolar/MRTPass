@@ -344,6 +344,7 @@ function formatNumber(number: number) {
   return number < 10 ? "0" + number : number.toString();
 }
 function SaveTimeTableEdit() {
+  console.log(CurrentStation.value);
   //console.log(model.deptime.split("~")[0] + ":" + model.deptime.split("~")[1]);
   const depH = computed(() => {
     const number = parseInt(model.deptime.split("~")[0]);
@@ -360,12 +361,12 @@ function SaveTimeTableEdit() {
       "http://localhost:3000/api/mrt_admin/station/" +
         route.params.id +
         "/time_table/" +
-        editing.value.toString,
+        editing.value.toString(),
       {
         time: depH.value + ":" + depM.value,
-        No: model.Mrtno,
-        line: CurrentRoute,
-        end: CurrentStation,
+        No: parseInt(model.Mrtno),
+        line: CurrentRoute.value,
+        end: CurrentStation.value,
       }
     )
     .then(function (response) {
