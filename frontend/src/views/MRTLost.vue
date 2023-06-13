@@ -45,14 +45,26 @@
           v-if="isManager"
           justify="center items-center"
         >
-          <n-button flex="~ grow" size="medium" type="info" quaternary>
+          <n-button
+            flex="~ grow"
+            size="medium"
+            type="info"
+            quaternary
+            @click="openEdit(item)"
+          >
             <template #icon>
               <n-icon :size="18"><edit /></n-icon>
             </template>
             <div>編輯</div>
           </n-button>
           <div m="1" p="0.8px" bg="gray-200" />
-          <n-button flex="~ grow" size="medium" type="error" quaternary>
+          <n-button
+            flex="~ grow"
+            size="medium"
+            type="error"
+            quaternary
+            @click="openDelete(item)"
+          >
             <template #icon>
               <n-icon :size="18"><trash /></n-icon>
             </template>
@@ -92,7 +104,7 @@
       <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
       <template #footer>
         <div flex="~ gap-8" class="justify-center px-2">
-          <n-button type="error" flex="grow" ghost>
+          <n-button type="error" flex="grow" ghost @click="deleteLost">
             <template #icon>
               <n-icon :size="18"><trash /></n-icon>
             </template>
@@ -194,23 +206,61 @@
 
   <!-- Overlay: Edit Lost Information -->
   <n-modal v-model:show="showEdit">
-    <n-card title="編輯公告" :header-style="{ 'align-self': 'center' }">
+    <n-card title="編輯遺失物" :header-style="{ 'align-self': 'center' }">
       <n-form
         ref="formRef"
-        :label-width="80"
+        :label-width="100"
+        :model="lostObject"
         require-mark-placement="right-hanging"
+        h="120"
+        overflow="auto"
       >
-        <n-form-item label="標題" path="topic">
-          <n-input placeholder="輸入標題" />
+        <n-form-item label="遺失物品" path="topic">
+          <n-input v-model:value="lostObject.item" placeholder="輸入物品名稱" />
         </n-form-item>
-        <n-form-item label="內文" path="context">
-          <template #header-extra> 必填 </template>
-          <n-input type="textarea" placeholder="輸入內文" />
+        <n-form-item label="遺失時間" path="title">
+          <n-date-picker
+            w="full"
+            v-model:value="timeValue"
+            type="datetime"
+            clearable
+          />
+        </n-form-item>
+        <n-form-item label="遺失地點" path="title">
+          <n-input
+            v-model:value="lostObject.location"
+            placeholder="請輸入地點"
+          />
+        </n-form-item>
+        <n-form-item label="屬性" path="title">
+          <n-select
+            v-model:value="lostObject.lost_Attr"
+            :options="attrOption"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
+                </div>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
         </n-form-item>
       </n-form>
       <template #footer>
         <div flex="~ gap-8" class="justify-center px-12">
-          <n-button type="primary" flex="grow" ghost>
+          <n-button @click="patchLost" type="primary" flex="grow" ghost>
             <template #icon>
               <n-icon :size="18"><save /></n-icon>
             </template>
@@ -298,7 +348,7 @@ onMounted(async () => {
   }
 });
 
-// Handle Appending new lost information
+// API functions
 const appendLost = async () => {
   lostObject.time = new Date(timeValue.value).toLocaleString();
   formData.append("item", lostObject.item);
@@ -310,8 +360,38 @@ const appendLost = async () => {
       "http://localhost:3000/api/mrt_admin/lost",
       formData
     );
-    console.log(res.data);
     showAppend.value = false;
+    router.go(0);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const patchLost = async () => {
+  lostObject.time = new Date(timeValue.value).toLocaleString();
+  formData.append("item", lostObject.item);
+  formData.append("time", lostObject.time);
+  formData.append("location", lostObject.location);
+  formData.append("lost_Attr", lostObject.lost_Attr);
+  try {
+    const res = await axios.patch(
+      `http://localhost:3000/api/mrt_admin/lost/${lostObject.id}`,
+      formData
+    );
+    console.log(res.data);
+    showEdit.value = false;
+    router.go(0);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deleteLost = async () => {
+  try {
+    const res = await axios.delete(
+      `http://localhost:3000/api/mrt_admin/lost/${lostObject.id}`
+    );
+    console.log(res.data);
+    showDelete.value = false;
     router.go(0);
   } catch (err) {
     console.log(err);
@@ -331,6 +411,7 @@ function openEdit(target: Lost) {
   lostObject.id = target.id;
   lostObject.item = target.item;
   lostObject.time = target.time;
+  timeValue.value = new Date(target.time).getTime();
   lostObject.location = target.location;
   lostObject.lost_Attr = target.lost_Attr;
 }
