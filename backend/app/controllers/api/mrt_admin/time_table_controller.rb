@@ -3,6 +3,9 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
         check,@member=check_mrt_admin
         if check
             @timetable = TimeTable.new(timetable_params)
+            if StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line)
+                @timetable.end=StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line).number
+            end
             @timetable.station_id=params[:station_id]
             if StationNo.find_by(linecolor:@timetable.line,number:@timetable.end) 
                 if StationNo.find_by(station_id:@timetable.station_id,linecolor:@timetable.line)
@@ -73,11 +76,18 @@ class Api::MrtAdmin::TimeTableController < ApplicationController
         check,@member=check_mrt_admin
         if check
             @timetable = TimeTable.new(timetable_params)
+            if StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line)
+                @timetable.end=StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line).number
+            end
             @timetable.station_id=params[:station_id]
             if StationNo.find_by(linecolor:@timetable.line,number:@timetable.end) 
                 if StationNo.find_by(station_id:@timetable.station_id,linecolor:@timetable.line)
                     @timetable = TimeTable.find(params[:id])
-                    if @timetable.update(timetable_params)
+                    @timetable.update(timetable_params)
+                    if StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line)
+                        @timetable.end=StationNo.find_by(station_id:@timetable.end,linecolor:@timetable.line).number
+                    end
+                    if @timetable.save
                         render json: {
                             status: "success",
                             error: false,

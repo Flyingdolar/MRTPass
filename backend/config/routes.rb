@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       resources :station do
         resources :time_table
         get 'time_table_search' => 'time_table#time_table_search'
+        get 'line'=>'station#show_line'
       end
       resources :line
       resources :ticket, except: [:update,:delete]
