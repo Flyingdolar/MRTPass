@@ -1,12 +1,23 @@
 <template>
-  <n-card>
-    <n-card>
-      <span>{{ Username }}</span
-      ><br />
-      <span>{{ Userrole }}</span>
-    </n-card>
-    <n-list align="center">
-      <template #header> 個人資料 </template>
+  <div flex="~ col gap-3" m="y-3">
+    <div
+      flex="~ gap-6"
+      justify="items-center"
+      p="x-6 y-4"
+      bg="white"
+      :class="roleColor"
+      border="t-3 b-3 opacity-10"
+    >
+      <n-icon size="48"><userIcon /></n-icon>
+      <div flex="~ col gap-2">
+        <div text="base title" font="500">{{ Username }}</div>
+        <div text="xs secondary">{{ Userrole }}</div>
+      </div>
+    </div>
+    <n-list>
+      <template #header>
+        <div m="l-6" text="title lg">個人資料</div>
+      </template>
       <n-list-item>
         <n-space vertical align="center">
           <n-button v-if="!roleisAdmin" @click="editUserNamemodal = true"
@@ -126,7 +137,7 @@
     <n-space justify="center">
       <n-button @click="logout">登出</n-button>
     </n-space>
-  </n-card>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -154,6 +165,8 @@ import { ref, reactive, computed, onMounted, onBeforeMount } from "vue";
 import store from "/src/scripts/vuex.ts";
 import { watchOnce } from "@vueuse/core";
 import { useMessage } from "naive-ui";
+import signout from "../../assets/icon/iSignout.vue";
+import userIcon from "../../assets/icon/iUser.vue";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
@@ -192,6 +205,17 @@ const Userrole = computed(() => {
     return "捷運管理員";
   } else {
     return "一般會員";
+  }
+});
+const roleColor = computed(() => {
+  if ((store.state?.userinfo?.role as unknown as string) == "admin") {
+    return "text-red border-red";
+  } else if (
+    (store.state?.userinfo?.role as unknown as string) == "mrt_admin"
+  ) {
+    return "text-orange border-orange";
+  } else {
+    return "text-blue border-blue";
   }
 });
 const rules: FormRules = {
@@ -246,7 +270,7 @@ onBeforeMount(() => {
   if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
   }
-  message.info(store.state.userinfo.nickname);
+  // message.info(store.state.userinfo.nickname);
 });
 const model = reactive({
   newName: "",
