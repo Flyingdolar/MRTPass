@@ -1,18 +1,49 @@
 <template>
-  <div m="y-2" space="y-2">
-    <n-card footer-style="padding: 0;" :bordered="false">
+  <div flex="~ col" justify="center items-end" h="10" bg="white">
+    <div m="t-auto b-10px" text="title center bottom">遺失物公告</div>
+    <div p="y-1px" bg=" gray-200" />
+  </div>
+  <div flex="~ col" h="160" overflow="auto" w="full" gap="2">
+    <!-- List Empty view -->
+    <div
+      v-if="isListEmpty"
+      flex="~ col"
+      justify="center items-center"
+      m="x-4 y-2"
+    >
+      <div text="center">目前沒有任何遺失物喔！</div>
+    </div>
+    <!-- Card: Lost Items -->
+    <n-card
+      v-else
+      v-for="item in lostList"
+      :key="item.id"
+      header-style="padding: 0;"
+      footer-style="padding: 0;"
+      :bordered="false"
+    >
       <template #header>
-        <div justify="items-end" flex="~" w="full">
-          <div flex="grow" text="lg title"></div>
-          <div mt="1.5" text="xs secondary" font="normal"></div>
+        <div flex="~ col" justify="items-start" gap="1" m="x-4 t-3">
+          <div flex="~" justify="items-end" text="xs" font="normal">
+            <div :class="setAttrClass(item)" p="x-1" border="rounded 1">
+              {{ item.lost_Attr }}
+            </div>
+            <div flex="grow" />
+            <div text="secondary" m="t-1">{{ item.time }}</div>
+          </div>
+          <div m="x-1">{{ item.item }}</div>
         </div>
+      </template>
+      <template #default>
+        <div p="y-2" text="xs secondary">拾獲地點： {{ item.location }}</div>
+        <n-image :src="showImage(item)" />
       </template>
       <template #footer>
         <div
           flex="~"
-          justify="center items-center"
           p="x-4 y-2"
           v-if="isManager"
+          justify="center items-center"
         >
           <n-button flex="~ grow" size="medium" type="info" quaternary>
             <template #icon>
@@ -31,11 +62,12 @@
       </template>
     </n-card>
     <div p="7" />
-    <!-- Card: New Annoucement -->
+    <!-- Card: New Lost Item -->
     <n-card
+      v-if="isManager"
+      :hoverable="true"
       pos="fixed bottom-16"
       footer-style="padding: 0px;"
-      :hoverable="true"
     >
       <template #footer>
         <div class="flex justify-center py-4 px-12">
@@ -90,12 +122,19 @@
         :label-width="100"
         :model="lostObject"
         require-mark-placement="right-hanging"
+        h="120"
+        overflow="auto"
       >
         <n-form-item label="遺失物品" path="topic">
           <n-input v-model:value="lostObject.item" placeholder="輸入物品名稱" />
         </n-form-item>
         <n-form-item label="遺失時間" path="title">
-          <n-input v-model:value="lostObject.time" placeholder="請輸入時間" />
+          <n-date-picker
+            w="full"
+            v-model:value="timeValue"
+            type="datetime"
+            clearable
+          />
         </n-form-item>
         <n-form-item label="遺失地點" path="title">
           <n-input
@@ -104,7 +143,29 @@
           />
         </n-form-item>
         <n-form-item label="屬性" path="title">
-          <n-input v-model:value="lostObject.lost_Attr" placeholder="屬性" />
+          <n-select
+            v-model:value="lostObject.lost_Attr"
+            :options="attrOption"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
+                </div>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
         </n-form-item>
       </n-form>
       <template #footer>
@@ -176,17 +237,19 @@ import { ref, reactive, computed, onMounted } from "vue";
 
 // Naive UI & Icons
 import {
-  NForm,
-  NInput,
   NIcon,
-  NFormItem,
-  FormRules,
-  NDivider,
-  NButton,
+  NForm,
   NCard,
-  FormItemRule,
-  NSpace,
   NModal,
+  NInput,
+  NImage,
+  NButton,
+  NSelect,
+  NUpload,
+  FormRules,
+  NFormItem,
+  NDatePicker,
+  FormItemRule,
 } from "naive-ui";
 import trash from "../assets/icon/iTrash.vue";
 import back from "../assets/icon/iRefund.vue";
@@ -195,16 +258,22 @@ import edit from "../assets/icon/iEdit.vue";
 import save from "../assets/icon/iSave.vue";
 import { Ref } from "vue";
 
-const lost = "遺失";
-const found = "拾獲";
+const timeValue = ref(0);
+const attrOption = [
+  { label: "遺失", value: "遺失" },
+  { label: "拾獲", value: "拾獲" },
+];
+const isListEmpty = ref(true);
+const lostItem = ref<Lost>();
 const lostList = ref<Lost[]>([]);
-// Let lostObject as a reactive object in Lost type
+const formData = new FormData();
 const lostObject = reactive<Lost>({
   id: 0,
   item: "",
   time: "",
+  photo: "",
   location: "",
-  lost_Attr: lost,
+  lost_Attr: attrOption[0].label,
 });
 
 // Visible of Overlay Modals
@@ -213,13 +282,17 @@ const showEdit = ref(false);
 const showDelete = ref(false);
 // Judge if the user is manager
 const isManager = computed(() => {
-  return true;
+  const role = store.state?.userinfo?.role as unknown as string;
+  if (role == "admin" || role == "mrt_admin") return true;
+  else return false;
 });
 
 onMounted(async () => {
   try {
     const res = await axios.get("http://localhost:3000/api/mrt_admin/lost");
-    console.log(res.data);
+    lostList.value = res.data.data;
+    isListEmpty.value = lostList.value.length === 0;
+    console.log(lostList.value);
   } catch (err) {
     console.log(err);
   }
@@ -227,10 +300,15 @@ onMounted(async () => {
 
 // Handle Appending new lost information
 const appendLost = async () => {
+  lostObject.time = new Date(timeValue.value).toLocaleString();
+  formData.append("item", lostObject.item);
+  formData.append("time", lostObject.time);
+  formData.append("location", lostObject.location);
+  formData.append("lost_Attr", lostObject.lost_Attr);
   try {
     const res = await axios.post(
       "http://localhost:3000/api/mrt_admin/lost",
-      lostObject
+      formData
     );
     console.log(res.data);
     showAppend.value = false;
@@ -243,9 +321,10 @@ const appendLost = async () => {
 // Open the overlay modals
 function openAppend() {
   showAppend.value = true;
-  // Reset the form
+  timeValue.value = Date.now();
   lostObject.item = "";
-  lostObject.time = "";
+  lostObject.location = "";
+  lostObject.lost_Attr = attrOption[0].label;
 }
 function openEdit(target: Lost) {
   showEdit.value = true;
@@ -259,4 +338,37 @@ function openDelete(target: Lost) {
   showDelete.value = true;
   lostObject.id = target.id;
 }
+function setAttrClass(item: Lost) {
+  if (item.lost_Attr == attrOption[0].label) {
+    return "text-orange border-yellow";
+  } else if (item.lost_Attr == attrOption[1].label) {
+    return "text-blue border-blue";
+  }
+}
+
+function showImage(item: Lost) {
+  if (item.photo.url != null) return "http://localhost:3000" + item.photo.url;
+}
+
+function handleImgBefore(event: any) {
+  const file = event.file;
+  const isImage = file.type.includes("image");
+  const fileSize = file.file.size / 1024 / 1024;
+  // TODO: 顯示錯誤訊息
+  if (!isImage) console.error("上傳內容必須為圖片格式!");
+  if (fileSize > 2) console.error("上傳圖片大小不能超過2MB!");
+  return isImage && fileSize < 2;
+}
+
+function handleImgChange(event: any) {
+  formData.delete("photo");
+  if (event.length === 0) return;
+  formData.append("photo", event[0].file, event[0].file.name);
+}
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+</style>

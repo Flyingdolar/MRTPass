@@ -18,7 +18,7 @@ export default defineConfig({
       red: "#BB0F17",
       orange: "#BE9505",
       yellow: "#E9B200",
-      green: "#62AE01",
+      green: "#18A058",
       teal: "#008E8E",
       blue: "#3A80C0",
       indigo: "#6B23B4",
