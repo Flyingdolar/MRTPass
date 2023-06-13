@@ -1,56 +1,63 @@
 <template>
   <n-space size="large" line-height="20px" vertical>
     <n-card>
-      <n-h3 class="cardtitle">common</n-h3>
-      <n-card
-        v-for="item in CurrentCommon"
-        :key="item?.info.id"
-        footer-style="padding: 0;"
-        :bordered="false"
-      >
-        <template #header>
-          <div justify="items-end" flex="~" w="full">
-            <div flex="grow" text="lg title">
-              {{ item.info.name }}
+      <div v-if="CurrentCommon?.length == 0">查無周遭景點資訊</div>
+      <div v-if="CurrentCommon">
+        <n-card
+          v-for="item in CurrentCommon"
+          :key="item?.info.id"
+          footer-style="padding: 0;"
+          :bordered="false"
+        >
+          <template #header>
+            <div justify="items-end" flex="~" w="full">
+              <div flex="grow" text="lg title">
+                {{ item.info.name }}
+              </div>
             </div>
-          </div>
-        </template>
-        {{ item.info.Des }}
-        <template #footer>
-          <div
-            flex="~"
-            justify="center items-center"
-            p="x-4 y-2"
-            v-if="roleisAdmin"
-          >
-            <n-button
-              @click="showOldCommon(item.info.id)"
-              flex="~ grow"
-              size="medium"
-              type="info"
-              quaternary
+          </template>
+          {{ item.info.Des }}
+          <n-space justify="center">
+            <n-button @click="viewCommon(item.info.id)">查看景點</n-button>
+          </n-space>
+
+          <template #footer>
+            <div
+              flex="~"
+              justify="center items-center"
+              p="x-4 y-2"
+              v-if="roleisAdmin"
             >
-              <template #icon>
-                <n-icon :size="18"><edit /></n-icon>
-              </template>
-              <div>編輯</div>
-            </n-button>
-            <div m="1" p="0.8px" bg="gray-200" />
-            <n-button
-              @click="showConfirmDelete(item.info.id)"
-              flex="~ grow"
-              size="medium"
-              type="error"
-              quaternary
-            >
-              <template #icon>
-                <n-icon :size="18"><trash /></n-icon>
-              </template>
-              <div>刪除</div>
-            </n-button>
-          </div>
-        </template>
-      </n-card>
+              <n-button
+                @click="showOldCommon(item.info.id)"
+                flex="~ grow"
+                size="medium"
+                type="info"
+                quaternary
+              >
+                <template #icon>
+                  <n-icon :size="18"><edit /></n-icon>
+                </template>
+                <div>編輯</div>
+              </n-button>
+              <div m="1" p="0.8px" bg="gray-200" />
+              <n-button
+                @click="showConfirmDelete(item.info.id)"
+                flex="~ grow"
+                size="medium"
+                type="error"
+                quaternary
+              >
+                <template #icon>
+                  <n-icon :size="18"><trash /></n-icon>
+                </template>
+                <div>刪除</div>
+              </n-button>
+            </div>
+          </template>
+        </n-card>
+      </div>
+
       <n-space v-if="roleisAdmin" justify="center">
         <n-button @click="showNewCommon = true">新增景點</n-button>
       </n-space>
@@ -362,7 +369,7 @@ const rules: FormRules = {
 watch(store.state, () => {
   getCommon();
 });
-const CurrentCommon = ref<Common[]>();
+const CurrentCommon = ref<Common[]>([]);
 function getCommon() {
   if (store.state.currentlinestation) {
     //axios get
@@ -634,5 +641,9 @@ function SubmitEditCommon() {
       console.log(error);
     });
   //axios
+}
+function viewCommon(id: number) {
+  console.log(id);
+  router.push("/Common/" + id.toString());
 }
 </script>

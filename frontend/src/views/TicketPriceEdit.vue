@@ -102,7 +102,7 @@ const lineOptions = computed(() =>
   }))
 );
 function goback() {
-  router.push("/stationlist");
+  router.push("/profile");
 }
 function SaveEdit() {
   //axios patch

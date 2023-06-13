@@ -83,7 +83,7 @@
                                 <n-form-item label="所屬路線"
                                   ><n-select
                                     v-model:value="CurrentRoute"
-                                    :options="lineOptions"
+                                    :options="lineOptions2"
                                   ></n-select
                                 ></n-form-item>
                                 <n-form-item label="班次目的地"
@@ -205,6 +205,7 @@ const model = reactive({
   Mrtno: "",
 });
 const AllLine = ref<Line[]>();
+const AllLine2 = ref<Line[]>();
 const AllTimeTable = ref<AlotsTimeTable[]>();
 const currentindex = ref(0);
 onBeforeMount(() => {
@@ -246,6 +247,19 @@ onBeforeMount(() => {
       console.log(error);
     });
   //axios
+  axios
+    .get(
+      "http://localhost:3000/api/mrt_admin/station/" + route.params.id + "/line"
+    )
+    .then(function (response) {
+      //console.log(response.data.data);
+      AllLine2.value = response.data.data;
+      //console.log(AllLine.value);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
   //axios get
   axios
     .get(
@@ -265,6 +279,12 @@ onBeforeMount(() => {
 });
 const lineOptions = computed(() =>
   AllLine.value?.map((v, index) => ({
+    label: v.linecolor + v.name,
+    value: v.linecolor,
+  }))
+);
+const lineOptions2 = computed(() =>
+  AllLine2.value?.map((v, index) => ({
     label: v.linecolor + v.name,
     value: v.linecolor,
   }))
