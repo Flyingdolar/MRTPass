@@ -20,12 +20,17 @@
       </template>
       <n-list-item>
         <n-space vertical align="center">
-          <n-button v-if="!roleisAdmin" @click="editUserNamemodal = true"
-            >修改使用者名稱</n-button
+          <n-button
+            v-if="!roleisAdmin"
+            @click="editUserNamemodal = true"
+            quaternary
+            type="primary"
           >
+            修改使用者名稱
+          </n-button>
+          <!-- Overlay: Change user name -->
           <n-modal v-model:show="editUserNamemodal">
             <n-card
-              style="width: 600px"
               title="修改使用者名稱"
               :bordered="false"
               size="huge"
@@ -38,15 +43,43 @@
               />
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="editUserName">儲存</n-button>
-                  <n-button @click="editUserNamemodal = false">取消</n-button>
+                  <div flex="~ gap-8" class="justify-center px-12">
+                    <n-button
+                      @click="editUserName"
+                      type="primary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><save /></n-icon>
+                      </template>
+                      <div>儲存</div>
+                    </n-button>
+                    <n-button
+                      @click="editUserNamemodal = false"
+                      type="tertiary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><back /></n-icon>
+                      </template>
+                      <div>取消</div>
+                    </n-button>
+                  </div>
                 </n-space>
               </template>
             </n-card>
           </n-modal>
-          <n-button v-if="!roleisAdmin" @click="editPhotomodal = true"
-            >修改頭像照片</n-button
+          <n-button
+            v-if="!roleisAdmin"
+            @click="editPhotomodal = true"
+            quaternary
+            type="primary"
           >
+            修改頭像照片
+          </n-button>
+          <!-- Overlay: Change Avatar -->
           <n-modal v-model:show="editPhotomodal">
             <n-card
               style="width: 600px"
@@ -59,19 +92,54 @@
               <n-upload
                 :on-before-upload="handleImgBefore"
                 :on-update-file-list="handleImgChange"
-                :on-remove="handleImgRemove"
               >
-                <n-button>上傳照片</n-button>
+                <n-upload-dragger w="full">
+                  <div
+                    p="x-4 y-4"
+                    bg="hover:blue-100"
+                    text="seconary hover:blue"
+                    border="rounded-lg 1 gray-200 hover:blue-400"
+                  >
+                    <div flex="~" justify="center">
+                      <n-icon size="48"><add /></n-icon>
+                    </div>
+                  </div>
+                </n-upload-dragger>
               </n-upload>
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="saveChange">儲存</n-button>
-                  <n-button @click="editPhotomodal = false">取消</n-button>
+                  <div flex="~ gap-8" class="justify-center px-12">
+                    <n-button
+                      @click="saveChange"
+                      type="primary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><save /></n-icon>
+                      </template>
+                      <div>儲存</div>
+                    </n-button>
+                    <n-button
+                      @click="editPhotomodal = false"
+                      type="tertiary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><back /></n-icon>
+                      </template>
+                      <div>取消</div>
+                    </n-button>
+                  </div>
                 </n-space>
               </template>
             </n-card>
           </n-modal>
-          <n-button @click="editPasswordmodal = true">修改密碼</n-button>
+          <n-button @click="editPasswordmodal = true" quaternary type="primary">
+            修改密碼
+          </n-button>
+          <!-- Overlay: Change password -->
           <n-modal v-model:show="editPasswordmodal">
             <n-card
               style="width: 600px"
@@ -114,8 +182,30 @@
               </n-form>
               <template #footer>
                 <n-space justify="center">
-                  <n-button @click="editPassword">儲存</n-button>
-                  <n-button @click="editPasswordmodal = false">取消</n-button>
+                  <div flex="~ gap-8" class="justify-center px-12">
+                    <n-button
+                      @click="editPassword"
+                      type="primary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><save /></n-icon>
+                      </template>
+                      <div>儲存</div>
+                    </n-button>
+                    <n-button
+                      @click="editPasswordmodal = false"
+                      type="tertiary"
+                      flex="grow"
+                      ghost
+                    >
+                      <template #icon>
+                        <n-icon :size="18"><back /></n-icon>
+                      </template>
+                      <div>取消</div>
+                    </n-button>
+                  </div>
                 </n-space>
               </template>
             </n-card>
@@ -123,19 +213,32 @@
         </n-space>
       </n-list-item>
     </n-list>
-    <n-list v-if="roleisAdmin" align="center">
-      <template #header> 管理 </template>
+    <n-list v-if="roleisAdmin">
+      <template #header> <div m="l-6" text="title lg">管理</div></template>
       <n-list-item>
         <n-space vertical align="center">
-          <n-button @click="editAllUser">使用者權限</n-button>
-          <n-button @click="editMRTLine">捷運路線設定</n-button>
-          <n-button @click="editTicketPrice">票價距離設定</n-button>
-          <n-button @click="editMRTStation">捷運站點設定</n-button>
+          <n-button quaternary type="primary" @click="editAllUser">
+            使用者權限
+          </n-button>
+          <n-button quaternary type="primary" @click="editMRTLine">
+            捷運路線設定
+          </n-button>
+          <n-button quaternary type="primary" @click="editTicketPrice">
+            票價距離設定
+          </n-button>
+          <n-button quaternary type="primary" @click="editMRTStation">
+            捷運站點設定
+          </n-button>
         </n-space>
       </n-list-item>
     </n-list>
-    <n-space justify="center">
-      <n-button @click="logout">登出</n-button>
+    <n-space justify="center" bg="white" py="2">
+      <n-button @click="logout" type="error" quaternary>
+        <template #icon>
+          <n-icon :size="18"><signout /></n-icon>
+        </template>
+        <div>登出</div>
+      </n-button>
     </n-space>
   </div>
 </template>
@@ -167,6 +270,9 @@ import { watchOnce } from "@vueuse/core";
 import { useMessage } from "naive-ui";
 import signout from "../../assets/icon/iSignout.vue";
 import userIcon from "../../assets/icon/iUser.vue";
+import save from "../../assets/icon/iSave.vue";
+import back from "../../assets/icon/iRefund.vue";
+import add from "../../assets/icon/iAdd.vue";
 
 const previewImage = ref<string | null>(null);
 const imageFile = ref<File | null>(null);
@@ -284,7 +390,6 @@ function logout() {
   axios
     .post("http://localhost:3000/sign_out")
     .then(function (response) {
-      //console.log(response);
       store.dispatch("userinfo", undefined);
       router.push("/account");
     })
@@ -303,18 +408,16 @@ function editUserName() {
       nickname: model.newName,
     })
     .then(function (response) {
-      console.log(response);
+      message.success("使用者名稱修改成功");
       store.dispatch("userinfo", response.data.data);
       editUserNamemodal.value = false;
     })
     .catch(function (error) {
-      console.log(error);
+      message.error("修改失敗，請檢查輸入是否正確");
     });
   //axios
 }
-function editPhoto() {
-  editPhotomodal.value = true;
-}
+
 function editPassword() {
   //axios patch
   axios
@@ -324,12 +427,12 @@ function editPassword() {
       confirmation: model.comfirmPassword,
     })
     .then(function (response) {
-      console.log(response);
+      message.success("密碼修改成功");
       store.dispatch("userinfo", response.data.data);
       editPasswordmodal.value = false;
     })
     .catch(function (error) {
-      console.log(error);
+      message.error("密碼修改失敗，請檢查輸入是否正確");
     });
   //axios
 }
@@ -345,27 +448,6 @@ function editMRTStation() {
 function editTicketPrice() {
   router.push("/ticketprice");
 }
-// function Photopatch() {
-//   //axios patch
-//   if (imageFile.value) {
-//     // 將圖像資料發送到後端
-//     const formData = new FormData();
-//     formData.append("image", imageFile.value);
-//     console.log(formData.values);
-//     //axios patch
-//     axios
-//       .patch("http://localhost:3000/update", {
-//         picture: formData.values,
-//       })
-//       .then(function (response) {
-//         console.log(response);
-//       })
-//       .catch(function (error) {
-//         console.log(error);
-//       });
-//     //axios
-//   }
-// }
 
 function handleImgBefore(event: any) {
   const file = event.file;
@@ -378,15 +460,9 @@ function handleImgBefore(event: any) {
 }
 
 function handleImgChange(event: any) {
+  formData.delete("picture");
+  if (event.length == 0) return;
   formData.append("picture", event[0].file, event[0].file.name);
-}
-
-function handleImgRemove() {
-  formData.delete("picture");
-}
-
-function cancelChange() {
-  formData.delete("picture");
 }
 
 function saveChange() {
@@ -399,9 +475,10 @@ function saveChange() {
     .then(function (response) {
       store.dispatch("userinfo", response.data);
       editPhotomodal.value = false;
+      message.success("上傳圖片成功");
     })
     .catch(function (error) {
-      console.log(error);
+      message.error("上傳圖片失敗");
     });
 }
 </script>
