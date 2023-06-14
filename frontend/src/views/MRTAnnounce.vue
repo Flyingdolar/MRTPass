@@ -58,6 +58,7 @@
     <div p="7" />
     <!-- Card: New Annoucement -->
     <n-card
+      v-if="roleisAdmin"
       pos="fixed bottom-16"
       footer-style="padding: 0px;"
       :hoverable="true"
