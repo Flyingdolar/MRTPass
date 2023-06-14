@@ -70,7 +70,7 @@
 
 1. 前端：`Vue + Electron`
 
-2. 後端：`Java`
+2. 後端：`Raiils on Ruby`
 
 3. 資料庫：`SQL lite`
 
