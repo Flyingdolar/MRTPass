@@ -367,6 +367,7 @@ function deleteAnnounce() {
     )
     .then(function (response) {
       console.log(response);
+      ConfirmDeleteshow.value = false;
       reloadAnnouncement();
     })
     .catch(function (error) {

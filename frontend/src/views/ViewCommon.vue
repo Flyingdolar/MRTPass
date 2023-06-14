@@ -60,7 +60,7 @@
       </n-card>
     </div>
     <template #footer>
-      <n-space justify="center">
+      <n-space justify="center" v-if="!UserhadComment">
         <n-button @click="showCreditModal">評論</n-button>
       </n-space>
     </template>
@@ -184,7 +184,7 @@
               <div>刪除</div>
             </n-button>
             <n-button
-              @click="showDelete = false"
+              @click="DeleteCommentModal = false"
               type="tertiary"
               flex="grow"
               ghost
@@ -274,6 +274,19 @@ const model = reactive({
   editedcontent: "",
   editedrate: "",
 });
+const UserhadComment = computed(() => {
+  const ret = ref(false);
+  if (CurrentComment.value) {
+    CurrentComment.value?.forEach((item) => {
+      if (item.comment.member_id == Userid.value) {
+        ret.value = true;
+      }
+    });
+  }
+  console.log(ret.value);
+  return ret.value;
+});
+
 const Userid = computed(() => {
   return store.state?.userinfo?.id;
 });
@@ -371,7 +384,8 @@ function submitCredt() {
     .then(function (response) {
       console.log(response);
       //router.go(0);
-      CurrentComment.value?.push(response.data.data);
+      reloadComment();
+      CreditModalShow.value = false;
     })
     .catch(function (error) {
       console.log(error);
@@ -432,6 +446,7 @@ function deleteUserComment() {
     )
     .then(function (response) {
       console.log(response);
+      DeleteCommentModal.value = false;
       reloadCommon();
       reloadComment();
     })
