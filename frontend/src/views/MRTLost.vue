@@ -344,15 +344,18 @@ const isManager = computed(() => {
   else return false;
 });
 
-onMounted(async () => {
+const getLost = async () => {
   try {
     const res = await axios.get("http://localhost:3000/api/mrt_admin/lost");
     lostList.value = res.data.data;
     isListEmpty.value = lostList.value.length === 0;
-    console.log(lostList.value);
   } catch (err) {
     console.log(err);
   }
+};
+
+onMounted(() => {
+  getLost();
 });
 
 // API functions
@@ -365,7 +368,7 @@ const appendLost = async () => {
   try {
     await axios.post("http://localhost:3000/api/mrt_admin/lost", formData);
     showAppend.value = false;
-    router.go(0);
+    getLost();
     message.success("新增成功");
   } catch (err) {
     message.error("新增失敗，缺少遺失物完整資料");
@@ -383,7 +386,7 @@ const patchLost = async () => {
       formData
     );
     showEdit.value = false;
-    router.go(0);
+    getLost();
     message.success("修改成功");
   } catch (err) {
     message.error("修改失敗，缺少遺失物完整資料");
@@ -396,7 +399,7 @@ const deleteLost = async () => {
       `http://localhost:3000/api/mrt_admin/lost/${lostObject.id}`
     );
     showDelete.value = false;
-    router.go(0);
+    getLost();
     message.success("刪除成功");
   } catch (err) {
     message.error("刪除失敗");
