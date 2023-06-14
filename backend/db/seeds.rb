@@ -476,7 +476,7 @@ Lost.create(item:"自行車一輛",time:"2023/05/08 19:00",location:"紅樹林�
 p "Set Announcement"
 Announcement.create(topic:"使用工具",context:"前端:Vue + Electron 後端:ROR(ruby on rails)",member_id:1)
 Announcement.create(topic:"製作團隊名單",context:"UI/UX設計、前端刻版面:鄭翔元 前端API串接:楊焜華 後端API設計、單元測試:葉威佑 後端功能:曾皓群",member_id:1)
-Announcement.create(topic:"致謝",context:"感謝柯老師指導及ChatGPT的技術支援",member_id:1)
+Announcement.create(topic:"致謝",context:"感謝柯老師指導及ChatGPT和Vonernue同學的技術支援",member_id:1)
 
 p "Set Info for 公館"
 Info.create(name:"阿里媽媽",photo:Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', '5.jpg'), 'image/jpg'),address:"台北市中正區羅斯福路四段136巷1弄3號",type_:"Common",Des:"營業時間:11:00~15:30,16:30~23:00 電話:02-2368 7724")
