@@ -1,7 +1,9 @@
 <template>
   <div flex="~ col" justify="center items-end" h="10" bg="white">
-    <div m="t-auto b-10px" text="title center bottom">遺失物公告</div>
-    <div p="y-1px" bg=" gray-200" />
+    <div flex="grow" mt="1" text="title center bottom" style="font-size: 16px">
+      遺失物公告
+    </div>
+    <div p="y-1px" bg="green-500" opacity="40" />
   </div>
   <div flex="~ col" h="160" overflow="auto" w="full" gap="2">
     <!-- List Empty view -->

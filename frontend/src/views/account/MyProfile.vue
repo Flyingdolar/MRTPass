@@ -8,7 +8,9 @@
       :class="roleColor"
       border="t-3 b-3 opacity-10"
     >
-      <n-icon size="48"><userIcon /></n-icon>
+      <n-avatar round :size="48" v-if="getAvatar != null" :src="getAvatar" />
+      <n-icon v-else :size="48"><userIcon /></n-icon>
+      <!-- <div>{{ getAvatar }}</div> -->
       <div flex="~ col gap-2">
         <div text="base title" font="500">{{ Username }}</div>
         <div text="xs secondary">{{ Userrole }}</div>
@@ -213,11 +215,16 @@
         </n-space>
       </n-list-item>
     </n-list>
-    <n-list v-if="roleisAdmin">
+    <n-list v-if="roleisAdmin || roleisMRTManager">
       <template #header> <div m="l-6" text="title lg">管理</div></template>
       <n-list-item>
         <n-space vertical align="center">
-          <n-button quaternary type="primary" @click="editAllUser">
+          <n-button
+            v-if="roleisAdmin"
+            quaternary
+            type="primary"
+            @click="editAllUser"
+          >
             使用者權限
           </n-button>
           <n-button quaternary type="primary" @click="editMRTLine">
@@ -259,6 +266,7 @@ import {
   NUploadDragger,
   NUpload,
   NIcon,
+  NAvatar,
   NText,
   NP,
   FormRules,
@@ -295,6 +303,7 @@ const uploadImage = (e: Event) => {
   }
 };
 const roleisAdmin = ref(false);
+const roleisMRTManager = ref(false);
 const editUserNamemodal = ref(false);
 const editPhotomodal = ref(false);
 const editPasswordmodal = ref(false);
@@ -323,6 +332,11 @@ const roleColor = computed(() => {
   } else {
     return "text-blue border-blue";
   }
+});
+const getAvatar = computed(() => {
+  const url = store.state?.userinfo?.picture.url;
+  if (url == null) return null;
+  else return "http://localhost:3000" + url;
 });
 const rules: FormRules = {
   oldPassword: [
@@ -375,6 +389,8 @@ const rules: FormRules = {
 onBeforeMount(() => {
   if ((store.state.userinfo?.role as unknown as string) == "admin") {
     roleisAdmin.value = true;
+  } else if ((store.state.userinfo?.role as unknown as string) == "mrt_admin") {
+    roleisMRTManager.value = true;
   }
   // message.info(store.state.userinfo.nickname);
 });
@@ -385,6 +401,7 @@ const model = reactive({
   newPassword: "",
   comfirmPassword: "",
 });
+
 function logout() {
   //axios post
   axios
@@ -473,7 +490,7 @@ function saveChange() {
       },
     })
     .then(function (response) {
-      store.dispatch("userinfo", response.data);
+      store.dispatch("userinfo", response.data.data);
       editPhotomodal.value = false;
       message.success("上傳圖片成功");
     })
