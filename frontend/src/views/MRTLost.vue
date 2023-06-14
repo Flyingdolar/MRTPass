@@ -37,8 +37,12 @@
         </div>
       </template>
       <template #default>
-        <div p="y-2" text="xs secondary">拾獲地點： {{ item.location }}</div>
-        <n-image :src="showImage(item)" />
+        <div p="y-2" text="sm secondary">
+          {{ item.lost_Attr }}地點： {{ item.location }}
+        </div>
+        <div flex="~" justify="center">
+          <n-image border="rounded-lg" :src="showImage(item)" />
+        </div>
       </template>
       <template #footer>
         <div
