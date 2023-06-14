@@ -1,30 +1,44 @@
 <template>
-  <n-card class="card">
-    <n-space size="large" line-height="20px">
-      <n-button @click="goback" size="large">返回</n-button>
-      <n-h3 class="cardtitle">編輯路線</n-h3>
-    </n-space>
-    <n-space justify="center" class="content2">
-      <n-card :bordered="false" size="huge" role="dialog" aria-modal="true">
-        <n-form ref="formRef" :label-width="80">
-          <n-form-item label="路線代號"
-            ><n-input v-model:value="model.linecolor"></n-input
-          ></n-form-item>
-          <n-form-item label="路線名稱"
-            ><n-input v-model:value="model.name"></n-input
-          ></n-form-item>
-          <n-form-item label="路線顏色"
-            ><n-input v-model:value="model.colorcode"></n-input
-          ></n-form-item>
-        </n-form>
-        <template #footer>
-          <n-space vertical>
-            <n-button @click="SaveEdit">儲存</n-button>
-          </n-space>
+  <div flex="~ col" justify="center items-end" h="10" bg="white">
+    <div flex="~" m="t-auto b-10px l-6 r-17" justify="items-center">
+      <n-button @click="goback" quaternary>
+        <n-icon :size="20"><back /></n-icon>
+      </n-button>
+      <div
+        flex="grow"
+        mt="1"
+        text="title center bottom"
+        style="font-size: 16px"
+      >
+        捷運路線編輯
+      </div>
+    </div>
+    <div p="y-1pt" bg=" gray-200" />
+  </div>
+  <div flex="~ col gap-3" h="160" overflow="auto">
+    <div py="1.5" />
+    <n-card :bordered="false" size="huge" role="dialog" aria-modal="true">
+      <n-form ref="formRef" :label-width="80">
+        <n-form-item label="路線代號"
+          ><n-input v-model:value="model.linecolor"></n-input
+        ></n-form-item>
+        <n-form-item label="路線名稱"
+          ><n-input v-model:value="model.name"></n-input
+        ></n-form-item>
+        <n-form-item label="路線顏色"
+          ><n-input v-model:value="model.colorcode"></n-input
+        ></n-form-item>
+      </n-form>
+    </n-card>
+    <div flex="~ gap-8" class="justify-center px-24 py-4 bg-white">
+      <n-button @click="SaveEdit" type="primary" flex="grow" ghost>
+        <template #icon>
+          <n-icon><save /></n-icon>
         </template>
-      </n-card>
-    </n-space>
-  </n-card>
+        <div>儲存</div>
+      </n-button>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,12 +50,15 @@ import {
   NDataTable,
   useMessage,
   NH3,
+  NIcon,
   NForm,
   NFormItem,
   NInput,
   NSelect,
   NPopconfirm,
 } from "naive-ui";
+import back from "../assets/icon/iExpLeft.vue";
+import save from "../assets/icon/iSave.vue";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch, reactive } from "vue";
 import { watchOnce } from "@vueuse/core";
