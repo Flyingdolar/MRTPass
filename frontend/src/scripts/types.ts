@@ -111,3 +111,15 @@ export interface Comment {
   score: number;
   updated_at: string;
 }
+export interface CommentAPI {
+  comment: Comment;
+  name: string;
+}
+export interface MRTInfo {
+  No: number;
+  end: number;
+  line: string;
+  name: string;
+  spend_time: string;
+  time: string;
+}

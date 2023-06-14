@@ -518,7 +518,7 @@ function NewTransSubmitt() {
         CurrentTrans.value?.push({
           Des: model.context,
           address: itemaddress.value,
-          id: response.data.info.id,
+          id: response.data.data.info.id,
           created_at: "",
           name: model.name,
           photo: formData,

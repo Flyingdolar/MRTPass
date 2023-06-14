@@ -307,7 +307,7 @@ function addNewAnnounce() {
     .then(function (response) {
       console.log(response);
       showNewAnnounce.value = false;
-      router.go(0);
+      AllPost.value.push(response.data.data);
     })
     .catch(function (error) {
       console.log(error);
