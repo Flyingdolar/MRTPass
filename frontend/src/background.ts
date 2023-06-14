@@ -24,7 +24,7 @@ async function createWindow() {
   });
 
   win.setSize(375, 836);
-  win.setMinimumSize(375, 836);
+  win.setMinimumSize(375, 200);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
