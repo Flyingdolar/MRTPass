@@ -1,276 +1,287 @@
 <template>
-  <n-space size="large" line-height="20px" vertical>
-    <n-card>
-      <div v-if="CurrentCommon?.length == 0">查無周遭景點資訊</div>
-      <div v-if="CurrentCommon">
-        <n-card
-          v-for="item in CurrentCommon"
-          :key="item?.info.id"
-          footer-style="padding: 0;"
-          :bordered="false"
-        >
-          <template #header>
-            <div justify="items-end" flex="~" w="full">
-              <div flex="grow" text="lg title">
-                {{ item.info.name }}
-              </div>
-            </div>
+  <!-- Empty View -->
+  <div v-if="CurrentCommon?.length == 0">
+    <div m="x-auto y-6" text="center secondary">查無周遭景點資訊</div>
+  </div>
+  <!-- List -->
+  <div space="y-3" m="t-3 b-20">
+    <n-card
+      v-for="item in CurrentCommon"
+      :key="item?.info.id"
+      footer-style="padding: 0;"
+      :bordered="false"
+    >
+      <template #header>
+        <div justify="items-end" flex="~" w="full">
+          <div flex="grow" text="lg title">
+            {{ item.info.name }}
+          </div>
+        </div>
+      </template>
+      <template #header-extra>
+        <n-button @click="viewCommon(item.info.id)" type="primary" quaternary>
+          <template #icon>
+            <n-icon :size="18"><star /></n-icon>
           </template>
-          {{ item.info.Des }}
-          <n-space justify="center">
-            <n-button @click="viewCommon(item.info.id)">查看景點</n-button>
-          </n-space>
-
-          <template #footer>
-            <div
-              flex="~"
-              justify="center items-center"
-              p="x-4 y-2"
-              v-if="roleisAdmin"
-            >
-              <n-button
-                @click="showOldCommon(item.info.id)"
-                flex="~ grow"
-                size="medium"
-                type="info"
-                quaternary
-              >
-                <template #icon>
-                  <n-icon :size="18"><edit /></n-icon>
-                </template>
-                <div>編輯</div>
-              </n-button>
-              <div m="1" p="0.8px" bg="gray-200" />
-              <n-button
-                @click="showConfirmDelete(item.info.id)"
-                flex="~ grow"
-                size="medium"
-                type="error"
-                quaternary
-              >
-                <template #icon>
-                  <n-icon :size="18"><trash /></n-icon>
-                </template>
-                <div>刪除</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
+          <div>查看景點</div>
+        </n-button>
+      </template>
+      <div style="white-space: pre-line">
+        {{ item.info.Des }}
       </div>
+      <n-space justify="center"> </n-space>
 
-      <n-space v-if="roleisAdmin" justify="center">
-        <n-button @click="showNewCommon = true">新增景點</n-button>
-      </n-space>
-      <!-- Overlay: Edit Annoucement -->
-      <n-modal v-model:show="OldCommonshow">
-        <n-card title="編輯景點資訊" :header-style="{ 'align-self': 'center' }">
-          <n-form
-            ref="formRef"
-            :label-width="80"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
-          >
-            <n-form-item label="景點名字" path="topic">
-              <n-input
-                v-model:value="model.newtopic"
-                placeholder="輸入景點名字"
-              />
-            </n-form-item>
-            <n-form-item label="地址" path="topic">
-              <n-input
-                v-model:value="model.newaddress"
-                placeholder="輸入地址"
-              />
-            </n-form-item>
-            <n-form-item label="景點描述" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.newcontent"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-            <n-form-item label="圖片" path="title">
-              <n-upload
-                :on-before-upload="handleImgBefore"
-                :on-update-file-list="handleImgChange"
-              >
-                <n-upload-dragger w="full">
-                  <div
-                    p="x-4 y-4"
-                    bg="hover:blue-100"
-                    text="seconary hover:blue"
-                    border="rounded-lg 1 gray-200 hover:blue-400"
-                  >
-                    <div flex="~" justify="center">
-                      <n-icon size="48"><add /></n-icon>
-                    </div>
-                  </div>
-                </n-upload-dragger>
-              </n-upload>
-            </n-form-item>
-          </n-form>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-12">
-              <n-button
-                @click="SubmitEditCommon"
-                type="primary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><save /></n-icon>
-                </template>
-                <div>儲存</div>
-              </n-button>
-              <n-button
-                @click="OldCommonshow = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
-      <!-- Overlay: Confirm Delete -->
-      <n-modal v-model:show="ConfirmDeleteshow">
-        <n-card
-          w="3/4 min-30"
-          title="確定要刪除？"
-          :header-style="{ 'align-self': 'center' }"
+      <template #footer>
+        <div
+          flex="~"
+          justify="center items-center"
+          p="x-4 y-2"
+          v-if="roleisAdmin"
         >
-          <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-2">
-              <n-button @click="deleteCommon" type="error" flex="grow" ghost>
-                <template #icon>
-                  <n-icon :size="18"><trash /></n-icon>
-                </template>
-                <div>刪除</div>
-              </n-button>
-              <n-button
-                @click="ConfirmDeleteshow = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
-      <!-- Overlay: New Annoucement -->
-      <n-modal v-model:show="showNewCommon">
-        <n-card title="建立景點" :header-style="{ 'align-self': 'center' }">
-          <n-form
-            ref="formRef"
-            :label-width="100"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
+          <n-button
+            @click="showOldCommon(item.info.id)"
+            flex="~ grow"
+            size="medium"
+            type="info"
+            quaternary
           >
-            <n-form-item label="景點名稱" path="topic">
-              <n-input v-model:value="model.name" placeholder="輸入名稱" />
-            </n-form-item>
-            <n-form-item label="附近捷運站">
-              <n-dynamic-input
-                v-model:value="Current.dynamicInputValue"
-                placeholder="请输入"
-                :on-create="onCreate"
-                :min="1"
-                :max="3"
-                #="{ index, value }"
-              >
-                <n-select
-                  v-model:value="Current.dynamicInputValue[index].CurrentRoute"
-                  :options="routeOpt"
-                  @update:value="handleUpdateValue(index)"
-                  placeholder="請選擇路線"
-                />
-
-                <n-select
-                  v-model:value="
-                    Current.dynamicInputValue[index].CurrentStation
-                  "
-                  :options="stationOpt[index]"
-                  placeholder="請選擇站點"
-                />
-              </n-dynamic-input>
-            </n-form-item>
-
-            <n-form-item label="地址" path="address">
-              <template #header-extra> 必填 </template>
-              <n-input v-model:value="model.address" placeholder="輸入內文" />
-            </n-form-item>
-            <n-form-item label="景點描述" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.context"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-            <n-form-item label="圖片" path="title">
-              <n-upload
-                :on-before-upload="handleImgBefore"
-                :on-update-file-list="handleImgChange"
-              >
-                <n-upload-dragger w="full">
-                  <div
-                    p="x-4 y-4"
-                    bg="hover:blue-100"
-                    text="seconary hover:blue"
-                    border="rounded-lg 1 gray-200 hover:blue-400"
-                  >
-                    <div flex="~" justify="center">
-                      <n-icon size="48"><add /></n-icon>
-                    </div>
-                  </div>
-                </n-upload-dragger>
-              </n-upload>
-            </n-form-item>
-          </n-form>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-12">
-              <n-button
-                @click="NewCommonSubmitt"
-                type="primary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><save /></n-icon>
-                </template>
-                <div>儲存</div>
-              </n-button>
-              <n-button
-                @click="showNewCommon = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
+            <template #icon>
+              <n-icon :size="18"><edit /></n-icon>
+            </template>
+            <div>編輯</div>
+          </n-button>
+          <div m="1" p="0.8px" bg="gray-200" />
+          <n-button
+            @click="showConfirmDelete(item.info.id)"
+            flex="~ grow"
+            size="medium"
+            type="error"
+            quaternary
+          >
+            <template #icon>
+              <n-icon :size="18"><trash /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+        </div>
+      </template>
     </n-card>
-  </n-space>
+  </div>
+
+  <!-- Card: New Annoucement -->
+  <n-card
+    v-if="roleisAdmin"
+    pos="fixed bottom-16"
+    footer-style="padding: 0px;"
+    :hoverable="true"
+  >
+    <template #footer>
+      <div class="flex justify-center py-4 px-12">
+        <n-button
+          flex="~ grow"
+          type="success"
+          ghost
+          @click="showNewCommon = true"
+        >
+          <template #icon>
+            <n-icon :size="18"><add /></n-icon>
+          </template>
+          新增景點
+        </n-button>
+      </div>
+    </template>
+  </n-card>
+
+  <!-- Overlay: Edit Annoucement -->
+  <n-modal v-model:show="OldCommonshow">
+    <n-card title="編輯景點資訊" :header-style="{ 'align-self': 'center' }">
+      <n-form
+        ref="formRef"
+        :label-width="80"
+        :model="model"
+        :rules="rules"
+        require-mark-placement="right-hanging"
+      >
+        <n-form-item label="景點名字" path="topic">
+          <n-input v-model:value="model.newtopic" placeholder="輸入景點名字" />
+        </n-form-item>
+        <n-form-item label="地址" path="topic">
+          <n-input v-model:value="model.newaddress" placeholder="輸入地址" />
+        </n-form-item>
+        <n-form-item label="景點描述" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.newcontent"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
+                </div>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="SubmitEditCommon" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="OldCommonshow = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
+  <!-- Overlay: Confirm Delete -->
+  <n-modal v-model:show="ConfirmDeleteshow">
+    <n-card
+      w="3/4 min-30"
+      title="確定要刪除？"
+      :header-style="{ 'align-self': 'center' }"
+    >
+      <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-2">
+          <n-button @click="deleteCommon" type="error" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><trash /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+          <n-button
+            @click="ConfirmDeleteshow = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
+  <!-- Overlay: New Annoucement -->
+  <n-modal v-model:show="showNewCommon">
+    <n-card title="建立景點" :header-style="{ 'align-self': 'center' }">
+      <n-form
+        ref="formRef"
+        :label-width="100"
+        :model="model"
+        :rules="rules"
+        require-mark-placement="right-hanging"
+      >
+        <n-form-item label="景點名稱" path="topic">
+          <n-input v-model:value="model.name" placeholder="輸入名稱" />
+        </n-form-item>
+        <n-form-item label="附近捷運站">
+          <n-dynamic-input
+            v-model:value="Current.dynamicInputValue"
+            placeholder="请输入"
+            :on-create="onCreate"
+            :min="1"
+            :max="3"
+            #="{ index, value }"
+          >
+            <n-select
+              v-model:value="Current.dynamicInputValue[index].CurrentRoute"
+              :options="routeOpt"
+              @update:value="handleUpdateValue(index)"
+              placeholder="請選擇路線"
+            />
+
+            <n-select
+              v-model:value="Current.dynamicInputValue[index].CurrentStation"
+              :options="stationOpt[index]"
+              placeholder="請選擇站點"
+            />
+          </n-dynamic-input>
+        </n-form-item>
+
+        <n-form-item label="地址" path="address">
+          <template #header-extra> 必填 </template>
+          <n-input v-model:value="model.address" placeholder="輸入內文" />
+        </n-form-item>
+        <n-form-item label="景點描述" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.context"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
+                </div>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="NewCommonSubmitt" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="showNewCommon = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
@@ -294,6 +305,7 @@ import {
   NUpload,
   NImage,
 } from "naive-ui";
+import star from "../assets/icon/iStar.vue";
 import trash from "../assets/icon/iTrash.vue";
 import add from "../assets/icon/iAdd.vue";
 import edit from "../assets/icon/iEdit.vue";
