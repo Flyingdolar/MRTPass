@@ -29,7 +29,7 @@
       />
     </div>
   </div>
-  <div flex="~ col" h="138" overflow="auto" class="scrollbar-hide" w="full">
+  <div flex="~ col" h="130" overflow="auto" class="scrollbar-hide" w="full">
     <router-view />
   </div>
 </template>
