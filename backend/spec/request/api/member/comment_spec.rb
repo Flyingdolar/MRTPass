@@ -106,7 +106,9 @@ RSpec.describe "Api::MrtAdmin::Comments", type: :request do
               "status": "success",
               "error": false,
               "message": "succeed to get info_1 comment list",
-              "data": Comment.where(info_id:1)
+              "data": [{name:"北捷管理員",comment:Comment.find(1)},
+                {name:"user#344003",comment:Comment.find(2)},
+                {name:"admin",comment:Comment.find(3)}]
             }.to_json
           )
         ) 
