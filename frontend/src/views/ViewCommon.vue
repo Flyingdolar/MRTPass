@@ -118,10 +118,144 @@
               type="error"
               quaternary
             >
+          </div>
+        </template>
+      </n-card>
+    </div>
+    <template #footer>
+      <n-space justify="center" v-if="!UserhadComment">
+        <n-button @click="showCreditModal">評論</n-button>
+      </n-space>
+    </template>
+    <n-modal v-model:show="CreditModalShow">
+      <n-card
+        title="給予評論"
+        :header-style="{ 'align-self': 'center' }"
+        :footer-style="{ 'align-self': 'center' }"
+        justify="center"
+      >
+        <n-space justify="center">
+          <n-form
+            ref="formRef"
+            :label-width="100"
+            :model="model"
+            :rules="rules"
+            require-mark-placement="right-hanging"
+          >
+            <n-form-item label="評論" path="context">
+              <template #header-extra> 必填 </template>
+              <n-input
+                v-model:value="model.context"
+                type="textarea"
+                placeholder="輸入內文"
+              />
+            </n-form-item>
+            <n-form-item label="圖片" path="title">
+              <n-upload
+                :on-before-upload="handleImgBefore"
+                :on-update-file-list="handleImgChange"
+              >
+                <n-upload-dragger w="full">
+                  <div
+                    p="x-4 y-4"
+                    bg="hover:blue-100"
+                    text="seconary hover:blue"
+                    border="rounded-lg 1 gray-200 hover:blue-400"
+                  >
+                    <div flex="~" justify="center">
+                      <n-icon size="48"><add /></n-icon>
+                    </div>
+                  </div>
+                </n-upload-dragger>
+              </n-upload>
+            </n-form-item>
+            <n-form-item label="評分" path="rate">
+              <n-rate size="large" v-model:value="model.rate" />
+            </n-form-item>
+          </n-form>
+        </n-space>
+        <template #footer>
+          <n-button @click="submitCredt">送出</n-button>
+        </template>
+      </n-card>
+    </n-modal>
+    <n-modal v-model:show="EditCommentModal">
+      <n-card
+        title="變更評論"
+        :header-style="{ 'align-self': 'center' }"
+        :footer-style="{ 'align-self': 'center' }"
+        justify="center"
+      >
+        <n-space justify="center">
+          <n-form
+            ref="formRef"
+            :label-width="100"
+            :model="model"
+            :rules="rules"
+            require-mark-placement="right-hanging"
+          >
+            <n-form-item label="評論" path="context">
+              <template #header-extra> 必填 </template>
+              <n-input
+                v-model:value="model.editedcontent"
+                type="textarea"
+                placeholder="輸入內文"
+              />
+            </n-form-item>
+            <n-form-item label="圖片" path="title">
+              <n-upload
+                :on-before-upload="handleImgBefore"
+                :on-update-file-list="handleImgChange"
+              >
+                <n-upload-dragger w="full">
+                  <div
+                    p="x-4 y-4"
+                    bg="hover:blue-100"
+                    text="seconary hover:blue"
+                    border="rounded-lg 1 gray-200 hover:blue-400"
+                  >
+                    <div flex="~" justify="center">
+                      <n-icon size="48"><add /></n-icon>
+                    </div>
+                  </div>
+                </n-upload-dragger>
+              </n-upload>
+            </n-form-item>
+            <n-form-item label="評分" path="rate">
+              <n-rate size="large" v-model:value="model.editedrate" />
+            </n-form-item>
+          </n-form>
+        </n-space>
+        <template #footer>
+          <n-button @click="editUserComment">送出</n-button>
+        </template>
+      </n-card>
+    </n-modal>
+    <n-modal v-model:show="DeleteCommentModal">
+      <n-card
+        w="3/4 min-30"
+        title="確定要刪除？"
+        :header-style="{ 'align-self': 'center' }"
+      >
+        <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+        <template #footer>
+          <div flex="~ gap-8" class="justify-center px-2">
+            <n-button type="error" flex="grow" ghost @click="deleteUserComment">
               <template #icon>
                 <n-icon :size="18"><remove /></n-icon>
               </template>
               <div>刪除</div>
+            </n-button>
+            <n-button
+              @click="DeleteCommentModal = false"
+              type="tertiary"
+              flex="grow"
+              ghost
+            >
+              <template #icon>
+                <n-icon :size="18"><cancel /></n-icon>
+              </template>
+              <div>取消</div>
             </n-button>
           </div>
         </template>
@@ -356,6 +490,19 @@ const model = reactive({
   editedcontent: "",
   editedrate: "",
 });
+const UserhadComment = computed(() => {
+  const ret = ref(false);
+  if (CurrentComment.value) {
+    CurrentComment.value?.forEach((item) => {
+      if (item.comment.member_id == Userid.value) {
+        ret.value = true;
+      }
+    });
+  }
+  console.log(ret.value);
+  return ret.value;
+});
+
 const Userid = computed(() => {
   return store.state?.userinfo?.id;
 });
@@ -457,7 +604,8 @@ function submitCredt() {
     .then(function (response) {
       console.log(response);
       //router.go(0);
-      CurrentComment.value?.push(response.data.data);
+      reloadComment();
+      CreditModalShow.value = false;
     })
     .catch(function (error) {
       console.log(error);
@@ -518,6 +666,7 @@ function deleteUserComment() {
     )
     .then(function (response) {
       console.log(response);
+      DeleteCommentModal.value = false;
       reloadCommon();
       reloadComment();
     })
