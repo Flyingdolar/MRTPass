@@ -17,7 +17,7 @@
         <n-icon :size="20" opacity="0"><search /></n-icon>
       </n-button>
     </div>
-    <div p="y-1pt" bg=" gray-200" />
+    <div p="y-1" bg=" gray-200" />
   </div>
   <div flex="~ col gap-3" h="146" overflow="auto">
     <!-- Common Info -->
@@ -57,6 +57,7 @@
         :footer-style="{ padding: '0' }"
         justify="center"
         class="content2"
+        bg="white opacity-70"
       >
         <!-- Comment User -->
         <template #header>
@@ -159,51 +160,69 @@
       :footer-style="{ 'align-self': 'center' }"
       justify="center"
     >
-      <n-space justify="center">
-        <n-form
-          ref="formRef"
-          :label-width="100"
-          :model="model"
-          :rules="rules"
-          require-mark-placement="right-hanging"
-        >
-          <n-form-item label="評論" path="context">
-            <template #header-extra> 必填 </template>
-            <n-input
-              v-model:value="model.context"
-              type="textarea"
-              placeholder="輸入內文"
-            />
-          </n-form-item>
-          <n-form-item label="圖片" path="title">
-            <n-upload
-              :on-before-upload="handleImgBefore"
-              :on-update-file-list="handleImgChange"
-            >
-              <n-upload-dragger w="full">
-                <div
-                  p="x-4 y-4"
-                  bg="hover:blue-100"
-                  text="seconary hover:blue"
-                  border="rounded-lg 1 gray-200 hover:blue-400"
-                >
-                  <div flex="~" justify="center">
-                    <n-icon size="48"><add /></n-icon>
-                  </div>
+      <n-form
+        ref="formRef"
+        :model="model"
+        :rules="rules"
+        require-mark-placement="right-hanging"
+        class="px-6"
+      >
+        <n-form-item label="評論" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.context"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
                 </div>
-              </n-upload-dragger>
-            </n-upload>
-          </n-form-item>
-          <n-form-item label="評分" path="rate">
-            <n-rate size="large" v-model:value="model.rate" />
-          </n-form-item>
-        </n-form>
-      </n-space>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
+        </n-form-item>
+        <n-form-item label="評分" path="rate">
+          <n-rate size="large" v-model:value="model.rate" />
+        </n-form-item>
+      </n-form>
       <template #footer>
-        <n-button @click="submitCredt">送出</n-button>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="submitCredt" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="CreditModalShow = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><refund /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
       </template>
     </n-card>
   </n-modal>
+
+  <!-- Overlay: Edit Comment -->
   <n-modal v-model:show="EditCommentModal">
     <n-card
       title="變更評論"
@@ -211,46 +230,45 @@
       :footer-style="{ 'align-self': 'center' }"
       justify="center"
     >
-      <n-space justify="center">
-        <n-form
-          ref="formRef"
-          :label-width="100"
-          :model="model"
-          :rules="rules"
-          require-mark-placement="right-hanging"
-        >
-          <n-form-item label="評論" path="context">
-            <template #header-extra> 必填 </template>
-            <n-input
-              v-model:value="model.editedcontent"
-              type="textarea"
-              placeholder="輸入內文"
-            />
-          </n-form-item>
-          <n-form-item label="圖片" path="title">
-            <n-upload
-              :on-before-upload="handleImgBefore"
-              :on-update-file-list="handleImgChange"
-            >
-              <n-upload-dragger w="full">
-                <div
-                  p="x-4 y-4"
-                  bg="hover:blue-100"
-                  text="seconary hover:blue"
-                  border="rounded-lg 1 gray-200 hover:blue-400"
-                >
-                  <div flex="~" justify="center">
-                    <n-icon size="48"><add /></n-icon>
-                  </div>
+      <n-form
+        ref="formRef"
+        :label-width="100"
+        :model="model"
+        :rules="rules"
+        class="px-6"
+        require-mark-placement="right-hanging"
+      >
+        <n-form-item label="評論" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.editedcontent"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+        <n-form-item label="圖片" path="title">
+          <n-upload
+            :on-before-upload="handleImgBefore"
+            :on-update-file-list="handleImgChange"
+          >
+            <n-upload-dragger w="full">
+              <div
+                p="x-4 y-4"
+                bg="hover:blue-100"
+                text="seconary hover:blue"
+                border="rounded-lg 1 gray-200 hover:blue-400"
+              >
+                <div flex="~" justify="center">
+                  <n-icon size="48"><add /></n-icon>
                 </div>
-              </n-upload-dragger>
-            </n-upload>
-          </n-form-item>
-          <n-form-item label="評分" path="rate">
-            <n-rate size="large" v-model:value="model.editedrate" />
-          </n-form-item>
-        </n-form>
-      </n-space>
+              </div>
+            </n-upload-dragger>
+          </n-upload>
+        </n-form-item>
+        <n-form-item label="評分" path="rate">
+          <n-rate size="large" v-model:value="model.editedrate" />
+        </n-form-item>
+      </n-form>
       <template #footer>
         <n-button @click="editUserComment">送出</n-button>
       </template>
@@ -294,19 +312,17 @@ import {
   NSpace,
   NButton,
   NModal,
-  NDataTable,
   useMessage,
-  NH3,
-  NPopconfirm,
   NRate,
   NForm,
   NInput,
   NIcon,
   NImage,
+  NUpload,
   NFormItem,
   FormRules,
-  NDivider,
   FormItemRule,
+  NUploadDragger,
 } from "naive-ui";
 import order from "../assets/icon/iOrder.vue";
 import back from "../assets/icon/iExpLeft.vue";
@@ -314,6 +330,8 @@ import star from "../assets/icon/iStar.vue";
 import add from "../assets/icon/iAdd.vue";
 import edit from "../assets/icon/iEdit.vue";
 import user from "../assets/icon/iUser.vue";
+import save from "../assets/icon/iSave.vue";
+import refund from "../assets/icon/iRefund.vue";
 import remove from "../assets/icon/iTrash.vue";
 import search from "../assets/icon/iSearch.vue";
 import cancel from "../assets/icon/iRefund.vue";
@@ -462,7 +480,6 @@ function handleImgBefore(event: any) {
   const file = event.file;
   const isImage = file.type.includes("image");
   const fileSize = file.file.size / 1024 / 1024;
-  // TODO: 顯示錯誤訊息
   if (!isImage) console.error("上傳內容必須為圖片格式!");
   if (fileSize > 2) console.error("上傳圖片大小不能超過2MB!");
   return isImage && fileSize < 2;
