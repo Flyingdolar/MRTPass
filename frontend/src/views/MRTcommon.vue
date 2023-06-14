@@ -548,7 +548,7 @@ function NewCommonSubmitt() {
       .post("http://localhost:3000/api/mrt_admin/common", formData)
       .then(function (response) {
         console.log(response.data.data);
-        CurrentCommon.value.push(response.data.data);
+        getCommon();
         showNewCommon.value = false;
       })
       .catch(function (error) {
@@ -602,7 +602,7 @@ function deleteCommon() {
     .then(function (response) {
       console.log(response.data.data);
       ConfirmDeleteshow.value = false;
-      router.go(0);
+      getCommon();
     })
     .catch(function (error) {
       console.log(error);
@@ -634,9 +634,7 @@ function SubmitEditCommon() {
     })
     .then(function (response) {
       console.log(response.data.data);
-      CurrentCommon.value[OldCommonindex.value].info.name = model.newtopic;
-      CurrentCommon.value[OldCommonindex.value].info.address = model.newaddress;
-      CurrentCommon.value[OldCommonindex.value].info.Des = model.newcontent;
+      getCommon();
       OldCommonshow.value = false;
     })
     .catch(function (error) {

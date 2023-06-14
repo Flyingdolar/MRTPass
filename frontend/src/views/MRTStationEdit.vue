@@ -326,7 +326,7 @@ const AllLine2 = ref<Line[]>();
 const AllTimeTable = ref<AlotsTimeTable[]>();
 const currentId = ref(0);
 const currentindex = ref(0);
-onBeforeMount(() => {
+function reloadstaioninfo() {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/station/" + route.params.id)
@@ -353,6 +353,9 @@ onBeforeMount(() => {
       console.log(error);
     });
   //axios
+}
+onBeforeMount(() => {
+  reloadstaioninfo();
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line")
@@ -378,6 +381,9 @@ onBeforeMount(() => {
       console.log(error);
     });
   //axios
+  reloadtimetable();
+});
+function reloadtimetable() {
   //axios get
   axios
     .get(
@@ -394,7 +400,7 @@ onBeforeMount(() => {
       console.log(error);
     });
   //axios
-});
+}
 const lineOptions = computed(() =>
   AllLine.value?.map((v, index) => ({
     label: v.linecolor + v.name,
@@ -425,7 +431,7 @@ function SaveEdit() {
     })
     .then(function (response) {
       message.success("修改成功");
-      router.push(0);
+      reloadstaioninfo();
     })
     .catch(function (error) {
       message.error("修改失敗");
@@ -451,7 +457,7 @@ function DeleteStation() {
     .then(function (response) {
       message.success("刪除成功");
       AllTimeTable.value?.splice(currentindex.value, 1);
-      router.push(0);
+      reloadtimetable();
     })
     .catch(function (error) {
       message.error("刪除失敗");
@@ -515,7 +521,7 @@ function SaveTimeTableEdit() {
     .then(function (response) {
       message.success("修改成功");
       editTimeTablemodal.value = false;
-      router.push(0);
+      reloadtimetable();
     })
     .catch(function (error) {
       message.error("修改失敗");
