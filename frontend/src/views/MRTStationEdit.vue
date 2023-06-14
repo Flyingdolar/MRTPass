@@ -425,7 +425,7 @@ function SaveEdit() {
     })
     .then(function (response) {
       message.success("修改成功");
-      router.push(0);
+      router.go(0);
     })
     .catch(function (error) {
       message.error("修改失敗");
@@ -451,7 +451,7 @@ function DeleteStation() {
     .then(function (response) {
       message.success("刪除成功");
       AllTimeTable.value?.splice(currentindex.value, 1);
-      router.push(0);
+      router.go(0);
     })
     .catch(function (error) {
       message.error("刪除失敗");
@@ -514,11 +514,13 @@ function SaveTimeTableEdit() {
     )
     .then(function (response) {
       message.success("修改成功");
+      console.log("done");
       editTimeTablemodal.value = false;
-      router.push(0);
+      router.go(0);
     })
     .catch(function (error) {
       message.error("修改失敗");
+      console.log(error);
     });
   //axios
 }
