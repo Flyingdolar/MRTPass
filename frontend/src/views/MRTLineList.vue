@@ -38,7 +38,7 @@
           <div>{{ line.name }}</div>
         </div>
         <div flex="~ gap-6">
-          <n-button ghost @click="DeleteLine(line.id)">
+          <n-button ghost @click="openDelete(line.id)">
             <template #icon>
               <n-icon text="danger"><remove /></n-icon>
             </template>
@@ -53,6 +53,37 @@
     </div>
     <div py="3px" />
   </div>
+  <!-- Overlay: Confirm Delete -->
+  <n-modal v-model:show="showDelete">
+    <n-card
+      w="3/4 min-30"
+      title="確定要刪除？"
+      :header-style="{ 'align-self': 'center' }"
+    >
+      <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-2">
+          <n-button type="error" flex="grow" ghost @click="DeleteLine">
+            <template #icon>
+              <n-icon :size="18"><remove /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+          <n-button
+            @click="showDelete = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><cancel /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
@@ -71,6 +102,7 @@ import back from "../assets/icon/iExpLeft.vue";
 import goto from "../assets/icon/iExpRight.vue";
 import remove from "../assets/icon/iTrash.vue";
 import search from "../assets/icon/iSearch.vue";
+import cancel from "../assets/icon/iRefund.vue";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
@@ -80,6 +112,9 @@ import router from "@/router";
 import store from "@/scripts/vuex";
 const EditUsermodal = ref(false);
 const colData = ref<Line[]>([]);
+const showDelete = ref(false);
+const selectID = ref(0);
+
 onMounted(() => {
   //axios get
   axios
@@ -109,11 +144,12 @@ function setLineColor(color: string) {
 function EditLine(id: number) {
   router.push("/linelist/" + (id as unknown as string));
 }
-function DeleteLine(id: number) {
+function DeleteLine() {
   //axios delete
   axios
     .delete(
-      "http://localhost:3000/api/mrt_admin/line/" + (id as unknown as string)
+      "http://localhost:3000/api/mrt_admin/line/" +
+        (selectID as unknown as string)
     )
     .then(function (response) {
       console.log(response);
@@ -124,6 +160,12 @@ function DeleteLine(id: number) {
     });
   //axios
 }
+
+function openDelete(id: number) {
+  showDelete.value = true;
+  selectID.value = id;
+}
+
 function goback() {
   router.push("/profile");
 }
