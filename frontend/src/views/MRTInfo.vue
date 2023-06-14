@@ -7,6 +7,7 @@
         v-model:value="depRoute.value"
         :options="routeOpt"
         placeholder="請選擇路線"
+        text="cool-gray-500"
       />
       <n-select
         v-model:value="depStation.value"
@@ -73,7 +74,7 @@ import {
   NCard,
   FormItemRule,
 } from "naive-ui";
-import { ref, reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onMounted, watch, h } from "vue";
 import { Station, Line, LineStation, MRTInfo } from "../scripts/types";
 const AllLine = ref<Line[]>();
 const CurrentdepLineStation = ref<LineStation[]>();
@@ -81,25 +82,40 @@ const CurrentarrLineStation = ref<LineStation[]>();
 let depRoute = reactive({
   label: "",
   value: "",
+  style: {
+    color: "",
+  },
 });
 
 let arrRoute = reactive({
   label: "",
   value: "",
+  style: {
+    color: "",
+  },
 });
 
 let depStation = reactive({
   label: "",
   value: "",
+  style: {
+    color: "",
+  },
 });
 let arrStation = reactive({
   label: "",
   value: "",
+  style: {
+    color: "",
+  },
 });
 let routeOpt = computed(() =>
   AllLine.value?.map((v, index) => ({
-    label: v.name,
+    label: v.linecolor + " · " + v.name,
     value: v.linecolor,
+    style: {
+      color: v.colorcode,
+    },
   }))
 );
 let depStationOpt = computed(() =>
@@ -162,6 +178,7 @@ watch(arrStation, () => {
 watch(depStation, () => {
   updateTicketandTime();
 });
+
 function updateTicketandTime() {
   if (arrStation.value && depStation.value) {
     //axios get
@@ -197,36 +214,6 @@ function updateTicketandTime() {
   }
 }
 
-let stationOpt = reactive([
-  // FIXME: 站點資料應該改為後端抓取
-  { label: "象山", value: "2" },
-  { label: "台北101/世貿", value: "3" },
-  { label: "信義安和", value: "4" },
-  { label: "大安", value: "5" },
-  { label: "忠孝復興", value: "6" },
-  { label: "南京復興", value: "7" },
-  { label: "中山國中", value: "8" },
-  { label: "松山機場", value: "9" },
-  { label: "大直", value: "10" },
-  { label: "劍南路", value: "11" },
-  { label: "西湖", value: "12" },
-  { label: "港墘", value: "13" },
-  { label: "文德", value: "14" },
-  { label: "內湖", value: "15" },
-  { label: "大湖公園", value: "16" },
-  { label: "葫洲", value: "17" },
-  { label: "東湖", value: "18" },
-  { label: "南港軟體園區", value: "19" },
-  { label: "南港展覽館", value: "20" },
-  { label: "小碧潭", value: "21" },
-  { label: "新北投", value: "22" },
-  { label: "復興崗", value: "23" },
-  { label: "忠義", value: "24" },
-  { label: "關渡", value: "25" },
-  { label: "竹圍", value: "26" },
-  { label: "紅樹林", value: "27" },
-  { label: "淡水", value: "28" },
-]);
 onMounted(() => {
   //axios get
   axios

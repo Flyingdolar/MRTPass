@@ -26,11 +26,13 @@
           <div>查看景點</div>
         </n-button>
       </template>
+      <!-- Common Image -->
+      <div v-if="getImage(item.info.photo) != null" flex="~" justify="center">
+        <img w="full" m="b-4" :src="getImage(item.info.photo)" />
+      </div>
       <div style="white-space: pre-line">
         {{ item.info.Des }}
       </div>
-      <n-space justify="center"> </n-space>
-
       <template #footer>
         <div
           flex="~"
@@ -348,6 +350,7 @@ const roleisAdmin = computed(() => {
 const model = reactive({
   name: "",
   context: "",
+  address: "",
   newtopic: "",
   newaddress: "",
   newcontent: "",
@@ -382,6 +385,11 @@ watch(store.state, () => {
   getCommon();
 });
 const CurrentCommon = ref<Common[]>([]);
+function getImage(photo: any) {
+  if (photo == null) return null;
+  if (photo.url == null) return null;
+  return "http://localhost:3000" + photo.url;
+}
 function getCommon() {
   if (store.state.currentlinestation) {
     //axios get
@@ -392,9 +400,9 @@ function getCommon() {
         },
       })
       .then(function (response) {
-        console.log(response);
+        // console.log(response);
         CurrentCommon.value = response.data.data;
-        console.log(CurrentCommon.value);
+        // console.log(CurrentCommon.value);
       })
       .catch(function (error) {
         console.log(error);
@@ -550,7 +558,7 @@ function NewCommonSubmitt() {
 
   if (goodformcheck.value) {
     formData.append("name", model.name);
-    formData.append("address", itemaddress.value);
+    formData.append("address", model.address);
     formData.append("Des", model.context);
     formData.append("station_id_1", stationid1.value);
     formData.append("station_id_2", stationid2.value);
@@ -559,7 +567,8 @@ function NewCommonSubmitt() {
     axios
       .post("http://localhost:3000/api/mrt_admin/common", formData)
       .then(function (response) {
-        console.log(response.data.data);
+        // console.log(response.data.data);
+        message.success("新增成功");
         getCommon();
         showNewCommon.value = false;
       })
@@ -636,16 +645,18 @@ function showOldCommon(id: number) {
   //console.log(OldAnnounceindex.value);
 }
 function SubmitEditCommon() {
+  formData.append("name", model.newtopic);
+  formData.append("address", model.newaddress);
+  formData.append("Des", model.newcontent);
   //axios patch
   axios
-    .patch("http://localhost:3000/api/mrt_admin/common/" + CommonID.value, {
-      name: model.newtopic,
-      photo: null,
-      address: model.newaddress,
-      Des: model.newcontent,
-    })
+    .patch(
+      "http://localhost:3000/api/mrt_admin/common/" + CommonID.value,
+      formData
+    )
     .then(function (response) {
-      console.log(response.data.data);
+      // console.log(response.data.data);
+      message.success("修改成功");
       getCommon();
       OldCommonshow.value = false;
     })
@@ -659,3 +670,9 @@ function viewCommon(id: number) {
   router.push("/Common/" + id.toString());
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
