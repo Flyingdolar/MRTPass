@@ -3,7 +3,9 @@
     default-value="info"
     justify-content="space-evenly"
     type="line"
+    z-index="1000"
     bg="white"
+    flex="grow-0"
   >
     <n-tab name="info">
       <router-link to="/post/MRTtrans">轉乘資訊</router-link>
@@ -27,7 +29,9 @@
       />
     </div>
   </div>
-  <router-view />
+  <div flex="~ col" h="138" overflow="auto" class="scrollbar-hide" w="full">
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -112,3 +116,9 @@ onBeforeMount(() => {
   }
 });
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
