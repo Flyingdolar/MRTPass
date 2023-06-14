@@ -33,11 +33,16 @@ class Api::Member::CommentController < ApplicationController
 
     def index
         @comments = Comment.where(info_id:params[:info_id])
+        revalue=[]
+        @comments.each do |c|
+            m=Member.find(c.member_id)
+            revalue<<{name:m.nickname,comment:c}
+        end
         render :json => {
             status: "success",
             error: false,
             message: "succeed to get info_#{params[:info_id]} comment list",
-            data: @comments
+            data: revalue
         }.to_json, :status => 200
     end
 
