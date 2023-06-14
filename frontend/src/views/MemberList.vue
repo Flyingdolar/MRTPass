@@ -1,14 +1,22 @@
 <template>
   <div flex="~ col" justify="center items-end" h="10" bg="white">
     <div flex="~" m="t-auto b-10px l-6 r-17" justify="items-center">
-      <n-button @click="tmp" quaternary>
-        <n-icon size="24"><back /></n-icon>
+      <n-button @click="backto" quaternary>
+        <n-icon :size="20"><back /></n-icon>
       </n-button>
-      <div flex="grow" text="title lg center bottom">管理使用者</div>
+      <div
+        flex="grow"
+        mt="1"
+        text="title center bottom"
+        style="font-size: 16px"
+      >
+        使用者一覽
+      </div>
     </div>
-    <div p="y-1px" bg=" gray-200" />
+    <div p="y-1pt" bg=" gray-200" />
   </div>
-  <div flex="~ col gap-3">
+  <div flex="~ col gap-3" h="160" overflow="auto">
+    <div py="1.5" />
     <div v-for="user in colData" :key="user.id" bg="white">
       <div flex="~" m="x-6 y-5" justify="items-center">
         <n-icon size="32" v-if="showImage(user.picture == null)">
@@ -19,7 +27,7 @@
           <div>{{ user.nickname }}</div>
           <div>{{ user.role }}</div>
         </div>
-        <n-button quaternary>
+        <n-button quaternary @click="editMember(user)">
           <template #icon>
             <n-icon><goto /></n-icon>
           </template>
@@ -27,12 +35,6 @@
       </div>
     </div>
   </div>
-  <n-card
-    :header-style="{ 'align-self': 'center' }"
-    :footer-style="{ 'align-self': 'center' }"
-  >
-    <n-data-table :columns="columns" :data="colData" :max-height="250" />
-  </n-card>
 </template>
 
 <script setup lang="ts">
@@ -63,7 +65,7 @@ onMounted(() => {
   axios
     .get("http://localhost:3000/api/admin/authorization")
     .then(function (response) {
-      console.log(response.data.data);
+      // console.log(response.data.data);
       colData.value = response.data.data.map(function (item, index, array) {
         return {
           account: item.account,
@@ -74,7 +76,7 @@ onMounted(() => {
           role: item.role,
         };
       });
-      console.log(colData.value);
+      // console.log(colData.value);
     })
     .catch(function (error) {
       console.log(error);
@@ -89,49 +91,10 @@ const toEditUser: User = {
   role: Role.user,
   picture: null,
 };
-const createColumns = ({
-  edit,
-}: {
-  edit: (row: User) => void;
-}): DataTableColumns<User> => {
-  return [
-    {
-      title: "nickname",
-      key: "nickname",
-    },
-    {
-      title: "edit",
-      key: "actions",
-      render(row) {
-        return h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: "small",
-            onClick: () => edit(row),
-          },
-          { default: () => "edit" }
-        );
-      },
-    },
-  ];
-};
-let columns = createColumns({
-  edit(row: User) {
-    toEditUser.id = row.id;
-    toEditUser.nickname = row.nickname;
-    toEditUser.account = row.account;
-    toEditUser.password = row.password;
-    toEditUser.role = row.role;
-    store.dispatch("editinfo", toEditUser);
-    router.push("/memberlist/edit");
-  },
-});
-function tmp() {
-  console.log("hi");
+const backto = () => {
   router.push("/profile");
-}
+};
+
 function userColor(role: string) {
   if (role == "admin") return "text-red";
   else if (role == "mrt_admin") return "text-orange";
@@ -141,4 +104,19 @@ function showImage(picture: any) {
   if (picture != null) return "http://localhost:3000" + picture;
   else return null;
 }
+function editMember(user: User) {
+  toEditUser.id = user.id;
+  toEditUser.nickname = user.nickname;
+  toEditUser.account = user.account;
+  toEditUser.password = user.password;
+  toEditUser.role = user.role;
+  store.dispatch("editinfo", toEditUser);
+  router.push("/memberlist/edit");
+}
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
