@@ -22,7 +22,13 @@
         <n-button @click="updateTicketandTime()">刷新資訊</n-button>
       </template>
       <div v-if="timetablesearchResult">
-        {{ timetablesearchResult }}
+        <div v-for="item in timetablesearchResult" :key="item.No">
+          <n-card :title="item.name">
+            <template #header-extra>
+              {{ item.spend_time }}
+            </template>
+          </n-card>
+        </div>
       </div>
       <div v-if="!timetablesearchResult">查無班次資訊</div>
     </n-card>
@@ -68,7 +74,7 @@ import {
   FormItemRule,
 } from "naive-ui";
 import { ref, reactive, computed, onMounted, watch } from "vue";
-import { Station, Line, LineStation } from "../scripts/types";
+import { Station, Line, LineStation, MRTInfo } from "../scripts/types";
 const AllLine = ref<Line[]>();
 const CurrentdepLineStation = ref<LineStation[]>();
 const CurrentarrLineStation = ref<LineStation[]>();
@@ -149,49 +155,46 @@ watch(arrRoute, (arrRoute) => {
   //axios
 });
 const price = ref();
-const timetablesearchResult = ref();
+const timetablesearchResult = ref<MRTInfo>();
 watch(arrStation, () => {
-  if (arrStation.value && depStation.value) {
-    updateTicketandTime();
-  }
+  updateTicketandTime();
 });
 watch(depStation, () => {
-  if (arrStation.value && depStation.value) {
-    updateTicketandTime();
-  }
+  updateTicketandTime();
 });
 function updateTicketandTime() {
-  //axios get
-  axios
-    .get("http://localhost:3000/api/mrt_admin/price_search", {
-      params: {
-        station1: depStation.value,
-        station2: arrStation.value,
-      },
-    })
-    .then(function (response) {
-      console.log(response);
-      price.value = response.data.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  //axios
-  //axios get
-  axios
-    .get(
-      "http://localhost:3000/api/mrt_admin/station/" +
-        depStation.value +
-        "/time_table_search"
-    )
-    .then(function (response) {
-      //console.log(response);
-      timetablesearchResult.value = response.data.data;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  //axios
+  if (arrStation.value && depStation.value) {
+    //axios get
+    axios
+      .get("http://localhost:3000/api/mrt_admin/price_search", {
+        params: {
+          station1: depStation.value,
+          station2: arrStation.value,
+        },
+      })
+      .then(function (response) {
+        console.log(response);
+        price.value = response.data.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    //axios
+    //axios get
+    axios
+      .get(
+        "http://localhost:3000/api/mrt_admin/station/" +
+          depStation.value +
+          "/time_table_search"
+      )
+      .then(function (response) {
+        console.log(response);
+        timetablesearchResult.value = response.data.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 }
 
 let stationOpt = reactive([

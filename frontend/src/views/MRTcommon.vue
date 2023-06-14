@@ -548,6 +548,8 @@ function NewCommonSubmitt() {
       .post("http://localhost:3000/api/mrt_admin/common", formData)
       .then(function (response) {
         console.log(response.data.data);
+        CurrentCommon.value.push(response.data.data);
+        showNewCommon.value = false;
       })
       .catch(function (error) {
         console.log(error);
