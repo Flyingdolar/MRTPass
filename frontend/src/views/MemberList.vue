@@ -19,13 +19,15 @@
     <div py="1.5" />
     <div v-for="user in colData" :key="user.id" bg="white">
       <div flex="~" m="x-6 y-5" justify="items-center">
-        <n-icon size="32" v-if="showImage(user.picture == null)">
-          <user :class="userColor(user.role.toString())" />
+        <n-icon size="32" v-if="showImage(user.picture) == null">
+          <user :class="userColor(user.role)" />
         </n-icon>
-        <n-image :src="showImage(user.picture)" />
+        <n-avatar v-else round :size="36" :src="showImage(user.picture)" />
         <div flex="grow" m="y-auto l-4" text="body">
-          <div>{{ user.nickname }}</div>
-          <div>{{ user.role }}</div>
+          <div text="base">{{ user.nickname }}</div>
+          <div :class="userColor(user.role)" text="xs">
+            {{ getRole(user.role) }}
+          </div>
         </div>
         <n-button quaternary @click="editMember(user)">
           <template #icon>
@@ -39,6 +41,7 @@
 
 <script setup lang="ts">
 import {
+  NAvatar,
   NCard,
   NSpace,
   NButton,
@@ -100,8 +103,13 @@ function userColor(role: string) {
   else if (role == "mrt_admin") return "text-orange";
   else return "text-blue";
 }
+function getRole(role: string) {
+  if (role == "admin") return "管理員";
+  else if (role == "mrt_admin") return "捷運管理員";
+  else return "一般會員";
+}
 function showImage(picture: any) {
-  if (picture != null) return "http://localhost:3000" + picture;
+  if (picture.url != null) return "http://localhost:3000" + picture.url;
   else return null;
 }
 function editMember(user: User) {
