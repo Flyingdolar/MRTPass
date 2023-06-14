@@ -1,204 +1,291 @@
 <template>
-  <n-card class="card">
-    <div>
-      <n-space justify="space-around" size="large" line-height="20px">
-        <n-button @click="goback" size="large">返回</n-button>
-        <n-h3 class="cardtitle">{{ CurrentCommon?.info.name }}</n-h3>
-      </n-space>
-    </div>
-    <n-space
-      :header-style="{ 'align-self': 'center' }"
-      :footer-style="{ 'align-self': 'center' }"
-      justify="center"
-      class="content2"
-    >
-      <n-card
-        header-style="padding: 0;"
-        footer-style="padding: 0;"
-        :bordered="false"
+  <!-- Common Title -->
+  <div flex="~ col" justify="center items-end" h="10" bg="white">
+    <div flex="~" m="t-auto b-10px x-6" justify="items-center">
+      <n-button @click="goback" quaternary>
+        <n-icon :size="20"><back /></n-icon>
+      </n-button>
+      <div
+        flex="grow"
+        mt="1"
+        text="title center bottom"
+        style="font-size: 16px"
       >
-        <template #default>
-          <div p="y-2" text="s">{{ CurrentCommon?.info.Des }}</div>
-          <div p="y-2" text="xs secondary">
-            地點： {{ CurrentCommon?.info.address }}
+        {{ CurrentCommon?.info.name }}
+      </div>
+      <n-button @click="tmp" quaternary>
+        <n-icon :size="20" opacity="0"><search /></n-icon>
+      </n-button>
+    </div>
+    <div p="y-1pt" bg=" gray-200" />
+  </div>
+  <div flex="~ col gap-3" h="146" overflow="auto">
+    <!-- Common Info -->
+    <n-card
+      header-style="padding: 0;"
+      footer-style="padding: 0;"
+      :bordered="false"
+    >
+      <!-- Common Image -->
+      <div
+        v-if="getImage(CurrentCommon?.info.photo) != null"
+        flex="~"
+        justify="center"
+      >
+        <img w="full" m="b-4" :src="getImage(CurrentCommon?.info.photo)" />
+      </div>
+      <!-- Description -->
+      <div p="y-2" text="s" style="white-space: pre-line">
+        {{ CurrentCommon?.info.Des }}
+      </div>
+      <div p="y-2" text="xs secondary">
+        地點： {{ CurrentCommon?.info.address }}
+      </div>
+      <template #footer>
+        <div text="sm secondary">
+          <div v-if="CurrentCommon?.average_score" flex="~" p="x-6 b-4">
+            {{ parseFloat(CurrentCommon?.average_score).toFixed(1) }} 顆星評價 ·
+            {{ CurrentComment?.length }} 則評論
           </div>
-        </template>
-        <template #footer>
-          <div flex="~" p="x-4 y-2" v-if="CurrentCommon?.average_score">
-            {{ parseFloat(CurrentCommon?.average_score).toFixed(1) }}顆星評價·{{
-              CurrentComment?.length
-            }}則評論
-          </div>
-          <div v-else>暫無評論</div>
-        </template>
-      </n-card>
-    </n-space>
+          <div v-else flex="~" p="x-6 b-4">暫無評論</div>
+        </div>
+      </template>
+    </n-card>
+    <!-- Comments -->
     <div v-for="(item, index) in CurrentComment" :key="item.comment.id">
       <n-card
-        :footer-style="{ 'align-self': 'center' }"
+        :footer-style="{ padding: '0' }"
         justify="center"
         class="content2"
-        :title="item.name"
       >
-        <template #header-extra> {{ item.comment.score }}顆星評價 </template>
-        {{ item.comment.comment }}
+        <!-- Comment User -->
+        <template #header>
+          <div flex="~ gap-2" justify="items-center">
+            <n-icon :size="20" my="auto"><user /></n-icon>
+            <div text="sm">{{ item.name }}</div>
+          </div>
+        </template>
+        <!-- Comment Score -->
+        <template #header-extra>
+          <div flex="~ gap-2px" w="30">
+            <div text="xs secondary" my="auto">評分：</div>
+            <div v-for="index in item.comment.score" :key="index">
+              <n-icon text="yellow">
+                <star />
+              </n-icon>
+            </div>
+          </div>
+        </template>
+        <!-- Comment Picture -->
+        <div
+          flex="~"
+          justify="center"
+          v-if="getImage(item.comment.photo) != null"
+        >
+          <n-image
+            width="280"
+            border="rounded-lg"
+            m="b-4"
+            :src="getImage(item.comment.photo)"
+          />
+        </div>
+        <!-- Comment Content -->
+        <div text="base body" style="white-space: pre-line">
+          {{ item.comment.comment }}
+        </div>
         <template #footer>
-          {{ itemDate(item.comment.created_at, item.comment.updated_at) }}
-          <div>
+          <!-- Comment Date -->
+          <div text="xs secondary" m="x-6 y-4">
+            {{ itemDate(item.comment.created_at, item.comment.updated_at) }}
+          </div>
+          <!-- Buttons -->
+          <div flex="~" justify="center items-center" p="x-4 y-2">
             <n-button
               v-if="SameUser(item.comment.member_id)"
               @click="showEditModal(item.comment.id, index)"
-              >編輯</n-button
+              flex="~ grow"
+              size="medium"
+              type="info"
+              quaternary
             >
+              <template #icon>
+                <n-icon :size="18"><edit /></n-icon>
+              </template>
+              <div>編輯</div>
+            </n-button>
+            <div
+              v-if="SameUser(item.comment.member_id)"
+              class="m-1 p-0.8px bg-gray-200"
+            />
             <n-button
               v-if="SameUser(item.comment.member_id) || isAdmin"
               @click="DeleteCommentShow(item.comment.id, index)"
-              >刪除</n-button
+              flex="~ grow"
+              size="medium"
+              type="error"
+              quaternary
             >
+              <template #icon>
+                <n-icon :size="18"><remove /></n-icon>
+              </template>
+              刪除
+            </n-button>
           </div>
         </template>
       </n-card>
     </div>
+    <div p="5" />
+  </div>
+
+  <!-- Card: New Credit -->
+  <n-card pos="fixed bottom-16" footer-style="padding: 0px;" :hoverable="true">
     <template #footer>
-      <n-space justify="center" v-if="!UserhadComment">
-        <n-button @click="showCreditModal">評論</n-button>
-      </n-space>
+      <div class="flex justify-center py-4 px-12">
+        <n-button flex="~ grow" type="success" ghost @click="showCreditModal">
+          <template #icon>
+            <n-icon :size="18"><order /></n-icon>
+          </template>
+          撰寫評論
+        </n-button>
+      </div>
     </template>
-    <n-modal v-model:show="CreditModalShow">
-      <n-card
-        title="給予評論"
-        :header-style="{ 'align-self': 'center' }"
-        :footer-style="{ 'align-self': 'center' }"
-        justify="center"
-      >
-        <n-space justify="center">
-          <n-form
-            ref="formRef"
-            :label-width="100"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
-          >
-            <n-form-item label="評論" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.context"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-            <n-form-item label="圖片" path="title">
-              <n-upload
-                :on-before-upload="handleImgBefore"
-                :on-update-file-list="handleImgChange"
-              >
-                <n-upload-dragger w="full">
-                  <div
-                    p="x-4 y-4"
-                    bg="hover:blue-100"
-                    text="seconary hover:blue"
-                    border="rounded-lg 1 gray-200 hover:blue-400"
-                  >
-                    <div flex="~" justify="center">
-                      <n-icon size="48"><add /></n-icon>
-                    </div>
-                  </div>
-                </n-upload-dragger>
-              </n-upload>
-            </n-form-item>
-            <n-form-item label="評分" path="rate">
-              <n-rate size="large" v-model:value="model.rate" />
-            </n-form-item>
-          </n-form>
-        </n-space>
-        <template #footer>
-          <n-button @click="submitCredt">送出</n-button>
-        </template>
-      </n-card>
-    </n-modal>
-    <n-modal v-model:show="EditCommentModal">
-      <n-card
-        title="變更評論"
-        :header-style="{ 'align-self': 'center' }"
-        :footer-style="{ 'align-self': 'center' }"
-        justify="center"
-      >
-        <n-space justify="center">
-          <n-form
-            ref="formRef"
-            :label-width="100"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
-          >
-            <n-form-item label="評論" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.editedcontent"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-            <n-form-item label="圖片" path="title">
-              <n-upload
-                :on-before-upload="handleImgBefore"
-                :on-update-file-list="handleImgChange"
-              >
-                <n-upload-dragger w="full">
-                  <div
-                    p="x-4 y-4"
-                    bg="hover:blue-100"
-                    text="seconary hover:blue"
-                    border="rounded-lg 1 gray-200 hover:blue-400"
-                  >
-                    <div flex="~" justify="center">
-                      <n-icon size="48"><add /></n-icon>
-                    </div>
-                  </div>
-                </n-upload-dragger>
-              </n-upload>
-            </n-form-item>
-            <n-form-item label="評分" path="rate">
-              <n-rate size="large" v-model:value="model.editedrate" />
-            </n-form-item>
-          </n-form>
-        </n-space>
-        <template #footer>
-          <n-button @click="editUserComment">送出</n-button>
-        </template>
-      </n-card>
-    </n-modal>
-    <n-modal v-model:show="DeleteCommentModal">
-      <n-card
-        w="3/4 min-30"
-        title="確定要刪除？"
-        :header-style="{ 'align-self': 'center' }"
-      >
-        <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
-        <template #footer>
-          <div flex="~ gap-8" class="justify-center px-2">
-            <n-button type="error" flex="grow" ghost @click="deleteUserComment">
-              <template #icon>
-                <n-icon :size="18"><remove /></n-icon>
-              </template>
-              <div>刪除</div>
-            </n-button>
-            <n-button
-              @click="DeleteCommentModal = false"
-              type="tertiary"
-              flex="grow"
-              ghost
-            >
-              <template #icon>
-                <n-icon :size="18"><cancel /></n-icon>
-              </template>
-              <div>取消</div>
-            </n-button>
-          </div>
-        </template>
-      </n-card>
-    </n-modal>
   </n-card>
+
+  <!-- Overlay -->
+  <n-modal v-model:show="CreditModalShow">
+    <n-card
+      title=" 撰寫評論"
+      :header-style="{ 'align-self': 'center' }"
+      :footer-style="{ 'align-self': 'center' }"
+      justify="center"
+    >
+      <n-space justify="center">
+        <n-form
+          ref="formRef"
+          :label-width="100"
+          :model="model"
+          :rules="rules"
+          require-mark-placement="right-hanging"
+        >
+          <n-form-item label="評論" path="context">
+            <template #header-extra> 必填 </template>
+            <n-input
+              v-model:value="model.context"
+              type="textarea"
+              placeholder="輸入內文"
+            />
+          </n-form-item>
+          <n-form-item label="圖片" path="title">
+            <n-upload
+              :on-before-upload="handleImgBefore"
+              :on-update-file-list="handleImgChange"
+            >
+              <n-upload-dragger w="full">
+                <div
+                  p="x-4 y-4"
+                  bg="hover:blue-100"
+                  text="seconary hover:blue"
+                  border="rounded-lg 1 gray-200 hover:blue-400"
+                >
+                  <div flex="~" justify="center">
+                    <n-icon size="48"><add /></n-icon>
+                  </div>
+                </div>
+              </n-upload-dragger>
+            </n-upload>
+          </n-form-item>
+          <n-form-item label="評分" path="rate">
+            <n-rate size="large" v-model:value="model.rate" />
+          </n-form-item>
+        </n-form>
+      </n-space>
+      <template #footer>
+        <n-button @click="submitCredt">送出</n-button>
+      </template>
+    </n-card>
+  </n-modal>
+  <n-modal v-model:show="EditCommentModal">
+    <n-card
+      title="變更評論"
+      :header-style="{ 'align-self': 'center' }"
+      :footer-style="{ 'align-self': 'center' }"
+      justify="center"
+    >
+      <n-space justify="center">
+        <n-form
+          ref="formRef"
+          :label-width="100"
+          :model="model"
+          :rules="rules"
+          require-mark-placement="right-hanging"
+        >
+          <n-form-item label="評論" path="context">
+            <template #header-extra> 必填 </template>
+            <n-input
+              v-model:value="model.editedcontent"
+              type="textarea"
+              placeholder="輸入內文"
+            />
+          </n-form-item>
+          <n-form-item label="圖片" path="title">
+            <n-upload
+              :on-before-upload="handleImgBefore"
+              :on-update-file-list="handleImgChange"
+            >
+              <n-upload-dragger w="full">
+                <div
+                  p="x-4 y-4"
+                  bg="hover:blue-100"
+                  text="seconary hover:blue"
+                  border="rounded-lg 1 gray-200 hover:blue-400"
+                >
+                  <div flex="~" justify="center">
+                    <n-icon size="48"><add /></n-icon>
+                  </div>
+                </div>
+              </n-upload-dragger>
+            </n-upload>
+          </n-form-item>
+          <n-form-item label="評分" path="rate">
+            <n-rate size="large" v-model:value="model.editedrate" />
+          </n-form-item>
+        </n-form>
+      </n-space>
+      <template #footer>
+        <n-button @click="editUserComment">送出</n-button>
+      </template>
+    </n-card>
+  </n-modal>
+  <n-modal v-model:show="DeleteCommentModal">
+    <n-card
+      w="3/4 min-30"
+      title="確定要刪除？"
+      :header-style="{ 'align-self': 'center' }"
+    >
+      <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-2">
+          <n-button type="error" flex="grow" ghost @click="deleteUserComment">
+            <template #icon>
+              <n-icon :size="18"><remove /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+          <n-button
+            @click="DeleteCommentModal = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><cancel /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
@@ -215,11 +302,21 @@ import {
   NForm,
   NInput,
   NIcon,
+  NImage,
   NFormItem,
   FormRules,
   NDivider,
   FormItemRule,
 } from "naive-ui";
+import order from "../assets/icon/iOrder.vue";
+import back from "../assets/icon/iExpLeft.vue";
+import star from "../assets/icon/iStar.vue";
+import add from "../assets/icon/iAdd.vue";
+import edit from "../assets/icon/iEdit.vue";
+import user from "../assets/icon/iUser.vue";
+import remove from "../assets/icon/iTrash.vue";
+import search from "../assets/icon/iSearch.vue";
+import cancel from "../assets/icon/iRefund.vue";
 import type { DataTableColumns } from "naive-ui";
 import { computed, h, onMounted, ref, watch, reactive } from "vue";
 import { watchOnce } from "@vueuse/core";
@@ -356,6 +453,11 @@ function showImage(item) {
   if (item.photo.url != null) return "http://localhost:3000" + item.photo.url;
 }
 
+function getImage(photo: any) {
+  if (photo == null) return null;
+  if (photo.url == null) return null;
+  return "http://localhost:3000" + photo.url;
+}
 function handleImgBefore(event: any) {
   const file = event.file;
   const isImage = file.type.includes("image");
@@ -365,7 +467,6 @@ function handleImgBefore(event: any) {
   if (fileSize > 2) console.error("上傳圖片大小不能超過2MB!");
   return isImage && fileSize < 2;
 }
-
 function handleImgChange(event: any) {
   formData.delete("photo");
   if (event.length === 0) return;
@@ -456,3 +557,9 @@ function deleteUserComment() {
   //axios
 }
 </script>
+
+<style scoped>
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
