@@ -108,8 +108,7 @@ const EditUsermodal = ref(false);
 const colData = ref<Station[]>([]);
 const showDelete = ref(false);
 const selectID = ref(0);
-
-onMounted(() => {
+function reloadStation() {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/station")
@@ -127,6 +126,9 @@ onMounted(() => {
       console.log(error);
     });
   //axios
+}
+onMounted(() => {
+  reloadStation();
 });
 
 function EditStation(id: number) {
@@ -141,7 +143,7 @@ function DeleteStation() {
     )
     .then(function (response) {
       console.log(response);
-      router.go(0);
+      reloadStation();
     })
     .catch(function (error) {
       console.log(error);

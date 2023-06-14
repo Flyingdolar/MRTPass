@@ -114,8 +114,7 @@ const EditUsermodal = ref(false);
 const colData = ref<Line[]>([]);
 const showDelete = ref(false);
 const selectID = ref(0);
-
-onMounted(() => {
+function reloadLine() {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line")
@@ -135,6 +134,9 @@ onMounted(() => {
       console.log(error);
     });
   //axios
+}
+onMounted(() => {
+  reloadLine();
 });
 
 function setLineColor(color: string) {
@@ -153,7 +155,7 @@ function DeleteLine() {
     )
     .then(function (response) {
       console.log(response);
-      router.go(0);
+      reloadLine();
     })
     .catch(function (error) {
       console.log(error);

@@ -579,7 +579,7 @@ function deleteTrans() {
       // console.log(response.data.data);
       message.success("刪除成功");
       ConfirmDeleteshow.value = false;
-      router.go(0);
+      getTrans();
     })
     .catch(function (error) {
       console.log(error);

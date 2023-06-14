@@ -263,8 +263,7 @@ function itemDate(create: string, update: string) {
     return `更新於 ${year}.${month}.${day} ${hour}:${minute}`;
   }
 }
-
-onMounted(() => {
+function reloadAnnouncement() {
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/announcement")
@@ -285,6 +284,9 @@ onMounted(() => {
       console.log(error);
     });
   //axios
+}
+onMounted(() => {
+  reloadAnnouncement();
 });
 const model = reactive({
   topic: "",
@@ -348,7 +350,7 @@ function SubmitEditAnnounce() {
     .then(function (response) {
       console.log(response);
       OldAnnounceshow.value = false;
-      router.go(0);
+      reloadAnnouncement();
     })
     .catch(function (error) {
       console.log(error);
@@ -365,7 +367,7 @@ function deleteAnnounce() {
     )
     .then(function (response) {
       console.log(response);
-      router.go(0);
+      reloadAnnouncement();
     })
     .catch(function (error) {
       console.log(error);
