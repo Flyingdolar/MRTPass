@@ -1,232 +1,236 @@
 <template>
-  <n-space size="large" line-height="20px" vertical>
-    <n-card>
-      <div v-if="CurrentTrans">
-        <n-card
-          v-for="item in CurrentTrans"
-          :key="item?.id"
-          footer-style="padding: 0;"
-          :bordered="false"
+  <!-- Empty View -->
+  <div v-if="CurrentTrans?.length == 0">
+    <div m="x-auto y-6" text="center secondary">目前尚無轉乘資訊</div>
+  </div>
+  <!-- List -->
+  <div space="y-3" m="t-3 b-20">
+    <n-card
+      v-for="item in CurrentTrans"
+      :key="item?.id"
+      footer-style="padding: 0;"
+      :bordered="false"
+    >
+      <template #header>
+        <div justify="items-end" flex="~" w="full">
+          <div flex="grow" text="lg title">
+            {{ item.name }}
+          </div>
+        </div>
+      </template>
+      {{ item.Des }}
+      <template #footer>
+        <div
+          flex="~"
+          justify="center items-center"
+          p="x-4 y-2"
+          v-if="roleisAdmin"
         >
-          <template #header>
-            <div justify="items-end" flex="~" w="full">
-              <div flex="grow" text="lg title">
-                {{ item.name }}
-              </div>
-            </div>
+          <n-button
+            @click="showOldTrans(item.id)"
+            flex="~ grow"
+            size="medium"
+            type="info"
+            quaternary
+          >
+            <template #icon>
+              <n-icon :size="18"><edit /></n-icon>
+            </template>
+            <div>編輯</div>
+          </n-button>
+          <div m="1" p="0.8px" bg="gray-200" />
+          <n-button
+            @click="showConfirmDelete(item.id)"
+            flex="~ grow"
+            size="medium"
+            type="error"
+            quaternary
+          >
+            <template #icon>
+              <n-icon :size="18"><trash /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </div>
+
+  <!-- Card: New Annoucement -->
+  <n-card
+    v-if="roleisAdmin"
+    pos="fixed bottom-16"
+    footer-style="padding: 0px;"
+    :hoverable="true"
+  >
+    <template #footer>
+      <div class="flex justify-center py-4 px-12">
+        <n-button
+          flex="~ grow"
+          type="success"
+          ghost
+          @click="showNewTrans = true"
+        >
+          <template #icon>
+            <n-icon :size="18"><add /></n-icon>
           </template>
-          {{ item.Des }}
-          <template #footer>
-            <div
-              flex="~"
-              justify="center items-center"
-              p="x-4 y-2"
-              v-if="roleisAdmin"
-            >
-              <n-button
-                @click="showOldTrans(item.id)"
-                flex="~ grow"
-                size="medium"
-                type="info"
-                quaternary
-              >
-                <template #icon>
-                  <n-icon :size="18"><edit /></n-icon>
-                </template>
-                <div>編輯</div>
-              </n-button>
-              <div m="1" p="0.8px" bg="gray-200" />
-              <n-button
-                @click="showConfirmDelete(item.id)"
-                flex="~ grow"
-                size="medium"
-                type="error"
-                quaternary
-              >
-                <template #icon>
-                  <n-icon :size="18"><trash /></n-icon>
-                </template>
-                <div>刪除</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
+          新增轉乘資訊
+        </n-button>
       </div>
-      <div v-if="CurrentTrans?.length == 0">查無轉乘資訊</div>
-      <!-- Overlay: Edit Annoucement -->
-      <n-modal v-model:show="OldTransshow">
-        <n-card title="編輯轉乘資訊" :header-style="{ 'align-self': 'center' }">
-          <n-form
-            ref="formRef"
-            :label-width="80"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
-          >
-            <n-form-item label="轉乘名字" path="topic">
-              <n-input
-                v-model:value="model.newtopic"
-                placeholder="輸入轉乘名字"
-              />
-            </n-form-item>
-            <n-form-item label="地址" path="topic">
-              <n-input
-                v-model:value="model.newaddress"
-                placeholder="輸入地址"
-              />
-            </n-form-item>
-            <n-form-item label="轉乘描述" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.newcontent"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-          </n-form>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-12">
-              <n-button
-                @click="SubmitEditTrans"
-                type="primary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><save /></n-icon>
-                </template>
-                <div>儲存</div>
-              </n-button>
-              <n-button
-                @click="OldTransshow = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
-      <!-- Overlay: Confirm Delete -->
-      <n-modal v-model:show="ConfirmDeleteshow">
-        <n-card
-          w="3/4 min-30"
-          title="確定要刪除？"
-          :header-style="{ 'align-self': 'center' }"
-        >
-          <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-2">
-              <n-button @click="deleteTrans" type="error" flex="grow" ghost>
-                <template #icon>
-                  <n-icon :size="18"><trash /></n-icon>
-                </template>
-                <div>刪除</div>
-              </n-button>
-              <n-button
-                @click="ConfirmDeleteshow = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
-      <!-- Overlay: New Annoucement -->
-      <n-space v-if="roleisAdmin" justify="center">
-        <n-button @click="showNewTrans = true">新增轉乘資訊</n-button>
-      </n-space>
-      <n-modal v-model:show="showNewTrans">
-        <n-card title="建立轉乘資訊" :header-style="{ 'align-self': 'center' }">
-          <n-form
-            ref="formRef"
-            :label-width="100"
-            :model="model"
-            :rules="rules"
-            require-mark-placement="right-hanging"
-          >
-            <n-form-item label="名稱" path="topic">
-              <n-input v-model:value="model.name" placeholder="輸入名稱" />
-            </n-form-item>
-            <n-form-item label="附近捷運站">
-              <n-dynamic-input
-                v-model:value="Current.dynamicInputValue"
-                placeholder="请输入"
-                :on-create="onCreate"
-                :min="1"
-                :max="3"
-                #="{ index, value }"
-              >
-                <n-select
-                  v-model:value="Current.dynamicInputValue[index].CurrentRoute"
-                  :options="routeOpt"
-                  @update:value="handleUpdateValue(index)"
-                  placeholder="請選擇路線"
-                />
+    </template>
+  </n-card>
 
-                <n-select
-                  v-model:value="
-                    Current.dynamicInputValue[index].CurrentStation
-                  "
-                  :options="stationOpt[index]"
-                  placeholder="請選擇站點"
-                />
-              </n-dynamic-input>
-            </n-form-item>
+  <!-- Overlay: Edit Annoucement -->
+  <n-modal v-model:show="OldTransshow">
+    <n-card title="編輯轉乘資訊" :header-style="{ 'align-self': 'center' }">
+      <n-form
+        ref="formRef"
+        :label-width="80"
+        :model="model"
+        :rules="rules"
+        require-mark-placement="right-hanging"
+      >
+        <n-form-item label="轉乘名字" path="topic">
+          <n-input v-model:value="model.newtopic" placeholder="輸入轉乘名字" />
+        </n-form-item>
+        <n-form-item label="地址" path="topic">
+          <n-input v-model:value="model.newaddress" placeholder="輸入地址" />
+        </n-form-item>
+        <n-form-item label="轉乘描述" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.newcontent"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="SubmitEditTrans" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="OldTransshow = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
+  <!-- Overlay: Confirm Delete -->
+  <n-modal v-model:show="ConfirmDeleteshow">
+    <n-card
+      w="3/4 min-30"
+      title="確定要刪除？"
+      :header-style="{ 'align-self': 'center' }"
+    >
+      <div text="sm center secondary" pb="2">請注意，刪除後無法復原</div>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-2">
+          <n-button @click="deleteTrans" type="error" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><trash /></n-icon>
+            </template>
+            <div>刪除</div>
+          </n-button>
+          <n-button
+            @click="ConfirmDeleteshow = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
+  <!-- Overlay: New Annoucement -->
+  <n-modal v-model:show="showNewTrans">
+    <n-card title="建立轉乘資訊" :header-style="{ 'align-self': 'center' }">
+      <n-form
+        ref="formRef"
+        :label-width="100"
+        :model="model"
+        :rules="rules"
+        require-mark-placement="right-hanging"
+      >
+        <n-form-item label="名稱" path="topic">
+          <n-input v-model:value="model.name" placeholder="輸入名稱" />
+        </n-form-item>
+        <n-form-item label="附近捷運站">
+          <n-dynamic-input
+            v-model:value="Current.dynamicInputValue"
+            placeholder="请输入"
+            :on-create="onCreate"
+            :min="1"
+            :max="3"
+            #="{ index, value }"
+          >
+            <n-select
+              v-model:value="Current.dynamicInputValue[index].CurrentRoute"
+              :options="routeOpt"
+              @update:value="handleUpdateValue(index)"
+              placeholder="請選擇路線"
+            />
 
-            <n-form-item label="描述" path="context">
-              <template #header-extra> 必填 </template>
-              <n-input
-                v-model:value="model.context"
-                type="textarea"
-                placeholder="輸入內文"
-              />
-            </n-form-item>
-          </n-form>
-          <template #footer>
-            <div flex="~ gap-8" class="justify-center px-12">
-              <n-button
-                @click="NewTransSubmitt"
-                type="primary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><save /></n-icon>
-                </template>
-                <div>儲存</div>
-              </n-button>
-              <n-button
-                @click="showNewTrans = false"
-                type="tertiary"
-                flex="grow"
-                ghost
-              >
-                <template #icon>
-                  <n-icon :size="18"><back /></n-icon>
-                </template>
-                <div>取消</div>
-              </n-button>
-              <!---
+            <n-select
+              v-model:value="Current.dynamicInputValue[index].CurrentStation"
+              :options="stationOpt[index]"
+              placeholder="請選擇站點"
+            />
+          </n-dynamic-input>
+        </n-form-item>
+
+        <n-form-item label="描述" path="context">
+          <template #header-extra> 必填 </template>
+          <n-input
+            v-model:value="model.context"
+            type="textarea"
+            placeholder="輸入內文"
+          />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="NewTransSubmitt" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="showNewTrans = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><back /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+          <!---
                 <n-button @click="print" />
               -->
-            </div>
-          </template>
-        </n-card>
-      </n-modal>
+        </div>
+      </template>
     </n-card>
-  </n-space>
+  </n-modal>
 </template>
 
 <script setup lang="ts">
@@ -346,7 +350,7 @@ function getTrans() {
       .then(function (response) {
         //console.log(response);
         CurrentTrans.value = response.data.data;
-        console.log(CurrentTrans.value);
+        // console.log(CurrentTrans.value);
       })
       .catch(function (error) {
         console.log(error);
@@ -514,7 +518,8 @@ function NewTransSubmitt() {
         station_id_3: stationid3.value,
       })
       .then(function (response) {
-        console.log(response);
+        // console.log(response);
+        message.success("新增成功");
         CurrentTrans.value?.push({
           Des: model.context,
           address: itemaddress.value,
@@ -571,7 +576,8 @@ function deleteTrans() {
   axios
     .delete("http://localhost:3000/api/mrt_admin/info/" + TransID.value)
     .then(function (response) {
-      console.log(response.data.data);
+      // console.log(response.data.data);
+      message.success("刪除成功");
       ConfirmDeleteshow.value = false;
       router.go(0);
     })
@@ -604,7 +610,8 @@ function SubmitEditTrans() {
       Des: model.newcontent,
     })
     .then(function (response) {
-      console.log(response.data.data);
+      // console.log(response.data.data);
+      message.success("修改成功");
       CurrentTrans.value[OldTransindex.value].name = model.newtopic;
       CurrentTrans.value[OldTransindex.value].address = model.newaddress;
       CurrentTrans.value[OldTransindex.value].Des = model.newcontent;

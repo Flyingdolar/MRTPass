@@ -520,11 +520,13 @@ function SaveTimeTableEdit() {
     )
     .then(function (response) {
       message.success("修改成功");
+      console.log("done");
       editTimeTablemodal.value = false;
       reloadtimetable();
     })
     .catch(function (error) {
       message.error("修改失敗");
+      console.log(error);
     });
   //axios
 }
