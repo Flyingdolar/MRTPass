@@ -8,6 +8,7 @@
         :options="routeOpt"
         placeholder="請選擇路線"
         text="cool-gray-500"
+        :theme-overrides="selectThemeOverrides1()"
       />
       <n-select
         v-model:value="depStation.value"
@@ -42,6 +43,7 @@
               v-model:value="arrRoute.value"
               :options="routeOpt"
               placeholder="請選擇路線"
+              :theme-overrides="selectThemeOverrides2()"
             />
             <n-select
               v-model:value="arrStation.value"
@@ -73,9 +75,30 @@ import {
   NButton,
   NCard,
   FormItemRule,
+  SelectProps,
 } from "naive-ui";
 import { ref, reactive, computed, onMounted, watch, h } from "vue";
 import { Station, Line, LineStation, MRTInfo } from "../scripts/types";
+let color1 = "#FF0000";
+function selectThemeOverrides1() {
+  return {
+    peers: {
+      InternalSelection: {
+        textColor: color1,
+      },
+    },
+  };
+}
+let color2 = "#FF0000";
+function selectThemeOverrides2() {
+  return {
+    peers: {
+      InternalSelection: {
+        textColor: color2,
+      },
+    },
+  };
+}
 const AllLine = ref<Line[]>();
 const CurrentdepLineStation = ref<LineStation[]>();
 const CurrentarrLineStation = ref<LineStation[]>();
@@ -134,6 +157,11 @@ watch(depRoute, (depRoute) => {
   depStation.value = null;
   price.value = null;
   timetablesearchResult.value = null;
+  const index = AllLine.value?.forEach(function (item, index, array) {
+    if (item.linecolor == depRoute.value) {
+      color1 = item.colorcode;
+    }
+  });
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
@@ -154,6 +182,11 @@ watch(arrRoute, (arrRoute) => {
   arrStation.value = null;
   price.value = null;
   timetablesearchResult.value = null;
+  const index = AllLine.value?.forEach(function (item, index, array) {
+    if (item.linecolor == arrRoute.value) {
+      color2 = item.colorcode;
+    }
+  });
   //axios get
   axios
     .get("http://localhost:3000/api/mrt_admin/line_station", {
