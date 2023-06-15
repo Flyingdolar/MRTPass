@@ -25,6 +25,29 @@ brew install node
 sudo apt install nodejs
 ```
 
+#### 可能產生的 Issue
+
+> 如果說你安裝完 nodejs ，使用 `node --version` 發現版本只有 `v10.19.0`
+> 你會需要以下的方法來將 nodejs 更新到更新的版本
+
+先安裝 npm （可能要先更新一下 apt get）
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install npm
+```
+
+接著裝 n （n 是一個 Node.js 版本管理工具），並使用 n 來安裝最新的版本
+
+```bash
+sudo npm install -g n
+sudo n latest
+# 或者是 sudo n stable 可以裝比較穩定的版本（但應該都會比 10.19.0 新）
+```
+
+> 備注：我們的專案要求至少 node version 需要在 v16.0.0 以上
+
 ### 3. Windows 安裝
 
 可以直接到 [Node.js 官網](https://nodejs.org/en/) 下載安裝檔，安裝完後可以在命令列中使用 `node` 指令。
@@ -52,10 +75,18 @@ brew install pnpm
 
 ### 2. Linux 安裝
 
-可以直接使用 apt 安裝：
+~~可以直接使用 apt 安裝~~ 使用 -curl 安裝（或者是 -wget）：
+> \[FIX\] apt 裏面沒有 pnpm，只有 npm，故此方法不可行
 
 ```bash
-sudo apt install pnpm
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+```
+
+安裝完畢之後，記得使用 source 你的 shell 來讓 pnpm 指令生效
+> （備注：會顯示在你的安裝訊息）
+
+```bash
+source /home/{username}/.bashrc
 ```
 
 ### 3. Windows 安裝

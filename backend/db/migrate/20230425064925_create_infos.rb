@@ -4,8 +4,8 @@ class CreateInfos < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :photo
       t.string :address
-      t.string :type
-      t.string :Des
+      t.string :type_
+      t.text :Des
 
       t.timestamps
     end
