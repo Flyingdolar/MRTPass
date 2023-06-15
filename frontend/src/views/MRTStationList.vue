@@ -44,6 +44,7 @@
         </div>
       </div>
     </div>
+    <div p="6" />
     <div py="3px" />
     <n-card
       pos="fixed bottom-16"
@@ -155,11 +156,12 @@ function DeleteStation() {
   axios
     .delete(
       "http://localhost:3000/api/mrt_admin/station/" +
-        (selectID as unknown as string)
+        (selectID.value as unknown as string)
     )
     .then(function (response) {
       console.log(response);
       reloadStation();
+      showDelete.value = false;
     })
     .catch(function (error) {
       console.log(error);
@@ -169,6 +171,7 @@ function DeleteStation() {
 function openDelete(id: number) {
   showDelete.value = true;
   selectID.value = id;
+  console.log(selectID.value);
 }
 
 function goback() {
