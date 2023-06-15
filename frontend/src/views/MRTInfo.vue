@@ -4,7 +4,7 @@
     <div space="y-5px" mx="1">
       <div text="body">出發站點</div>
       <div flex="~ gap-4">
-        <div flex="~ gap-5px" w="full">
+        <div flex="~ gap-1" w="full">
           <div
             class="flex my-auto p-3px"
             border="2 rounded-lg"
@@ -22,11 +22,18 @@
             :theme-overrides="selectThemeOverrides1()"
           />
         </div>
-        <div flex="~ gap-5px" w="full">
-          <div class="flex my-auto p-3px">
-            <n-icon m="auto" :size="22">
-              <location text="body" />
-            </n-icon>
+        <div flex="~ gap-1" w="full">
+          <n-icon v-if="depStation.value == null" m="auto" :size="22">
+            <location text="body" />
+          </n-icon>
+          <div
+            class="my-auto !bg-transparent font-medium whitespace-nowrap"
+            style="font-size: 16px"
+            :style="setLineColor(depColor)"
+            v-else
+          >
+            {{ depRoute.value
+            }}{{ depStation.number?.toString().padStart(2, "0") }}
           </div>
           <n-select
             v-model:value="depStation.value"
@@ -57,10 +64,17 @@
           />
         </div>
         <div flex="~ gap-5px" w="full">
-          <div class="flex my-auto p-3px">
-            <n-icon m="auto" :size="22">
-              <location text="body" />
-            </n-icon>
+          <n-icon v-if="arrStation.value == null" m="auto" :size="22">
+            <location text="body" />
+          </n-icon>
+          <div
+            class="my-auto !bg-transparent font-medium whitespace-nowrap"
+            style="font-size: 16px"
+            :style="setLineColor(arrColor)"
+            v-else
+          >
+            {{ arrRoute.value
+            }}{{ arrStation.number?.toString().padStart(2, "0") }}
           </div>
           <n-select
             v-model:value="arrStation.value"
@@ -161,7 +175,7 @@ const CurrentdepLineStation = ref<LineStation[]>();
 const CurrentarrLineStation = ref<LineStation[]>();
 let depRoute = reactive({
   label: "",
-  value: null,
+  value: null as string | null,
   style: {
     color: "",
   },
@@ -169,7 +183,7 @@ let depRoute = reactive({
 
 let arrRoute = reactive({
   label: "",
-  value: null,
+  value: null as string | null,
   style: {
     color: "",
   },
@@ -177,14 +191,16 @@ let arrRoute = reactive({
 
 let depStation = reactive({
   label: "",
-  value: null,
+  value: null as number | null,
+  number: null as number | null,
   style: {
     color: "",
   },
 });
 let arrStation = reactive({
   label: "",
-  value: null,
+  value: null as number | null,
+  number: null as number | null,
   style: {
     color: "",
   },
@@ -202,12 +218,14 @@ let depStationOpt = computed(() =>
   CurrentdepLineStation.value?.map((v, index) => ({
     label: v.station.name,
     value: v.station.id,
+    number: v.number,
   }))
 );
 let arrStationOpt = computed(() =>
   CurrentarrLineStation.value?.map((v, index) => ({
     label: v.station.name,
     value: v.station.id,
+    number: v.number,
   }))
 );
 watch(depRoute, (depRoute) => {
@@ -229,6 +247,7 @@ watch(depRoute, (depRoute) => {
     .then(function (response) {
       //console.log(response);
       CurrentdepLineStation.value = response.data.data;
+      console.log(CurrentdepLineStation.value);
     })
     .catch(function (error) {
       console.log(error);
@@ -252,7 +271,7 @@ watch(arrRoute, (arrRoute) => {
       },
     })
     .then(function (response) {
-      //console.log(response);
+      console.log(response);
       CurrentarrLineStation.value = response.data.data;
     })
     .catch(function (error) {
@@ -263,9 +282,19 @@ watch(arrRoute, (arrRoute) => {
 const price = ref();
 const timetablesearchResult = ref<MRTInfo>();
 watch(arrStation, () => {
+  arrStationOpt.value?.forEach(function (item, index, array) {
+    if (item.value == arrStation.value) {
+      arrStation.number = item.number;
+    }
+  });
   updateTicketandTime();
 });
 watch(depStation, () => {
+  depStationOpt.value?.forEach(function (item, index, array) {
+    if (item.value == depStation.value) {
+      depStation.number = item.number;
+    }
+  });
   updateTicketandTime();
 });
 
@@ -309,7 +338,7 @@ function getLineColor(line: string) {
     if (item.linecolor == line) {
       const color = item.colorcode;
       // console.log(color);
-      return "color: " + color + "; " + "border-color: " + color + ";";
+      return "color: " + color + "; " + "border-color: " + color;
     }
   });
   return "";
@@ -318,9 +347,9 @@ function getLineColor(line: string) {
 function setLineColor(color: string) {
   const textColor = "color: " + color + "; ";
   const borderColor = "border-color: " + color + "; ";
-  const bgColor = "background-color: white;";
+  const bgColor = "background-color: white";
   if (color == "") return "border-color: transparent; color: #555555;";
-  return textColor + borderColor;
+  return textColor + borderColor + bgColor;
 }
 
 onMounted(() => {
