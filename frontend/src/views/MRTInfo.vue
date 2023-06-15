@@ -1,33 +1,126 @@
 <template>
   <!-- Header: 選擇出發站點 -->
-  <div p="x-4 y-3" space="y-1" bg="blue-100">
-    <div text="title">選擇出發站點</div>
-    <div flex="~" space="x-4">
-      <n-select
-        v-model:value="depRoute.value"
-        :options="routeOpt"
-        placeholder="請選擇路線"
-        text="cool-gray-500"
-        :theme-overrides="selectThemeOverrides1()"
-      />
-      <n-select
-        v-model:value="depStation.value"
-        :options="depStationOpt"
-        placeholder="請選擇站點"
-      />
+  <n-card bg="blue-100" title="選擇站點" pos="sticky -top-15 z-60">
+    <div space="y-5px" mx="1">
+      <div text="body">出發站點</div>
+      <div flex="~ gap-4">
+        <div flex="~ gap-1" w="full">
+          <div
+            class="flex my-auto p-3px"
+            border="2 rounded-lg"
+            :style="setLineColor(depColor)"
+          >
+            <n-icon v-if="depColor == ''" m="auto" :size="22"><train /></n-icon>
+            <div v-else class="w-5 h-5 text-center font-semibold">
+              {{ depRoute.value }}
+            </div>
+          </div>
+          <n-select
+            v-model:value="depRoute.value"
+            :options="routeOpt"
+            placeholder="請選擇路線"
+            :theme-overrides="selectThemeOverrides1()"
+          />
+        </div>
+        <div flex="~ gap-1" w="full">
+          <n-icon v-if="depStation.value == null" m="auto" :size="22">
+            <location text="body" />
+          </n-icon>
+          <div
+            class="my-auto !bg-transparent font-medium whitespace-nowrap"
+            style="font-size: 16px"
+            :style="setLineColor(depColor)"
+            v-else
+          >
+            {{ depRoute.value
+            }}{{ depStation.number?.toString().padStart(2, "0") }}
+          </div>
+          <n-select
+            v-model:value="depStation.value"
+            :options="depStationOpt"
+            placeholder="請選擇站點"
+          />
+        </div>
+      </div>
+      <div p="1" />
+      <div text="body">目的地站點</div>
+      <div flex="~ gap-4">
+        <div flex="~ gap-5px" w="full">
+          <div
+            class="flex my-auto p-3px"
+            border="2 rounded-lg"
+            :style="setLineColor(arrColor)"
+          >
+            <n-icon v-if="arrColor == ''" m="auto" :size="22"><train /></n-icon>
+            <div v-else class="w-5 h-5 text-center font-semibold">
+              {{ arrRoute.value }}
+            </div>
+          </div>
+          <n-select
+            v-model:value="arrRoute.value"
+            :options="routeOpt"
+            placeholder="請選擇路線"
+            :theme-overrides="selectThemeOverrides2()"
+          />
+        </div>
+        <div flex="~ gap-5px" w="full">
+          <n-icon v-if="arrStation.value == null" m="auto" :size="22">
+            <location text="body" />
+          </n-icon>
+          <div
+            class="my-auto !bg-transparent font-medium whitespace-nowrap"
+            style="font-size: 16px"
+            :style="setLineColor(arrColor)"
+            v-else
+          >
+            {{ arrRoute.value
+            }}{{ arrStation.number?.toString().padStart(2, "0") }}
+          </div>
+          <n-select
+            v-model:value="arrStation.value"
+            :options="arrStationOpt"
+            placeholder="請選擇站點"
+          />
+        </div>
+      </div>
     </div>
-  </div>
+  </n-card>
   <!-- Body: 班次資訊 -->
   <div m="y-2" space="y-2">
     <n-card title="班次資訊">
       <template #header-extra>
-        <n-button @click="updateTicketandTime()">刷新資訊</n-button>
+        <n-button
+          @click="updateTicketandTime()"
+          type="tertiary"
+          size="small"
+          class="mt-0.5"
+          ghost
+        >
+          <template #icon>
+            <n-icon :size="16"><refresh /></n-icon>
+          </template>
+          <div text="sm">刷新</div>
+        </n-button>
       </template>
       <div v-if="timetablesearchResult">
         <div v-for="item in timetablesearchResult" :key="item.No">
           <n-card :title="item.name">
+            <template #header>
+              <div flex="~ gap-4">
+                <div
+                  class="flex my-auto p-3px"
+                  border="2 rounded-lg"
+                  :style="getLineColor(item.line)"
+                >
+                  <div class="w-8 text-center font-semibold">
+                    {{ item.line }}
+                  </div>
+                </div>
+                <div my="auto">{{ item.name }}</div>
+              </div>
+            </template>
             <template #header-extra>
-              {{ item.spend_time }}
+              <div class="tracking-widest">{{ item.spend_time }}</div>
             </template>
           </n-card>
         </div>
@@ -35,29 +128,13 @@
       <div v-if="!timetablesearchResult">查無班次資訊</div>
     </n-card>
     <n-card title="票價查詢">
-      <div space="y-2">
-        <div space="y-1">
-          <div>選擇目的地站點</div>
-          <div flex="~" space="x-4">
-            <n-select
-              v-model:value="arrRoute.value"
-              :options="routeOpt"
-              placeholder="請選擇路線"
-              :theme-overrides="selectThemeOverrides2()"
-            />
-            <n-select
-              v-model:value="arrStation.value"
-              :options="arrStationOpt"
-              placeholder="請選擇站點"
-            />
-          </div>
-        </div>
-        <div space="y-1">
-          <div text="sm" v-if="price">價格<br />{{ price }}元</div>
-        </div>
-        <div space="y-1">
-          <div text="sm" v-if="!price">請選擇站點</div>
-        </div>
+      <div p="b-2">價格</div>
+      <div v-if="price" flex="~ gap-3" mx="2">
+        <n-icon my="auto" :size="18"><money /></n-icon>
+        <div my="auto" text="xl title">{{ price }}</div>
+      </div>
+      <div v-else>
+        <div my="auto" text="secondary">（請選擇路線與站點）</div>
       </div>
     </n-card>
   </div>
@@ -65,36 +142,30 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import {
-  NSelect,
-  NForm,
-  NInput,
-  NFormItem,
-  FormRules,
-  FormInst,
-  NButton,
-  NCard,
-  FormItemRule,
-  SelectProps,
-} from "naive-ui";
+import { NSelect, NButton, NCard, NIcon } from "naive-ui";
 import { ref, reactive, computed, onMounted, watch, h } from "vue";
 import { Station, Line, LineStation, MRTInfo } from "../scripts/types";
-let color1 = "#FF0000";
+import train from "../assets/icon/iTrain.vue";
+import location from "../assets/icon/iLocation.vue";
+import refresh from "../assets/icon/iRefresh.vue";
+import money from "../assets/icon/iMoney.vue";
+
+let depColor = "";
+let arrColor = "";
 function selectThemeOverrides1() {
   return {
     peers: {
       InternalSelection: {
-        textColor: color1,
+        textColor: depColor,
       },
     },
   };
 }
-let color2 = "#FF0000";
 function selectThemeOverrides2() {
   return {
     peers: {
       InternalSelection: {
-        textColor: color2,
+        textColor: arrColor,
       },
     },
   };
@@ -104,7 +175,7 @@ const CurrentdepLineStation = ref<LineStation[]>();
 const CurrentarrLineStation = ref<LineStation[]>();
 let depRoute = reactive({
   label: "",
-  value: "",
+  value: null as string | null,
   style: {
     color: "",
   },
@@ -112,7 +183,7 @@ let depRoute = reactive({
 
 let arrRoute = reactive({
   label: "",
-  value: "",
+  value: null as string | null,
   style: {
     color: "",
   },
@@ -120,21 +191,23 @@ let arrRoute = reactive({
 
 let depStation = reactive({
   label: "",
-  value: "",
+  value: null as number | null,
+  number: null as number | null,
   style: {
     color: "",
   },
 });
 let arrStation = reactive({
   label: "",
-  value: "",
+  value: null as number | null,
+  number: null as number | null,
   style: {
     color: "",
   },
 });
 let routeOpt = computed(() =>
   AllLine.value?.map((v, index) => ({
-    label: v.linecolor + " · " + v.name,
+    label: v.name,
     value: v.linecolor,
     style: {
       color: v.colorcode,
@@ -145,12 +218,14 @@ let depStationOpt = computed(() =>
   CurrentdepLineStation.value?.map((v, index) => ({
     label: v.station.name,
     value: v.station.id,
+    number: v.number,
   }))
 );
 let arrStationOpt = computed(() =>
   CurrentarrLineStation.value?.map((v, index) => ({
     label: v.station.name,
     value: v.station.id,
+    number: v.number,
   }))
 );
 watch(depRoute, (depRoute) => {
@@ -159,7 +234,7 @@ watch(depRoute, (depRoute) => {
   timetablesearchResult.value = null;
   const index = AllLine.value?.forEach(function (item, index, array) {
     if (item.linecolor == depRoute.value) {
-      color1 = item.colorcode;
+      depColor = item.colorcode;
     }
   });
   //axios get
@@ -172,6 +247,7 @@ watch(depRoute, (depRoute) => {
     .then(function (response) {
       //console.log(response);
       CurrentdepLineStation.value = response.data.data;
+      console.log(CurrentdepLineStation.value);
     })
     .catch(function (error) {
       console.log(error);
@@ -184,7 +260,7 @@ watch(arrRoute, (arrRoute) => {
   timetablesearchResult.value = null;
   const index = AllLine.value?.forEach(function (item, index, array) {
     if (item.linecolor == arrRoute.value) {
-      color2 = item.colorcode;
+      arrColor = item.colorcode;
     }
   });
   //axios get
@@ -195,7 +271,7 @@ watch(arrRoute, (arrRoute) => {
       },
     })
     .then(function (response) {
-      //console.log(response);
+      console.log(response);
       CurrentarrLineStation.value = response.data.data;
     })
     .catch(function (error) {
@@ -206,9 +282,19 @@ watch(arrRoute, (arrRoute) => {
 const price = ref();
 const timetablesearchResult = ref<MRTInfo>();
 watch(arrStation, () => {
+  arrStationOpt.value?.forEach(function (item, index, array) {
+    if (item.value == arrStation.value) {
+      arrStation.number = item.number;
+    }
+  });
   updateTicketandTime();
 });
 watch(depStation, () => {
+  depStationOpt.value?.forEach(function (item, index, array) {
+    if (item.value == depStation.value) {
+      depStation.number = item.number;
+    }
+  });
   updateTicketandTime();
 });
 
@@ -245,6 +331,25 @@ function updateTicketandTime() {
         console.log(error);
       });
   }
+}
+
+function getLineColor(line: string) {
+  AllLine.value?.forEach(function (item, index, array) {
+    if (item.linecolor == line) {
+      const color = item.colorcode;
+      // console.log(color);
+      return "color: " + color + "; " + "border-color: " + color;
+    }
+  });
+  return "";
+}
+
+function setLineColor(color: string) {
+  const textColor = "color: " + color + "; ";
+  const borderColor = "border-color: " + color + "; ";
+  const bgColor = "background-color: white";
+  if (color == "") return "border-color: transparent; color: #555555;";
+  return textColor + borderColor + bgColor;
 }
 
 onMounted(() => {
