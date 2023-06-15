@@ -34,12 +34,7 @@
         {{ item.info.Des }}
       </div>
       <template #footer>
-        <div
-          flex="~"
-          justify="center items-center"
-          p="x-4 y-2"
-          v-if="roleisAdmin"
-        >
+        <div flex="~" justify="center items-center" p="x-4 y-2" v-if="isLogin">
           <n-button
             @click="showOldCommon(item.info.id)"
             flex="~ grow"
@@ -52,13 +47,14 @@
             </template>
             <div>編輯</div>
           </n-button>
-          <div m="1" p="0.8px" bg="gray-200" />
+          <div m="1" p="0.8px" bg="gray-200" v-if="roleisAdmin" />
           <n-button
             @click="showConfirmDelete(item.info.id)"
             flex="~ grow"
             size="medium"
             type="error"
             quaternary
+            v-if="roleisAdmin"
           >
             <template #icon>
               <n-icon :size="18"><trash /></n-icon>
@@ -72,7 +68,7 @@
 
   <!-- Card: New Annoucement -->
   <n-card
-    v-if="roleisAdmin"
+    v-if="isLogin"
     pos="fixed bottom-16"
     footer-style="padding: 0px;"
     :hoverable="true"
@@ -328,6 +324,7 @@ import {
 } from "../scripts/types";
 import back from "../assets/icon/iRefund.vue";
 import save from "../assets/icon/iSave.vue";
+const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 const route = useRoute();
 const message = useMessage();
 const Current = ref({
@@ -343,7 +340,7 @@ const roleisAdmin = computed(() => {
   if ((store.state?.userinfo?.role as string) == "admin") {
     return true;
   } else if ((store.state?.userinfo?.role as string) == "mrt_admin") {
-    return true;
+    return false;
   }
   return false;
 });

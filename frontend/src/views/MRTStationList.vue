@@ -44,7 +44,24 @@
         </div>
       </div>
     </div>
+    <div p="6" />
     <div py="3px" />
+    <n-card
+      pos="fixed bottom-16"
+      footer-style="padding: 0px;"
+      :hoverable="true"
+    >
+      <template #footer>
+        <div class="flex justify-center py-4 px-12">
+          <n-button flex="~ grow" type="success" ghost @click="AddMRTStation">
+            <template #icon>
+              <n-icon :size="18"><add /></n-icon>
+            </template>
+            新增站點
+          </n-button>
+        </div>
+      </template>
+    </n-card>
   </div>
   <!-- Overlay: Confirm Delete -->
   <n-modal v-model:show="showDelete">
@@ -139,11 +156,12 @@ function DeleteStation() {
   axios
     .delete(
       "http://localhost:3000/api/mrt_admin/station/" +
-        (selectID as unknown as string)
+        (selectID.value as unknown as string)
     )
     .then(function (response) {
       console.log(response);
       reloadStation();
+      showDelete.value = false;
     })
     .catch(function (error) {
       console.log(error);
@@ -153,6 +171,7 @@ function DeleteStation() {
 function openDelete(id: number) {
   showDelete.value = true;
   selectID.value = id;
+  console.log(selectID.value);
 }
 
 function goback() {
@@ -160,6 +179,9 @@ function goback() {
 }
 function tmp() {
   console.log("Not yet:D");
+}
+function AddMRTStation() {
+  router.push("/stationadd");
 }
 </script>
 
