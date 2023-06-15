@@ -1,0 +1,16 @@
+directories:
+  output: dist_electron
+  buildResources: build
+  app: dist_electron/bundled
+files:
+  - filter:
+      - '**'
+extends: null
+productName: MRT_pass
+mac:
+  icon: public/icon.icns
+win:
+  icon: public/icon.ico
+linux:
+  icon: public/icon.png
+electronVersion: 13.6.9
