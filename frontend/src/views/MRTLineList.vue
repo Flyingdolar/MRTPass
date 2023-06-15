@@ -53,6 +53,65 @@
     </div>
     <div py="3px" />
   </div>
+  <div p="9" />
+
+  <!-- Card: New Annoucement -->
+  <n-card pos="fixed bottom-16" footer-style="padding: 0px;" :hoverable="true">
+    <template #footer>
+      <div class="flex justify-center py-4 px-16">
+        <n-button
+          flex="~ grow"
+          type="success"
+          ghost
+          @click="showNewLine = true"
+        >
+          <template #icon>
+            <n-icon :size="18"><add /></n-icon>
+          </template>
+          新增路線
+        </n-button>
+      </div>
+    </template>
+  </n-card>
+
+  <!-- Overlay: New Annoucement -->
+  <n-modal v-model:show="showNewLine">
+    <n-card title="新增路線" :header-style="{ 'align-self': 'center' }">
+      <n-form ref="formRef" :label-width="80">
+        <n-form-item label="路線代號"
+          ><n-input v-model:value="model.linecolor"></n-input
+        ></n-form-item>
+        <n-form-item label="路線名稱"
+          ><n-input v-model:value="model.name"></n-input
+        ></n-form-item>
+        <n-form-item label="路線顏色"
+          ><n-input v-model:value="model.colorcode"></n-input
+        ></n-form-item>
+      </n-form>
+      <template #footer>
+        <div flex="~ gap-8" class="justify-center px-12">
+          <n-button @click="addNewLine" type="primary" flex="grow" ghost>
+            <template #icon>
+              <n-icon :size="18"><save /></n-icon>
+            </template>
+            <div>儲存</div>
+          </n-button>
+          <n-button
+            @click="showNewLine = false"
+            type="tertiary"
+            flex="grow"
+            ghost
+          >
+            <template #icon>
+              <n-icon :size="18"><cancel /></n-icon>
+            </template>
+            <div>取消</div>
+          </n-button>
+        </div>
+      </template>
+    </n-card>
+  </n-modal>
+
   <!-- Overlay: Confirm Delete -->
   <n-modal v-model:show="showDelete">
     <n-card
@@ -90,21 +149,21 @@
 import {
   NCard,
   NIcon,
-  NSpace,
+  NForm,
+  NInput,
+  NFormItem,
   NButton,
   NModal,
-  NDataTable,
   useMessage,
-  NH3,
-  NPopconfirm,
 } from "naive-ui";
 import back from "../assets/icon/iExpLeft.vue";
 import goto from "../assets/icon/iExpRight.vue";
 import remove from "../assets/icon/iTrash.vue";
 import search from "../assets/icon/iSearch.vue";
 import cancel from "../assets/icon/iRefund.vue";
+import save from "../assets/icon/iSave.vue";
 import type { DataTableColumns } from "naive-ui";
-import { computed, h, onMounted, ref, watch } from "vue";
+import { computed, h, onMounted, ref, reactive, watch } from "vue";
 import { watchOnce } from "@vueuse/core";
 import { Line, Role } from "../scripts/types";
 import axios from "axios";
@@ -112,8 +171,17 @@ import router from "@/router";
 import store from "@/scripts/vuex";
 const EditUsermodal = ref(false);
 const colData = ref<Line[]>([]);
+const showNewLine = ref(false);
 const showDelete = ref(false);
 const selectID = ref(0);
+const message = useMessage();
+const model = reactive({
+  id: 0,
+  name: "",
+  linecolor: "",
+  colorcode: "",
+});
+
 function reloadLine() {
   //axios get
   axios
@@ -141,6 +209,27 @@ onMounted(() => {
 
 function setLineColor(color: string) {
   return "color: " + color + "; border-color: " + color + ";";
+}
+
+function addNewLine() {
+  //axios post
+  axios
+    .post("http://localhost:3000/api/mrt_admin/line", {
+      name: model.name,
+      linecolor: model.linecolor,
+      colorcode: model.colorcode,
+    })
+    .then(function (response) {
+      message.success("新增成功");
+      console.log(response);
+      showNewLine.value = false;
+      reloadLine();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  //axios
+  showNewLine.value = false;
 }
 
 function EditLine(id: number) {
