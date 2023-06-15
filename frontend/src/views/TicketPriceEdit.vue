@@ -153,16 +153,43 @@ function goback() {
   router.push("/profile");
 }
 function SaveEdit() {
-  //axios patch
+  deleteticket();
+  submitedit(parseInt(model.basicprice), 0);
+  model.length.forEach(function (item, index, array) {
+    submitedit(model.addtionprice[index], model.distance[index]);
+  });
+}
+function deleteticket() {
+  //axios delete
   axios
-    .patch("http://localhost:3000/api/mrt_admin/station/" + route.params.id, {})
+    .delete("http://localhost:3000/api/mrt_admin/ticket")
     .then(function (response) {
-      message.success("儲存成功");
+      message.success("刪除成功");
     })
     .catch(function (error) {
-      message.error("儲存失敗，請檢查欄位輸入是否合法");
+      message.error("刪除失敗，請檢查欄位輸入是否合法");
     });
   //axios
+}
+const ticketresponse = ref(true);
+function submitedit(price: number, distance: number) {
+  if (ticketresponse.value) {
+    //axios psot
+    axios
+      .post("http://localhost:3000/api/mrt_admin/ticket", {
+        price: price,
+        distance: distance,
+      })
+      .then(function (response) {
+        console.log(response);
+        message.success("儲存成功");
+      })
+      .catch(function (error) {
+        ticketresponse.value = false;
+        message.error("儲存失敗，請檢查欄位輸入是否合法");
+      });
+    //axios
+  }
 }
 
 function DeleteStation(id: number, index: number) {
