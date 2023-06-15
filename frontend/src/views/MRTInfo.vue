@@ -296,6 +296,7 @@ watch(depStation, () => {
     }
   });
   updateTicketandTime();
+  updateTimetable();
 });
 
 function updateTicketandTime() {
@@ -316,21 +317,24 @@ function updateTicketandTime() {
         console.log(error);
       });
     //axios
-    //axios get
-    axios
-      .get(
-        "http://localhost:3000/api/mrt_admin/station/" +
-          depStation.value +
-          "/time_table_search"
-      )
-      .then(function (response) {
-        console.log(response);
-        timetablesearchResult.value = response.data.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    updateTimetable();
   }
+}
+function updateTimetable() {
+  //axios get
+  axios
+    .get(
+      "http://localhost:3000/api/mrt_admin/station/" +
+        depStation.value +
+        "/time_table_search"
+    )
+    .then(function (response) {
+      console.log(response);
+      timetablesearchResult.value = response.data.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 }
 
 function getLineColor(line: string) {

@@ -45,6 +45,22 @@
       </div>
     </div>
     <div py="3px" />
+    <n-card
+      pos="fixed bottom-16"
+      footer-style="padding: 0px;"
+      :hoverable="true"
+    >
+      <template #footer>
+        <div class="flex justify-center py-4 px-12">
+          <n-button flex="~ grow" type="success" ghost @click="AddMRTStation">
+            <template #icon>
+              <n-icon :size="18"><add /></n-icon>
+            </template>
+            新增站點
+          </n-button>
+        </div>
+      </template>
+    </n-card>
   </div>
   <!-- Overlay: Confirm Delete -->
   <n-modal v-model:show="showDelete">
@@ -160,6 +176,9 @@ function goback() {
 }
 function tmp() {
   console.log("Not yet:D");
+}
+function AddMRTStation() {
+  router.push("/stationadd");
 }
 </script>
 

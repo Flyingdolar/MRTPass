@@ -139,9 +139,14 @@
   </div>
 
   <!-- Card: New Credit -->
-  <n-card pos="fixed bottom-16" footer-style="padding: 0px;" :hoverable="true">
+  <n-card
+    pos="fixed bottom-16"
+    footer-style="padding: 0px;"
+    :hoverable="true"
+    v-if="isLogin"
+  >
     <template #footer>
-      <div class="flex justify-center py-4 px-12">
+      <div class="flex justify-center py-4 px-12" v-if="!UserhadComment">
         <n-button flex="~ grow" type="success" ghost @click="showCreditModal">
           <template #icon>
             <n-icon :size="18"><order /></n-icon>
@@ -345,7 +350,7 @@ import store from "@/scripts/vuex";
 import { useRoute } from "vue-router";
 import { parentPort } from "worker_threads";
 import { ca } from "date-fns/locale";
-
+const isLogin = computed(() => (store?.state?.userinfo ? true : false));
 const EditUsermodal = ref(false);
 const CurrentCommon = ref<Common>();
 const CurrentComment = ref<CommentAPI[]>();
@@ -411,7 +416,7 @@ const isAdmin = computed(() => {
   } else if (
     (store.state?.userinfo?.role as unknown as string) == "mrt_admin"
   ) {
-    return true;
+    return false;
   } else {
     return false;
   }
